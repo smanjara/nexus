@@ -19,15 +19,17 @@ import sys
 import os
 
 def check_empty_list():
-    host_in = os.environ.get('EXISTING_NODES')
-    if len(host_in) == 0:
-        print "List is empty!"
-        sys.exit()
+       host_in = os.environ.get('EXISTING_NODES')
+       if not host_in:
+           print "List is empty!"
+           sys.exit(1)
 
-my_node = tuple(os.environ.get('EXISTING_NODES').split(","))
+
 def ipa_topology():
-    if len(my_node) == 1:
-        print "I have only %s and it is my MASTER." % my_node[0]
-
+       my_node = tuple(os.environ.get('EXISTING_NODES').split(","))
+       if len(my_node) == 1:
+            print "I have only %s and it is my MASTER." % my_node[0]
+       
+            
 check_empty_list()
 ipa_topology()
