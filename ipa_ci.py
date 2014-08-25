@@ -18,13 +18,14 @@
 import sys
 import os
 
+#checks if the list is empty
 def check_empty_list():
        host_in = os.environ.get('EXISTING_NODES')
        if not host_in:
            print "List is empty!"
            sys.exit(1)
 
-
+#print the first node as master node
 def ipa_topology():
        my_node = tuple(os.environ.get('EXISTING_NODES').split(","))
        if len(my_node) == 1:
