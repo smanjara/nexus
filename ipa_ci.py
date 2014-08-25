@@ -17,6 +17,11 @@
 
 import sys
 import os
+import paramiko
+
+username = "root"
+password = "whatever"
+git_clone = "git clone <git-url>"
 
 # checks if the list is empty
 def check_empty_list():
@@ -30,6 +35,16 @@ def ipa_topology():
     my_node = tuple(os.environ.get('EXISTING_NODES').split(","))
     if len(my_node) == 1:
         print "I have only %s and it is my MASTER." % my_node[0]
+        # creats a new SSHClient object and then calls connect()
+        ssh = paramiko.SSHClient()
+        # "paramiko.AutoAddPolicy()" which will auto-accept unknown keys.
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.connect(my_node[0], username=username,
+                    password=password)
+        stdin, stdout, stderr = ssh.exec_command(git_clone)
+        for line in stdout.read().splitlines():
+            print 'host: %s: %s' % (my_node[0], line)
+        ssh.close()
 
 check_empty_list()
 ipa_topology()
