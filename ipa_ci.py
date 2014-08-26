@@ -64,8 +64,8 @@ def ipa_aio():
             else:
                 LOG.info('host: %s: %s' % (my_node[0], line))
 
-        ipa_quickinstall_task = ". env_profile; cd /root/ipa-tests/beaker/ipa-server/acceptance/quickinstall/; make run"
-        stdin, stdout, stderr = ssh.exec_command(ipa_quickinstall_task)
+        ipa_simpleinstall_task = ". env_profile; cd /root/ipa-tests/beaker/ipa-server/acceptance/ipa-simple-install/; make run"
+        stdin, stdout, stderr = ssh.exec_command(ipa_simpleinstall_task)
         for line in stdout.read().splitlines():
             if "FAIL" in line:
                 LOG.error('host: %s: %s' % (my_node[0], line))
