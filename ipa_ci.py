@@ -25,15 +25,15 @@ LOG = logging.getLogger(__name__)
 
 username = "root"
 password = "whatever"
-git_clone = "ls /tmp" # value used for testing this script
-#git_clone = "git clone <git-url>"
+git_clone = "git clone http://git.app.eng.bos.redhat.com/git/ipa-tests.git"
+shared_task = ". env_profile; cd /root/ipa-tests/beaker/ipa-server/shared; make run"
 
 # checks if the list is empty
 def check_empty_list():
-    LOG.info('Checking if EXISTING_NODES variable is empty')
+    LOG.info("Checking if EXISTING_NODES variable is empty")
     host_in = os.environ.get('EXISTING_NODES')
     if not host_in:
-        LOG.error('List is empty!')
+        LOG.error("List is empty!")
         sys.exit(1)
     else:
         LOG.info("EXISTING_NODES list is not empty!")
@@ -46,16 +46,23 @@ def ipa_aio():
 
         # creats a new SSHClient object and then calls connect()
         ssh = paramiko.SSHClient()
+
         # "paramiko.AutoAddPolicy()" which will auto-accept unknown keys.
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh.connect(my_node[0], username=username,
                     password=password)
         LOG.info("Executing command %s" % git_clone)
         stdin, stdout, stderr = ssh.exec_command(git_clone)
-
         for line in stdout.read().splitlines():
             LOG.info('host: %s: %s' % (my_node[0], line))
-        LOG.info("Closing ssh connection.")
+
+        stdin, stdout, stderr = ssh.exec_command(shared_task)
+        for line in stdout.read().splitlines():
+            if "FAIL" in line:
+                LOG.error('host: %s: %s' % (my_node[0], line))
+            else:
+                LOG.info('host: %s: %s' % (my_node[0], line))
+
         ssh.close()
     else:
         LOG.info("Multiple nodes detected.")
