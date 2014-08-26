@@ -25,7 +25,8 @@ LOG = logging.getLogger(__name__)
 
 username = "root"
 password = "whatever"
-git_clone = "git clone <git-url>"
+git_clone = "ls /tmp" # value used for testing this script
+#git_clone = "git clone <git-url>"
 
 # checks if the list is empty
 def check_empty_list():
@@ -34,9 +35,11 @@ def check_empty_list():
     if not host_in:
         LOG.error('List is empty!')
         sys.exit(1)
+    else:
+        LOG.info("EXISTING_NODES list is not empty!")
 
 # print the first node as master node
-def ipa_topology():
+def ipa_aio():
     my_node = tuple(os.environ.get('EXISTING_NODES').split(","))
     if len(my_node) == 1:
         LOG.info("I have only %s and it is my MASTER." % my_node[0])
@@ -54,6 +57,8 @@ def ipa_topology():
             LOG.info('host: %s: %s' % (my_node[0], line))
         LOG.info("Closing ssh connection.")
         ssh.close()
+    else:
+        LOG.info("Multiple nodes detected.")
 
 check_empty_list()
-ipa_topology()
+ipa_aio()
