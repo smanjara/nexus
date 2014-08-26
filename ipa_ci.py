@@ -63,7 +63,7 @@ def ipa_aio():
             else:
                 LOG.info('host: %s: %s' % (my_node[0], line))
 
-        ipa_usercli_task = ". env_profile; cd /root/ipa-tests/beaker/ipa-server/acceptance/ipa-user-cli/adduser/; make run")
+        ipa_usercli_task = ". env_profile; cd /root/ipa-tests/beaker/ipa-server/acceptance/ipa-user-cli/adduser/; make run"
         stdin, stdout, stderr = ssh.exec_command(ipa_usercli_task)
         for line in stdout.read().splitlines():
             if "FAIL" in line:
