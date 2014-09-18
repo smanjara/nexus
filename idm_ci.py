@@ -33,7 +33,7 @@ pv = args.provisioner
 def main():
     if pj == "ipa":
         if pv == "beaker":
-            beaker_run = ipa_ci.main()
+            ipa_ci.beaker_run()
         else:
             LOG.error("Missing acceptable provisioner name, see help for more info")
     else:

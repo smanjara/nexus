@@ -20,9 +20,10 @@ logging.basicConfig(level=logging.INFO)
 LOG = logging.getLogger(__name__)
 
 
-def main():
+def beaker_run():
     resources = ExistingNodes()
     resources._env_check()
+    resources._single_node()
 
 if __name__ == '__main__':
-    main()
+    beaker_run()

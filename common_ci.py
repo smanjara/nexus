@@ -30,3 +30,8 @@ class ExistingNodes():
         else:
             LOG.info("EXISTING_NODES list is not empty ... ready to go!")
 
+    def _single_node(self):
+        my_node = tuple(os.environ.get('EXISTING_NODES').split(","))
+        if len(my_node) == 1:
+            LOG.info("I have only %s and it is my MASTER." % my_node[0])
+
