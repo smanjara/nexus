@@ -21,7 +21,7 @@ LOG = logging.getLogger(__name__)
 
 class ExistingNodes():
 
-    def _env_check(self):
+    def env_check(self):
         LOG.info("Checking if EXISTING_NODES variable is empty")
         host_in = os.environ.get('EXISTING_NODES')
         if not host_in:
@@ -30,8 +30,11 @@ class ExistingNodes():
         else:
             LOG.info("EXISTING_NODES list is not empty ... ready to go!")
 
-    def _single_node(self):
-        my_node = tuple(os.environ.get('EXISTING_NODES').split(","))
-        if len(my_node) == 1:
-            LOG.info("I have only %s and it is my MASTER." % my_node[0])
-
+    def node_check(self):
+        my_nodes = tuple(os.environ.get('EXISTING_NODES').split(","))
+        if len(my_nodes) == 1:
+            LOG.info("I have only %s and it is my MASTER." % my_nodes[0])
+            return my_nodes
+        else:
+            LOG.info("I have multiple resources")
+            return my_nodes

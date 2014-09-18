@@ -22,8 +22,10 @@ LOG = logging.getLogger(__name__)
 
 def beaker_run():
     resources = ExistingNodes()
-    resources._env_check()
-    resources._single_node()
+    resources.env_check()
+
+    my_nodes = resources.node_check()
+    LOG.info (my_nodes)
 
 if __name__ == '__main__':
     beaker_run()
