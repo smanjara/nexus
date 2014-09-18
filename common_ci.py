@@ -14,15 +14,19 @@ import sys
 import os
 import paramiko
 import logging
-from common_ci import ExistingNodes
 
 logging.basicConfig(level=logging.INFO)
 LOG = logging.getLogger(__name__)
 
 
-def main():
-    resources = ExistingNodes()
-    resources._env_check()
+class ExistingNodes():
 
-if __name__ == '__main__':
-    main()
+    def _env_check(self):
+        LOG.info("Checking if EXISTING_NODES variable is empty")
+        host_in = os.environ.get('EXISTING_NODES')
+        if not host_in:
+            LOG.error("List is empty!")
+            sys.exit(1)
+        else:
+            LOG.info("EXISTING_NODES list is not empty ... ready to go!")
+
