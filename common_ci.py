@@ -14,9 +14,10 @@ import sys
 import os
 import paramiko
 import logging
+import util
 
-logging.basicConfig(level=logging.INFO)
-LOG = logging.getLogger(__name__)
+#logging.basicConfig(level=logging.INFO)
+#LOG = logging.getLogger(__name__)
 
 username = "root"
 password = "whatever"
@@ -24,21 +25,21 @@ password = "whatever"
 class ExistingNodes():
 
     def env_check(self):
-        LOG.info("Checking if EXISTING_NODES variable is empty")
+        util.log.info("Checking if EXISTING_NODES variable is empty")
         host_in = os.environ.get('EXISTING_NODES')
         if not host_in:
-            LOG.error("List is empty!")
+            util.log.error("List is empty!")
             sys.exit(1)
         else:
-            LOG.info("EXISTING_NODES list is not empty ... ready to go!")
+            util.log.info("EXISTING_NODES list is not empty ... ready to go!")
 
     def node_check(self):
         my_nodes = tuple(os.environ.get('EXISTING_NODES').split(","))
         if len(my_nodes) == 1:
-            LOG.info("I have only %s and it is my MASTER." % my_nodes[0])
+            util.log.info("I have only %s and it is my MASTER." % my_nodes[0])
             return my_nodes
         else:
-            LOG.info("I have multiple resources")
+            util.log.info("I have multiple resources")
             return my_nodes
 
 
@@ -56,10 +57,10 @@ class SetupRestraint():
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
             ssh.connect(my_nodes[0], username=username,
                         password=password)
-            LOG.info("Executing command %s" % get_repo)
+            util.log.info("Executing command %s" % get_repo)
             stdin, stdout, stderr = ssh.exec_command(get_repo)
             for line in stdout.read().splitlines():
-                LOG.info('host: %s: %s' % (my_nodes[0], line))
+                util.log.info('host: %s: %s' % (my_nodes[0], line))
 
     def restraint_install(self):
         resources = ExistingNodes()
@@ -73,14 +74,14 @@ class SetupRestraint():
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
             ssh.connect(my_nodes[0], username=username,
                         password=password)
-            LOG.info("Executing command %s" % yum_install)
+            util.log.info("Executing command %s" % yum_install)
             stdin, stdout, stderr = ssh.exec_command(yum_install)
             for line in stdout.read().splitlines():
                 if "error" in line:
-                    LOG.error('host: %s: %s' % (my_node[0], line))
+                    util.log.error('host: %s: %s' % (my_node[0], line))
                     sys.exit(1)
                 else:
-                    LOG.info('host: %s: %s' % (my_nodes[0], line))
+                    util.log.info('host: %s: %s' % (my_nodes[0], line))
 
     def restraint_start(self):
         resources = ExistingNodes()
@@ -94,11 +95,12 @@ class SetupRestraint():
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
             ssh.connect(my_nodes[0], username=username,
                         password=password)
-            LOG.info("Executing command %s" % start_service)
+            util.log.info("Executing command %s" % start_service)
             stdin, stdout, stderr = ssh.exec_command(start_service)
             for line in stdout.read().splitlines():
                 if "error" in line:
-                    LOG.error('host: %s: %s' % (my_node[0], line))
+                    util.log.error('host: %s: %s' % (my_node[0], line))
                     sys.exit(1)
                 else:
-                    LOG.info('host: %s: %s' % (my_nodes[0], line))
+                    util.log.info('host: %s: %s' % (my_nodes[0], line))
+
