@@ -18,6 +18,8 @@ import logging
 logging.basicConfig(level=logging.INFO)
 LOG = logging.getLogger(__name__)
 
+username = "root"
+password = "whatever"
 
 class ExistingNodes():
 
@@ -38,3 +40,65 @@ class ExistingNodes():
         else:
             LOG.info("I have multiple resources")
             return my_nodes
+
+
+class SetupRestraint():
+
+    def restraint_repo(self):
+        resources = ExistingNodes()
+        my_nodes = resources.node_check()
+
+        repo_url = "http://file.bos.redhat.com/~bpeck/restraint/el6.repo"
+        get_repo = ("wget %s -O /etc/yum.repos.d/restraint.repo" % repo_url)
+
+        for node in my_nodes:
+            ssh = paramiko.SSHClient()
+            ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            ssh.connect(my_nodes[0], username=username,
+                        password=password)
+            LOG.info("Executing command %s" % get_repo)
+            stdin, stdout, stderr = ssh.exec_command(get_repo)
+            for line in stdout.read().splitlines():
+                LOG.info('host: %s: %s' % (my_nodes[0], line))
+
+    def restraint_install(self):
+        resources = ExistingNodes()
+        my_nodes = resources.node_check()
+
+        pkgs = ("restraint staf")
+        yum_install = ("yum install -y %s" % pkgs)
+
+        for node in my_nodes:
+            ssh = paramiko.SSHClient()
+            ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            ssh.connect(my_nodes[0], username=username,
+                        password=password)
+            LOG.info("Executing command %s" % yum_install)
+            stdin, stdout, stderr = ssh.exec_command(yum_install)
+            for line in stdout.read().splitlines():
+                if "error" in line:
+                    LOG.error('host: %s: %s' % (my_node[0], line))
+                    sys.exit(1)
+                else:
+                    LOG.info('host: %s: %s' % (my_nodes[0], line))
+
+    def restraint_start(self):
+        resources = ExistingNodes()
+        my_nodes = resources.node_check()
+
+        service = ("restraintd")
+        start_service = ("service %s start; chkconfig %s on" % (service, service))
+
+        for node in my_nodes:
+            ssh = paramiko.SSHClient()
+            ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            ssh.connect(my_nodes[0], username=username,
+                        password=password)
+            LOG.info("Executing command %s" % start_service)
+            stdin, stdout, stderr = ssh.exec_command(start_service)
+            for line in stdout.read().splitlines():
+                if "error" in line:
+                    LOG.error('host: %s: %s' % (my_node[0], line))
+                    sys.exit(1)
+                else:
+                    LOG.info('host: %s: %s' % (my_nodes[0], line))

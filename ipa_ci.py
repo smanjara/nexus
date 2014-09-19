@@ -15,6 +15,7 @@ import os
 import paramiko
 import logging
 from common_ci import ExistingNodes
+from common_ci import SetupRestraint
 
 logging.basicConfig(level=logging.INFO)
 LOG = logging.getLogger(__name__)
@@ -26,6 +27,11 @@ def beaker_run():
 
     my_nodes = resources.node_check()
     LOG.info (my_nodes)
+
+    restraint_setup = SetupRestraint()
+    restraint_setup.restraint_repo()
+    restraint_setup.restraint_install()
+    restraint_setup.restraint_start()
 
 if __name__ == '__main__':
     beaker_run()

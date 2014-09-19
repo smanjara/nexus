@@ -15,6 +15,7 @@ import ipa_ci
 logging.basicConfig(level=logging.INFO)
 LOG = logging.getLogger(__name__)
 
+
 # Parse
 parser = argparse.ArgumentParser(description='CI tool')
 
