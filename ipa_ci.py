@@ -14,6 +14,7 @@ import sys
 import os
 import paramiko
 import logging
+import subprocess
 from common_ci import ExistingNodes
 from common_ci import SetupRestraint
 
@@ -22,6 +23,10 @@ LOG = logging.getLogger(__name__)
 
 
 def beaker_run():
+    workspace = os.environ.get('WORKSPACE')
+    restraint_dir = ("ipa-tests/restraint")
+    restraint_loc = os.path.join(workspace, restraint_dir)
+
     resources = ExistingNodes()
     resources.env_check()
 
@@ -32,6 +37,15 @@ def beaker_run():
     restraint_setup.restraint_repo()
     restraint_setup.restraint_install()
     restraint_setup.restraint_start()
+
+    job_in = os.environ.get('JOB_NAME')
+    if "ipa-user-cli" in job_in:
+        LOG.info("ipa-user-cli suite identified.")
+        job_name = ("ipa-user-cli.xml")
+        restraint_job = os.path.join(restraint_loc, job_name)
+        host1 = ("1=%s:8081" % my_nodes[0])
+        subprocess.check_call(['cat', restraint_job])
+        subprocess.check_call(['restraint', '--job', restraint_job, '--host', host1, '-v'])
 
 if __name__ == '__main__':
     beaker_run()
