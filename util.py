@@ -16,3 +16,4 @@ formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(messag
 handler.setFormatter(formatter)
 
 log.addHandler(handler)
+log.propagate = False
