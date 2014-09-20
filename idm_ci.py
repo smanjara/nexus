@@ -8,7 +8,7 @@
 
 
 import sys
-import logging
+#import logging
 import argparse
 import ipa_ci
 import util
