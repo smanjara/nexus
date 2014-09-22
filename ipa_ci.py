@@ -21,6 +21,11 @@ from common_ci import SetupRestraint
 
 def beaker_run():
     workspace = os.environ.get('WORKSPACE')
+    if not workspace:
+        util.log.error("Failed to find WORKSPACE env variable.")
+        sys.exit(1)
+    else:
+        util.log.info("WORKSPACE env variable is %s." % workspace)
     restraint_dir = ("ipa-tests/restraint")
     restraint_loc = os.path.join(workspace, restraint_dir)
 
@@ -37,7 +42,11 @@ def beaker_run():
 
     job_in = os.environ.get('JOB_NAME')
     if "ipa-user-cli" in job_in:
-        util.log.info("ipa-user-cli suite identified.")
+        if not job_in:
+            util.log.error("Failed to find JOB_NAME env variable.")
+            sys.exit(1)
+        else:
+            util.log.info("ipa-user-cli suite identified.")
         job_name = ("ipa-user-cli.xml")
         restraint_job = os.path.join(restraint_loc, job_name)
         host1 = ("1=%s:8081" % my_nodes[0])
