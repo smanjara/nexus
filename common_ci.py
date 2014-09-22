@@ -13,11 +13,8 @@
 import sys
 import os
 import paramiko
-import logging
 import util
 
-#logging.basicConfig(level=logging.INFO)
-#LOG = logging.getLogger(__name__)
 
 username = "root"
 password = "whatever"

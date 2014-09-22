@@ -8,13 +8,9 @@
 
 
 import sys
-#import logging
 import argparse
 import ipa_ci
 import util
-
-#ogging.basicConfig(level=logging.INFO)
-#LOG.log = logging.getLogger(__name__)
 
 
 # Parse

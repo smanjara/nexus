@@ -13,14 +13,10 @@
 import sys
 import os
 import paramiko
-#import logging
 import util
 import subprocess
 from common_ci import ExistingNodes
 from common_ci import SetupRestraint
-
-#logging.basicConfig(level=logging.INFO)
-#LOG = logging.getLogger(__name__)
 
 
 def beaker_run():
