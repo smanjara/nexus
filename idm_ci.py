@@ -8,12 +8,13 @@
 
 
 import sys
-import logging
+#import logging
 import argparse
 import ipa_ci
+import util
 
-logging.basicConfig(level=logging.INFO)
-LOG = logging.getLogger(__name__)
+#ogging.basicConfig(level=logging.INFO)
+#LOG.log = logging.getLogger(__name__)
 
 
 # Parse
@@ -36,9 +37,9 @@ def main():
         if pv == "beaker":
             ipa_ci.beaker_run()
         else:
-            LOG.error("Missing acceptable provisioner name, see help for more info")
+            util.log.error("Missing acceptable provisioner name, see help for more info")
     else:
-        LOG.error("Missing acceptable project name, see help for more info")
+        util.log.error("Missing acceptable project name, see help for more info")
 
 if __name__ == '__main__':
     main()
