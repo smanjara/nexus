@@ -59,11 +59,32 @@ class SetupRestraint():
             for line in stdout.read().splitlines():
                 util.log.info('host: %s: %s' % (my_nodes[0], line))
 
+    def remove_rhts_python(self):
+        resources = ExistingNodes()
+        my_nodes = resources.node_check()
+
+        r_pkgs = ("rhts-python")
+        yum_remove = ("yum remove -y %s" % r_pkgs)
+
+        for node in my_nodes:
+            ssh = paramiko.SSHClient()
+            ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            ssh.connect(my_nodes[0], username=username, password=password)
+            util.log.info("Executing command %s" % yum_remove)
+            stdin, stdout, stderr = ssh.exec_command(yum_remove)
+            for line in stdout.read().splitlines():
+                if "error" in line:
+                    util.log.error('host: %s: %s' % (my_node[0], line))
+                    sys.exit(1)
+                else:
+                    util.log.info('host: %s: %s' % (my_nodes[0], line))
+
+
     def restraint_install(self):
         resources = ExistingNodes()
         my_nodes = resources.node_check()
 
-        pkgs = ("restraint staf")
+        pkgs = ("restraint staf restraint-rhts")
         yum_install = ("yum install -y %s" % pkgs)
 
         for node in my_nodes:

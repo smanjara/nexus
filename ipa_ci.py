@@ -37,6 +37,7 @@ def beaker_run():
 
     restraint_setup = SetupRestraint()
     restraint_setup.restraint_repo()
+    restraint_setup.remove_rhts_python()
     restraint_setup.restraint_install()
     restraint_setup.restraint_start()
 
