@@ -2,9 +2,9 @@ Continuous Integration utilities
 ================================
 
 pre-requisite:
-1. export EXISTING_NODES=resource.hostname
-2. export JOB_NAME=jenkins_job_name
-3. export WORKSPACE=location_of_your_test_repo
+|1. export EXISTING_NODES=resource.hostname 
+|2. export JOB_NAME=jenkins_job_name 
+|3. export WORKSPACE=location_of_your_test_repo 
 
 Usage example: python idm_ci.py --project ipa --provisioner beaker
 
