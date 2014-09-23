@@ -1,7 +1,7 @@
 Continuous Integration utilities
 ================================
 
-* Usage:
+Usage example: python idm_ci.py --project ipa --provisioner beaker
 
 .. code-block:: bash
     # python idm_ci.py 
