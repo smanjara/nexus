@@ -15,25 +15,25 @@ import os
 import paramiko
 import util
 import subprocess
+import ConfigParser
 from common_ci import ExistingNodes
 from common_ci import SetupRestraint
+from config_ci import SetupConfig
 
 
 def beaker_run():
-    workspace = os.environ.get('WORKSPACE')
-    if not workspace:
-        util.log.error("Failed to find WORKSPACE env variable.")
-        sys.exit(1)
-    else:
-        util.log.info("WORKSPACE env variable is %s." % workspace)
-    restraint_dir = ("ipa-tests/restraint")
-    restraint_loc = os.path.join(workspace, restraint_dir)
 
-    resources = ExistingNodes()
-    resources.env_check()
+    setup_config = SetupConfig()
+    setup_config.workspace_dir()
+    setup_config.jenkins_job_name()
+    setup_config.identify_nodes()
 
-    my_nodes = resources.node_check()
-    util.log.info (my_nodes)
+    idm_config = ConfigParser.SafeConfigParser()
+    idm_config.read("config/idm_setup.cfg")
+    workspace_option = idm_config.get('global', 'workspace')
+    restraint_option = idm_config.get('beaker', 'restraint_jobs')
+
+    restraint_loc = os.path.join(workspace_option, restraint_option)
 
     restraint_setup = SetupRestraint()
     restraint_setup.restraint_repo()
@@ -41,18 +41,14 @@ def beaker_run():
     restraint_setup.restraint_install()
     restraint_setup.restraint_start()
 
-    job_in = os.environ.get('JOB_NAME')
-    if "ipa-user-cli" in job_in:
-        if not job_in:
-            util.log.error("Failed to find JOB_NAME env variable.")
-            sys.exit(1)
-        else:
-            util.log.info("ipa-user-cli suite identified.")
-        job_name = ("ipa-user-cli.xml")
-        restraint_job = os.path.join(restraint_loc, job_name)
-        host1 = ("1=%s:8081" % my_nodes[0])
-        subprocess.check_call(['cat', restraint_job])
-        subprocess.check_call(['restraint', '--job', restraint_job, '--host', host1, '-v'])
+    job_in = idm_config.get('global', 'job_name')
+    # TODO - change the following hardcoded job_name value to detect from
+    # JOB_NAME jenkins variable
+    job_name = ("ipa-user-cli.xml")
+    restraint_job = os.path.join(restraint_loc, job_name)
+    host1 = ("1=%s:8081" % my_nodes[0])
+    subprocess.check_call(['cat', restraint_job])
+    subprocess.check_call(['restraint', '--job', restraint_job, '--host', host1, '-v'])
 
 if __name__ == '__main__':
     beaker_run()
