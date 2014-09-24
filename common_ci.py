@@ -74,6 +74,8 @@ class SetupRestraint():
         resources = ExistingNodes()
         my_nodes = resources.node_check()
 
+        # TODO: move this pacakge name to config/idm_setup.cfg
+        # https://github.com/gsr-shanks/ci-utilities/issues/17
         r_pkgs = ("rhts-python")
         yum_remove = ("yum remove -y %s" % r_pkgs)
 
@@ -95,6 +97,8 @@ class SetupRestraint():
         resources = ExistingNodes()
         my_nodes = resources.node_check()
 
+        # TODO: move this pacakge name to config/idm_setup.cfg
+        # https://github.com/gsr-shanks/ci-utilities/issues/17
         pkgs = ("restraint staf restraint-rhts")
         yum_install = ("yum install -y %s" % pkgs)
 
@@ -116,6 +120,7 @@ class SetupRestraint():
         resources = ExistingNodes()
         my_nodes = resources.node_check()
 
+        # TODO: move this service name to config/idm_setup.cfg
         service = ("restraintd")
         start_service = ("service %s start; chkconfig %s on" % (service, service))
 
