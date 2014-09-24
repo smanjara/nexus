@@ -16,12 +16,17 @@ import paramiko
 import util
 
 
+# Username and Password for test resources
+# TODO: move this to config/idm_setup.cfg
+# https://github.com/gsr-shanks/ci-utilities/issues/16
 username = "root"
 password = "whatever"
 
 class ExistingNodes():
 
     def env_check(self):
+        """checks if EXISTING_NODES evn variable is empty or
+        not"""
         util.log.info("Checking if EXISTING_NODES variable is empty")
         host_in = os.environ.get('EXISTING_NODES')
         if not host_in:
@@ -31,6 +36,7 @@ class ExistingNodes():
             util.log.info("EXISTING_NODES list is not empty ... ready to go!")
 
     def node_check(self):
+        """converts list of resources into tuple for further use"""
         my_nodes = tuple(os.environ.get('EXISTING_NODES').split(","))
         if len(my_nodes) == 1:
             util.log.info("I have only %s and it is my MASTER." % my_nodes[0])
@@ -43,6 +49,10 @@ class ExistingNodes():
 class SetupRestraint():
 
     def restraint_repo(self):
+        """downloads restraint repo file into /etc/yum.repos.d/"""
+        # TODO: check the OS and download its respective repo file instead of
+        # hardcoding el6.repo
+        # https://github.com/gsr-shanks/ci-utilities/issues/8
         resources = ExistingNodes()
         my_nodes = resources.node_check()
 
@@ -60,6 +70,7 @@ class SetupRestraint():
                 util.log.info('host: %s: %s' % (my_nodes[0], line))
 
     def remove_rhts_python(self):
+        """remove rhts-python as it conflicts with restraint-rhts"""
         resources = ExistingNodes()
         my_nodes = resources.node_check()
 
