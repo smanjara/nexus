@@ -1,8 +1,8 @@
 
 *"Learn to refactor, refactor to learn."*
 
-I understand there are quite a few areas where the above applies, so if you come across any 
-please feel free to raise an issue with details or pull requests are always welcome.
+I understand there are quite a few areas where the above applies, so if you are here 
+please feel free to raise an issue with implementation details or pull requests are always welcome.
 
 
 Continuous Integration utilities
