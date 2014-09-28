@@ -45,21 +45,3 @@ class SetupConfig():
 
         with open('etc/idm_setup.cfg', 'wb') as idm_setup_config:
             idm_config.write(idm_setup_config)
-
-"""
-    def identify_nodes(self):
-        ipa_config = ConfigParser.SafeConfigParser()
-        ipa_config.read("etc/ipa_setup.cfg")
-        util.log.info (ipa_config.sections())
-
-        resources = ExistingNodes()
-        resources.env_check()
-
-        my_nodes = resources.node_check()
-        util.log.info (my_nodes)
-
-        ipa_config.set('restraint_xml', 'master', my_nodes[0])
-
-        with open('etc/ipa_setup.cfg', 'wb') as ipa_setup_config:
-            ipa_config.write(ipa_setup_config)
-"""
