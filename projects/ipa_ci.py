@@ -13,12 +13,12 @@
 import sys
 import os
 import paramiko
-import util
+import common.util
 import subprocess
 import ConfigParser
-from common_ci import ExistingNodes
-from common_ci import SetupRestraint
-from config_ci import SetupConfig
+from common.nodes import ExistingNodes
+from common.restraint import SetupRestraint
+from common.config import SetupConfig
 
 
 def beaker_run():
@@ -29,7 +29,7 @@ def beaker_run():
     setup_config.identify_nodes()
 
     idm_config = ConfigParser.SafeConfigParser()
-    idm_config.read("config/idm_setup.cfg")
+    idm_config.read("etc/idm_setup.cfg")
     workspace_option = idm_config.get('global', 'workspace')
     restraint_option = idm_config.get('beaker', 'restraint_jobs')
 

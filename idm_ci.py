@@ -9,8 +9,8 @@
 
 import sys
 import argparse
-import ipa_ci
-import util
+import projects.ipa_ci
+import common.util
 
 
 # Parse
@@ -31,11 +31,11 @@ pv = args.provisioner
 def main():
     if pj == "ipa":
         if pv == "beaker":
-            ipa_ci.beaker_run()
+            projects.ipa_ci.beaker_run()
         else:
-            util.log.error("Missing acceptable provisioner name, see help for more info")
+            common.util.log.error("Missing acceptable provisioner name, see help for more info")
     else:
-        util.log.error("Missing acceptable project name, see help for more info")
+        common.util.log.error("Missing acceptable project name, see help for more info")
 
 if __name__ == '__main__':
     main()

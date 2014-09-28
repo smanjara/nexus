@@ -5,13 +5,13 @@ import sys
 import ConfigParser
 import time
 import util
-from common_ci import ExistingNodes
+from common.nodes import ExistingNodes
 
 class SetupConfig():
 
     def workspace_dir(self):
         idm_config = ConfigParser.SafeConfigParser()
-        idm_config.read("config/idm_setup.cfg")
+        idm_config.read("etc/idm_setup.cfg")
         util.log.info (idm_config.sections())
 
         workspace = os.environ.get('WORKSPACE')
@@ -23,12 +23,12 @@ class SetupConfig():
 
         idm_config.set('global', 'workspace', workspace)
 
-        with open('config/idm_setup.cfg', 'wb') as idm_setup_config:
+        with open('etc/idm_setup.cfg', 'wb') as idm_setup_config:
             idm_config.write(idm_setup_config)
 
     def jenkins_job_name(self):
         idm_config = ConfigParser.SafeConfigParser()
-        idm_config.read("config/idm_setup.cfg")
+        idm_config.read("etc/idm_setup.cfg")
         util.log.info (idm_config.sections())
         job_in = os.environ.get('JOB_NAME')
         if not job_in:
@@ -39,13 +39,13 @@ class SetupConfig():
 
         idm_config.set('global', 'job_name', job_in)
 
-        with open('config/idm_setup.cfg', 'wb') as idm_setup_config:
+        with open('etc/idm_setup.cfg', 'wb') as idm_setup_config:
             idm_config.write(idm_setup_config)
 
 
     def identify_nodes(self):
         ipa_config = ConfigParser.SafeConfigParser()
-        ipa_config.read("config/ipa_setup.cfg")
+        ipa_config.read("etc/ipa_setup.cfg")
         util.log.info (ipa_config.sections())
 
         resources = ExistingNodes()
@@ -56,5 +56,5 @@ class SetupConfig():
 
         ipa_config.set('restraint_xml', 'master', my_nodes[0])
 
-        with open('config/ipa_setup.cfg', 'wb') as ipa_setup_config:
+        with open('etc/ipa_setup.cfg', 'wb') as ipa_setup_config:
             ipa_config.write(ipa_setup_config)
