@@ -24,9 +24,11 @@ from common.config import SetupConfig
 def beaker_run():
 
     setup_config = SetupConfig()
-    setup_config.workspace_dir()
-    setup_config.jenkins_job_name()
-    setup_config.identify_nodes()
+    setup_config.workspace_dir("WORKSPACE")
+    setup_config.jenkins_job_name("JOB_NAME")
+
+    existing_nodes = ExistingNodes()
+    existing_nodes.env_check("EXISTING_NODES")
 
     idm_config = ConfigParser.SafeConfigParser()
     idm_config.read("etc/idm_setup.cfg")

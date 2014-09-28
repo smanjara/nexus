@@ -13,6 +13,7 @@
 import sys
 import os
 import util
+import ConfigParser
 
 
 # Username and Password for test resources
@@ -23,23 +24,35 @@ password = "whatever"
 
 class ExistingNodes():
 
-    def env_check(self):
+    def env_check(self, x):
         """checks if EXISTING_NODES evn variable is empty or
         not"""
-        util.log.info("Checking if EXISTING_NODES variable is empty")
-        host_in = os.environ.get('EXISTING_NODES')
+        self.env = x
+
+        util.log.info("Checking if %s variable is empty" % self.env)
+        host_in = os.environ.get(self.env)
         if not host_in:
             util.log.error("List is empty!")
             sys.exit(1)
         else:
-            util.log.info("EXISTING_NODES list is not empty ... ready to go!")
+            util.log.info("% list is not empty ... ready to go!" % self.env)
 
-    def node_check(self):
+    def identify_nodes(env_check):
         """converts list of resources into tuple for further use"""
-        my_nodes = tuple(os.environ.get('EXISTING_NODES').split(","))
+        my_nodes = tuple(os.environ.get(self.env).split(","))
         if len(my_nodes) == 1:
             util.log.info("I have only %s and it is my MASTER." % my_nodes[0])
             return my_nodes
         else:
             util.log.info("I have multiple resources")
             return my_nodes
+
+        ipa_config = ConfigParser.SafeConfigParser()
+        ipa_config.read("etc/ipa_setup.cfg")
+        util.log.info (ipa_config.sections())
+        util.log.info (my_nodes)
+
+        ipa_config.set('restraint_xml', 'master', my_nodes[0])
+
+        with open('etc/ipa_setup.cfg', 'wb') as ipa_setup_config:
+            ipa_config.write(ipa_setup_config)
