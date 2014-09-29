@@ -22,29 +22,6 @@ import util
 username = "root"
 password = "whatever"
 
-class ExistingNodes():
-
-    def env_check(self):
-        """checks if EXISTING_NODES evn variable is empty or
-        not"""
-        util.log.info("Checking if EXISTING_NODES variable is empty")
-        host_in = os.environ.get('EXISTING_NODES')
-        if not host_in:
-            util.log.error("List is empty!")
-            sys.exit(1)
-        else:
-            util.log.info("EXISTING_NODES list is not empty ... ready to go!")
-
-    def node_check(self):
-        """converts list of resources into tuple for further use"""
-        my_nodes = tuple(os.environ.get('EXISTING_NODES').split(","))
-        if len(my_nodes) == 1:
-            util.log.info("I have only %s and it is my MASTER." % my_nodes[0])
-            return my_nodes
-        else:
-            util.log.info("I have multiple resources")
-            return my_nodes
-
 
 class SetupRestraint():
 

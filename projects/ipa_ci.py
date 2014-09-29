@@ -13,6 +13,7 @@
 import sys
 import os
 import paramiko
+import string
 import common.util
 import subprocess
 import ConfigParser
@@ -27,8 +28,9 @@ def beaker_run():
     setup_config.workspace_dir("WORKSPACE")
     setup_config.jenkins_job_name("JOB_NAME")
 
-    existing_nodes = ExistingNodes()
-    existing_nodes.env_check("EXISTING_NODES")
+    existing_nodes = ExistingNodes("EXISTING_NODES")
+    existing_nodes.env_check()
+    my_nodes = existing_nodes.identify_nodes()
 
     idm_config = ConfigParser.SafeConfigParser()
     idm_config.read("etc/idm_setup.cfg")
@@ -48,9 +50,20 @@ def beaker_run():
     # JOB_NAME jenkins variable
     job_name = ("ipa-user-cli.xml")
     restraint_job = os.path.join(restraint_loc, job_name)
+    print restraint_job
+
+    j = open(restraint_job, 'r').read()
+    print j
+    m = j.replace('hostname1', my_nodes[0])
+    print m
+    f = open(job_name, 'w')
+    f.write(m)
+    f.close()
+
     host1 = ("1=%s:8081" % my_nodes[0])
-    subprocess.check_call(['cat', restraint_job])
-    subprocess.check_call(['restraint', '--job', restraint_job, '--host', host1, '-v'])
+
+    subprocess.check_call(['cat', job_name])
+    subprocess.check_call(['restraint', '--job', job_name, '--host', host1, '-v', '-v', '-v'])
 
 if __name__ == '__main__':
     beaker_run()
