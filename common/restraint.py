@@ -26,16 +26,13 @@ password = "whatever"
 
 
 class SetupRestraint():
-
-    def __init__(self):
-        resources = ExistingNodes("EXISTING_NODES")
-        my_nodes = resources.identify_nodes()
-
     def restraint_repo(self):
         """downloads restraint repo file into /etc/yum.repos.d/"""
         # TODO: check the OS and download its respective repo file instead of
         # hardcoding el6.repo
         # https://github.com/gsr-shanks/ci-utilities/issues/8
+        resources = ExistingNodes("EXISTING_NODES")
+        my_nodes = resources.identify_nodes()
 
         repo_url = "http://file.bos.redhat.com/~bpeck/restraint/el6.repo"
         get_repo = ("wget %s -O /etc/yum.repos.d/restraint.repo" % repo_url)
@@ -52,6 +49,8 @@ class SetupRestraint():
 
     def remove_rhts_python(self):
         """remove rhts-python as it conflicts with restraint-rhts"""
+        resources = ExistingNodes("EXISTING_NODES")
+        my_nodes = resources.identify_nodes()
 
         # TODO: move this pacakge name to config/idm_setup.cfg
         # https://github.com/gsr-shanks/ci-utilities/issues/17
@@ -73,6 +72,8 @@ class SetupRestraint():
 
 
     def restraint_install(self):
+        resources = ExistingNodes("EXISTING_NODES")
+        my_nodes = resources.identify_nodes()
 
         # TODO: move this pacakge name to config/idm_setup.cfg
         # https://github.com/gsr-shanks/ci-utilities/issues/17
@@ -94,6 +95,8 @@ class SetupRestraint():
                     util.log.info('host: %s: %s' % (my_nodes[0], line))
 
     def restraint_start(self):
+        resources = ExistingNodes("EXISTING_NODES")
+        my_nodes = resources.identify_nodes()
 
         # TODO: move this service name to config/idm_setup.cfg
         service = ("restraintd")
