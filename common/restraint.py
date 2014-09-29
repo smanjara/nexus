@@ -14,6 +14,8 @@ import sys
 import os
 import paramiko
 import util
+from common.nodes import ExistingNodes
+from common.config import SetupConfig
 
 
 # Username and Password for test resources
@@ -30,8 +32,8 @@ class SetupRestraint():
         # TODO: check the OS and download its respective repo file instead of
         # hardcoding el6.repo
         # https://github.com/gsr-shanks/ci-utilities/issues/8
-        resources = ExistingNodes()
-        my_nodes = resources.node_check()
+        resources = ExistingNodes("EXISTING_NODES")
+        my_nodes = resources.identify_nodes()
 
         repo_url = "http://file.bos.redhat.com/~bpeck/restraint/el6.repo"
         get_repo = ("wget %s -O /etc/yum.repos.d/restraint.repo" % repo_url)
