@@ -61,7 +61,7 @@ def beaker_run():
     host1 = ("1=%s:8081" % my_nodes[0])
 
     subprocess.check_call(['cat', job_name])
-    subprocess.check_call(['restraint', '--job', job_name, '--host', host1, '-v', '-v', shell=True])
+    subprocess.check_call(['restraint', '-j', job_name, '-t', host1, '-v', '-v'])
 
 if __name__ == '__main__':
     beaker_run()
