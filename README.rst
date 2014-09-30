@@ -5,8 +5,8 @@ I understand there are quite a few areas where the above applies, so if you are 
 please feel free to raise an issue with implementation details or pull requests are always welcome.
 
 
-Continuous Integration utilities
-================================
+Nexus - Continuous Integration utility
+======================================
 
 
 * pre-requisite for manual execution
