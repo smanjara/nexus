@@ -63,7 +63,7 @@ def beaker_run():
     subprocess.check_call(['cat', job_name])
     subprocess.check_call(['restraint', '-j', job_name, '-t', host1, '-v', '-v'])
 
-    restraint_setup.restraint_junit(junit.xml)
+    restraint_setup.restraint_junit("junit.xml")
 
 if __name__ == '__main__':
     beaker_run()
