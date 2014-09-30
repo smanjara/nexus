@@ -14,6 +14,7 @@ import sys
 import os
 import paramiko
 import util
+import subprocess
 from common.nodes import ExistingNodes
 from common.config import SetupConfig
 
@@ -25,7 +26,7 @@ username = "root"
 password = "whatever"
 
 
-class SetupRestraint():
+class Restraint():
     def restraint_repo(self):
         """downloads restraint repo file into /etc/yum.repos.d/"""
         # TODO: check the OS and download its respective repo file instead of
@@ -116,3 +117,13 @@ class SetupRestraint():
                 else:
                     util.log.info('host: %s: %s' % (my_nodes[0], line))
 
+    def restraint_junit(self, x):
+        self.junit_xml = x
+        job2junit = "/usr/share/restraint/client/job2junit.xml"
+
+        all_dirs = [d for d in os.listdir('.') if os.path.isdir(d)]
+        latest_dir = max(all_dirs, key=os.path.getmtime)
+        job_xml = os.path.join(latest_dir, "job.xml")
+        junit_xml = os.path.join(latest_dir, self.junit_xml)
+
+        subprocess.check_call(['xsltproc', job2junit, job_xml, '>', junit_xml])

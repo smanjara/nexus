@@ -18,7 +18,7 @@ import common.util
 import subprocess
 import ConfigParser
 from common.nodes import ExistingNodes
-from common.restraint import SetupRestraint
+from common.restraint import Restraint
 from common.config import SetupConfig
 
 
@@ -39,7 +39,7 @@ def beaker_run():
 
     restraint_loc = os.path.join(workspace_option, restraint_option)
 
-    restraint_setup = SetupRestraint()
+    restraint_setup = Restraint()
     restraint_setup.restraint_repo()
     restraint_setup.remove_rhts_python()
     restraint_setup.restraint_install()
@@ -62,6 +62,8 @@ def beaker_run():
 
     subprocess.check_call(['cat', job_name])
     subprocess.check_call(['restraint', '-j', job_name, '-t', host1, '-v', '-v'])
+
+    restraint_setup.restraint_junit(junit.xml)
 
 if __name__ == '__main__':
     beaker_run()
