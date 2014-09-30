@@ -71,7 +71,6 @@ class Restraint():
                 else:
                     util.log.info('host: %s: %s' % (my_nodes[0], line))
 
-
     def restraint_install(self):
         resources = ExistingNodes("EXISTING_NODES")
         my_nodes = resources.identify_nodes()
@@ -123,7 +122,17 @@ class Restraint():
 
         all_dirs = [d for d in os.listdir('.') if os.path.isdir(d)]
         latest_dir = max(all_dirs, key=os.path.getmtime)
+
         job_xml = os.path.join(latest_dir, "job.xml")
         junit_xml = os.path.join(latest_dir, self.junit_xml)
 
-        subprocess.check_call(['xsltproc', job2junit, job_xml, '>', junit_xml])
+        args = ('xsltproc', '/usr/share/restraint/client/job2junit.xml', job_xml)
+        p_out = subprocess.PIPE
+        p_err = subprocess.PIPE
+
+        p = subprocess.Popen(args,stdout=p_out,stderr=p_err)
+        stdout,stderr = p.communicate()
+
+        fd = open(junit_xml, "w")
+        fd.write(stdout)
+        fd.close()
