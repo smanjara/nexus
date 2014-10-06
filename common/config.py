@@ -13,7 +13,7 @@ class SetupConfig():
         self.workspace = x
 
         idm_config = ConfigParser.SafeConfigParser()
-        idm_config.read("etc/idm_setup.cfg")
+        idm_config.read("etc/global.conf")
         util.log.info (idm_config.sections())
 
         workspace = os.environ.get(self.workspace)
@@ -25,14 +25,14 @@ class SetupConfig():
 
         idm_config.set('global', 'workspace', workspace)
 
-        with open('etc/idm_setup.cfg', 'wb') as idm_setup_config:
+        with open('etc/global.conf', 'wb') as idm_setup_config:
             idm_config.write(idm_setup_config)
 
     def jenkins_job_name(self, x):
         self.jobname = x
 
         idm_config = ConfigParser.SafeConfigParser()
-        idm_config.read("etc/idm_setup.cfg")
+        idm_config.read("etc/global.conf")
         util.log.info (idm_config.sections())
         job_in = os.environ.get(self.jobname)
         if not job_in:
@@ -43,5 +43,5 @@ class SetupConfig():
 
         idm_config.set('global', 'job_name', job_in)
 
-        with open('etc/idm_setup.cfg', 'wb') as idm_setup_config:
+        with open('etc/global.conf', 'wb') as idm_setup_config:
             idm_config.write(idm_setup_config)

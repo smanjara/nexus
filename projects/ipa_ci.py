@@ -33,7 +33,7 @@ def beaker_run():
     my_nodes = existing_nodes.identify_nodes()
 
     idm_config = ConfigParser.SafeConfigParser()
-    idm_config.read("etc/idm_setup.cfg")
+    idm_config.read("etc/global.conf")
     workspace_option = idm_config.get('global', 'workspace')
     restraint_option = idm_config.get('beaker', 'restraint_jobs')
 
