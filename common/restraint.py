@@ -25,10 +25,10 @@ class Restraint():
         global_config = ConfigParser.SafeConfigParser()
         global_config.read("etc/global.conf")
         util.log.info (global_config.sections())
-        username = global_config('global', 'username')
-        password = global_config('global', 'password')
-        r_pkgs = global_config('restraint', 'remove_pkgs')
-        i_pkgs = global_config('restraint', 'install_pkgs')
+        self.username = global_config.get('global', 'username')
+        self.password = global_config.get('global', 'password')
+        self.r_pkgs = global_config.get('restraint', 'remove_pkgs')
+        self.i_pkgs = global_config.get('restraint', 'install_pkgs')
 
 
     def restraint_repo(self):
@@ -45,24 +45,24 @@ class Restraint():
         for node in my_nodes:
             ssh = paramiko.SSHClient()
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            ssh.connect(my_nodes[0], username=username,
-                        password=password)
+            ssh.connect(node, username=self.username,
+                        password=self.password)
             util.log.info("Executing command %s" % get_repo)
             stdin, stdout, stderr = ssh.exec_command(get_repo)
             for line in stdout.read().splitlines():
-                util.log.info('host: %s: %s' % (my_nodes[0], line))
+                util.log.info('host: %s: %s' % (node, line))
 
     def remove_rhts_python(self):
         """remove rhts-python as it conflicts with restraint-rhts"""
         resources = ExistingNodes("EXISTING_NODES")
         my_nodes = resources.identify_nodes()
 
-        yum_remove = ("yum remove -y %s" % r_pkgs)
+        yum_remove = ("yum remove -y %s" % self.r_pkgs)
 
         for node in my_nodes:
             ssh = paramiko.SSHClient()
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            ssh.connect(my_nodes[0], username=username, password=password)
+            ssh.connect(my_nodes[0], username=self.username, password=self.password)
             util.log.info("Executing command %s" % yum_remove)
             stdin, stdout, stderr = ssh.exec_command(yum_remove)
             for line in stdout.read().splitlines():
@@ -76,13 +76,13 @@ class Restraint():
         resources = ExistingNodes("EXISTING_NODES")
         my_nodes = resources.identify_nodes()
 
-        yum_install = ("yum install -y %s" % i_pkgs)
+        yum_install = ("yum install -y %s" % self.i_pkgs)
 
         for node in my_nodes:
             ssh = paramiko.SSHClient()
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            ssh.connect(my_nodes[0], username=username,
-                        password=password)
+            ssh.connect(my_nodes[0], username=self.username,
+                        password=self.password)
             util.log.info("Executing command %s" % yum_install)
             stdin, stdout, stderr = ssh.exec_command(yum_install)
             for line in stdout.read().splitlines():
@@ -103,8 +103,8 @@ class Restraint():
         for node in my_nodes:
             ssh = paramiko.SSHClient()
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            ssh.connect(my_nodes[0], username=username,
-                        password=password)
+            ssh.connect(my_nodes[0], username=self.username,
+                        password=self.password)
             util.log.info("Executing command %s" % start_service)
             stdin, stdout, stderr = ssh.exec_command(start_service)
             for line in stdout.read().splitlines():

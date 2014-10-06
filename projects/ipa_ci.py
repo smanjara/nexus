@@ -35,7 +35,10 @@ def beaker_run():
     idm_config = ConfigParser.SafeConfigParser()
     idm_config.read("etc/global.conf")
     workspace_option = idm_config.get('global', 'workspace')
-    restraint_option = idm_config.get('beaker', 'restraint_jobs')
+
+    ipa_config = ConfigParser.SafeConfigParser()
+    ipa_config.read("etc/ipa.conf")
+    restraint_option = ipa_config.get('global', 'restraint_jobs')
 
     restraint_loc = os.path.join(workspace_option, restraint_option)
 
@@ -45,10 +48,8 @@ def beaker_run():
     restraint_setup.restraint_install()
     restraint_setup.restraint_start()
 
-    job_in = idm_config.get('global', 'job_name')
-    # TODO - change the following hardcoded job_name value to detect from
-    # JOB_NAME jenkins variable
-    job_name = ("ipa-user-cli.xml")
+    #TODO: remove the hardcoded values below and make it generic
+    job_name = ipa_config.get('ipa_user_cli', 'job_name')
     restraint_job = os.path.join(restraint_loc, job_name)
     print restraint_job
 
