@@ -27,4 +27,4 @@ Usage example: python idm_ci.py --project ipa --provisioner beaker
 Workflow
 ========
 
-.. image:: IdM_CI.jpg
+.. image:: IdM_CI.png
