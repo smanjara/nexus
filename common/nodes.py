@@ -16,12 +16,6 @@ import util
 import ConfigParser
 
 
-# Username and Password for test resources
-# TODO: move this to config/idm_setup.cfg
-# https://github.com/gsr-shanks/ci-utilities/issues/16
-username = "root"
-password = "whatever"
-
 class ExistingNodes():
     def __init__(self, x):
         self.env = x
