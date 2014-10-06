@@ -42,16 +42,3 @@ class ExistingNodes():
         else:
             util.log.info("I have multiple resources")
             return my_nodes
-
-        # TODO: need to work on configParser module and its usage in
-        # ci-utilities
-        #
-        #ipa_config = ConfigParser.SafeConfigParser()
-        #ipa_config.read("etc/ipa_setup.cfg")
-        #util.log.info (ipa_config.sections())
-        #util.log.info (my_nodes)
-
-        #ipa_config.set('restraint_xml', 'master', my_nodes[0])
-
-        #with open('etc/ipa_setup.cfg', 'wb') as ipa_setup_config:
-        #    ipa_config.write(ipa_setup_config)

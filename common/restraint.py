@@ -27,6 +27,9 @@ class Restraint():
         util.log.info (global_config.sections())
         username = global_config('global', 'username')
         password = global_config('global', 'password')
+        r_pkgs = global_config('restraint', 'remove_pkgs')
+        i_pkgs = global_config('restraint', 'install_pkgs')
+
 
     def restraint_repo(self):
         """downloads restraint repo file into /etc/yum.repos.d/"""
@@ -54,9 +57,6 @@ class Restraint():
         resources = ExistingNodes("EXISTING_NODES")
         my_nodes = resources.identify_nodes()
 
-        # TODO: move this pacakge name to config/idm_setup.cfg
-        # https://github.com/gsr-shanks/ci-utilities/issues/17
-        r_pkgs = ("rhts-python")
         yum_remove = ("yum remove -y %s" % r_pkgs)
 
         for node in my_nodes:
@@ -76,10 +76,7 @@ class Restraint():
         resources = ExistingNodes("EXISTING_NODES")
         my_nodes = resources.identify_nodes()
 
-        # TODO: move this pacakge name to config/idm_setup.cfg
-        # https://github.com/gsr-shanks/ci-utilities/issues/17
-        pkgs = ("restraint staf restraint-rhts")
-        yum_install = ("yum install -y %s" % pkgs)
+        yum_install = ("yum install -y %s" % i_pkgs)
 
         for node in my_nodes:
             ssh = paramiko.SSHClient()
