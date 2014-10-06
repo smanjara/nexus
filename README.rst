@@ -23,3 +23,8 @@ Usage example: python idm_ci.py --project ipa --provisioner beaker
     usage: idm_ci.py [-h] [--async ASYNC] --project PROJECT --provisioner PROVISIONER
     idm_ci.py: error: argument --project is required
 
+
+Workflow
+========
+
+.. image:: IdM_CI.jpg

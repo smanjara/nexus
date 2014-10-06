@@ -17,16 +17,17 @@ import util
 import subprocess
 from common.nodes import ExistingNodes
 from common.config import SetupConfig
-
-
-# Username and Password for test resources
-# TODO: move this to config/idm_setup.cfg
-# https://github.com/gsr-shanks/ci-utilities/issues/16
-username = "root"
-password = "whatever"
+import ConfigParser
 
 
 class Restraint():
+    def __init__(self):
+        global_config = ConfigParser.SafeConfigParser()
+        global_config.read("etc/global.conf")
+        util.log.info (global_config.sections())
+        username = global_config('global', 'username')
+        password = global_config('global', 'password')
+
     def restraint_repo(self):
         """downloads restraint repo file into /etc/yum.repos.d/"""
         # TODO: check the OS and download its respective repo file instead of
