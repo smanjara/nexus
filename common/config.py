@@ -34,14 +34,15 @@ class SetupConfig():
         idm_config = ConfigParser.SafeConfigParser()
         idm_config.read("etc/global.conf")
         util.log.info (idm_config.sections())
-        job_in = os.environ.get(self.jobname)
-        if not job_in:
+        job_name = os.environ.get(self.jobname)
+        if not job_name:
             util.log.error("Failed to find %s env variable." % self.jobname)
             sys.exit(1)
         else:
-            util.log.info("%s is my job." % job_in)
+            util.log.info("%s is my job." % job_name)
 
-        idm_config.set('global', 'job_name', job_in)
+        idm_config.set('global', 'job_name', job_name)
 
         with open('etc/global.conf', 'wb') as idm_setup_config:
             idm_config.write(idm_setup_config)
+        return job_name

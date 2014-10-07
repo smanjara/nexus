@@ -26,7 +26,7 @@ def beaker_run():
 
     setup_config = SetupConfig()
     setup_config.workspace_dir("WORKSPACE")
-    setup_config.jenkins_job_name("JOB_NAME")
+    job_name = setup_config.jenkins_job_name("JOB_NAME")
 
     existing_nodes = ExistingNodes("EXISTING_NODES")
     existing_nodes.env_check()
@@ -49,24 +49,29 @@ def beaker_run():
     restraint_setup.restraint_start()
 
     # ~~~~~ Project specific section begins ~~~~~
-    #TODO: remove the hardcoded values below and make it generic
-    job_name = ipa_config.get('ipa_user_cli', 'job_name')
-    restraint_job = os.path.join(restraint_loc, job_name)
-    print restraint_job
+    if ipa_config.has_section(job_name):
+        job = ipa_config.get(job_name, 'job_name')
+        restraint_job = os.path.join(restraint_loc, job)
+        print restraint_job
+    else:
+        util.log.error("Unable to get job_name")
+        sys.exit(1)
 
     j = open(restraint_job, 'r').read()
     m = j.replace('hostname1', my_nodes[0])
-    f = open(job_name, 'w')
+    f = open(restraint_job, 'w')
     f.write(m)
     f.close()
 
     host1 = ("1=%s:8081" % my_nodes[0])
 
-    subprocess.check_call(['cat', job_name])
-    subprocess.check_call(['restraint', '-j', job_name, '-t', host1])
+    subprocess.check_call(['cat', restraint_job])
+    subprocess.check_call(['restraint', '-j', restraint_job, '-t', host1])
     # ~~~~~ Project specific section ends ~~~~~
 
     restraint_setup.restraint_junit("junit.xml")
+
+
 
 if __name__ == '__main__':
     beaker_run()
