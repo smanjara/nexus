@@ -10,6 +10,7 @@
 import sys
 import argparse
 import projects.ipa_ci
+import projects.rhcs_ci
 import common.util
 
 
@@ -34,6 +35,9 @@ def main():
             projects.ipa_ci.beaker_run()
         else:
             common.util.log.error("Missing acceptable provisioner name, see help for more info")
+   elif pj == "rhcs":
+        if pv == "beaker":
+            projects.rhcs_ci.beaker_run()
     else:
         common.util.log.error("Missing acceptable project name, see help for more info")
 
