@@ -48,6 +48,7 @@ def beaker_run():
     restraint_setup.restraint_install()
     restraint_setup.restraint_start()
 
+    # ~~~~~ Project specific section begins ~~~~~
     #TODO: remove the hardcoded values below and make it generic
     job_name = ipa_config.get('ipa_user_cli', 'job_name')
     restraint_job = os.path.join(restraint_loc, job_name)
@@ -63,6 +64,7 @@ def beaker_run():
 
     subprocess.check_call(['cat', job_name])
     subprocess.check_call(['restraint', '-j', job_name, '-t', host1])
+    # ~~~~~ Project specific section ends ~~~~~
 
     restraint_setup.restraint_junit("junit.xml")
 
