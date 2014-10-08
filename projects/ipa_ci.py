@@ -82,7 +82,7 @@ def junit_results():
 def beaker_run():
     get_workspace()
     existing_nodes()
-    #restraint_setup()
+    restraint_setup()
     restraint_location()
 
     ipa_config = ConfigParser.SafeConfigParser()
