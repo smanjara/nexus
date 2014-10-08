@@ -104,14 +104,15 @@ def beaker_run():
     my_nodes = existing_nodes()
     restraint_inst = restraint_setup()
     restraint_loc = restraint_location()
+    common.util.log.info("Executing %r Job  on %r Nodes using %r xml", %(job_name, existing_nodes, restraint_loc))
 
     rhcs_config = ConfigParser.SafeConfigParser()
     rhcs_config.read("etc/rhcs.conf")
     
     if job_name:    
         rhcs_config.has_section(job_name)
-        job_style = ipa_config.get(job_name, 'style')
-        job_type = ipa_config.get(job_name, 'type')
+        job_style = rhcs_config.get(job_name, 'style')
+        job_type = rhcs_config.get(job_name, 'type')
     else:
         common.util.log.error("Unable to get job_name")
         sys.exit(1)
