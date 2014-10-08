@@ -71,7 +71,6 @@ def restraint_single_free(job_name,my_nodes,restraint_loc):
     passed to restraint command
     """
 
-    project configuration file, 
     rhcs_config = ConfigParser.SafeConfigParser()
     rhcs_config.read("etc/rhcs.conf")
 
