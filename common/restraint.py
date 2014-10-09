@@ -38,10 +38,6 @@ class Restraint():
         # TODO: check the OS and download its respective repo file instead of
         # hardcoding el6.repo
         # https://github.com/gsr-shanks/ci-utilities/issues/8
-        resources = ExistingNodes("EXISTING_NODES")
-        my_nodes = resources.identify_nodes()
-
-        #with open("$WORKSPACE/resources.json") as json_file:
       
         
         with open("$WORKSPACE/resources.json") as json_file:
