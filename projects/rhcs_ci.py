@@ -104,7 +104,7 @@ def beaker_run():
     my_nodes = existing_nodes()
     restraint_inst = restraint_setup()
     restraint_loc = restraint_location()
-    common.util.log.info("Executing %r Job  on %r Nodes using %r xml", %(job_name, existing_nodes, restraint_loc))
+    common.util.log.info("Executing %r Job  on %r Nodes using %r xml" %(job_name, existing_nodes, restraint_loc))
 
     rhcs_config = ConfigParser.SafeConfigParser()
     rhcs_config.read("etc/rhcs.conf")
