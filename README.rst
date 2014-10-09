@@ -8,7 +8,6 @@ please feel free to raise an issue with implementation details or pull requests 
 Nexus - Continuous Integration utility
 ======================================
 
-
 pre-requisite for manual execution
 
 1. export EXISTING_NODES=resource.hostname 
