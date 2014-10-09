@@ -24,7 +24,6 @@ class SetupConfig():
             util.log.info("WORKSPACE env variable is %s." % workspace)
 
         idm_config.set('global', 'workspace', workspace)
-
         with open('etc/global.conf', 'wb') as idm_setup_config:
             idm_config.write(idm_setup_config)
 

@@ -31,16 +31,16 @@ class Restraint():
         self.password = global_config.get('global', 'password')
         self.r_pkgs = global_config.get('restraint', 'remove_pkgs')
         self.i_pkgs = global_config.get('restraint', 'install_pkgs')
+        self.workspace = global_config.get('global', 'workspace')
 
 
     def restraint_repo(self):
         """downloads restraint repo file into /etc/yum.repos.d/"""
-        # TODO: check the OS and download its respective repo file instead of
-        # hardcoding el6.repo
-        # https://github.com/gsr-shanks/ci-utilities/issues/8
 
+        resources_file = os.path.join(self.workspace, "resources.json")
+        print resources_file
 
-        with open("$WORKSPACE/resources.json") as json_file:
+        with open(resources_file) as json_file:
             data = json.load(json_file)
             version = data["family"]
             if version == "RedHatEnterpriseLinux6":
@@ -73,6 +73,7 @@ class Restraint():
                stdin, stdout, stderr = ssh.exec_command(get_repo)
                for line in stdout.read().splitlines():
                   util.log.info('host: %s: %s' % (node, line))
+
 
     def remove_rhts_python(self):
         """remove rhts-python as it conflicts with restraint-rhts"""
