@@ -93,6 +93,7 @@ def restraint_single_free(job_name,my_nodes,restraint_loc):
 
     host1 = ("1=%s:8081" % my_nodes[0])
     subprocess.check_call(['cat', restraint_job])
+    common.util.log.info("Executing %r Job  on %r Nodes using Job xml %r" %(job_name, mynodes[0], job_name, restraint_job))
     returncode = subprocess.check_call(['restraint', '-j', restraint_job, '-t', host1])
 
     return returncode 
@@ -104,7 +105,7 @@ def beaker_run():
     my_nodes = existing_nodes()
     restraint_inst = restraint_setup()
     restraint_loc = restraint_location()
-    common.util.log.info("Executing %r Job  on %r Nodes using %r xml" %(job_name, existing_nodes, restraint_loc))
+
 
     rhcs_config = ConfigParser.SafeConfigParser()
     rhcs_config.read("etc/rhcs.conf")
@@ -118,11 +119,9 @@ def beaker_run():
         sys.exit(1)
 
     if job_type == "single" and job_style == "free":
-
         common.util.log.info("Job type is %s and job style is %s" % (job_type, job_style))
         returncode = restraint_single_free(job_name,my_nodes,restraint_loc)
         common.util.log.info("Restraint returned with %r" % returncode)
-
     else:
         common.util.log.error("Unknown job_style or job_type")
         sys.exit(1)
