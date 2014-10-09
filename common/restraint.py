@@ -24,7 +24,7 @@ from pprint import pprint
 
 class Restraint():
     def __init__(self):
-        globalt_config = ConfigParser.SafeConfigParser()
+        global_config = ConfigParser.SafeConfigParser()
         global_config.read("etc/global.conf")
         util.log.info (global_config.sections())
         self.username = global_config.get('global', 'username')
@@ -38,8 +38,8 @@ class Restraint():
         # TODO: check the OS and download its respective repo file instead of
         # hardcoding el6.repo
         # https://github.com/gsr-shanks/ci-utilities/issues/8
-      
-        
+
+
         with open("$WORKSPACE/resources.json") as json_file:
             data = json.load(json_file)
             version = data["family"]
@@ -61,10 +61,10 @@ class Restraint():
             elif version == "Fedora20":
                     repo_url = "http://file.bos.redhat.com/~bpeck/restraint/fc20.repo"
                     get_repo = ("wget %s -O /etc/yum.repos.d/restraint.repo" % repo_url)
-            
-            node = data["system"]         
 
-            for node in json_file: 
+            node = data["system"]
+
+            for node in json_file:
                ssh = paramiko.SSHClient()
                ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
                ssh.connect(node, username=self.username,
