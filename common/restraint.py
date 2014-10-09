@@ -18,11 +18,13 @@ import subprocess
 from common.nodes import ExistingNodes
 from common.config import SetupConfig
 import ConfigParser
+import json
+from pprint import pprint
 
 
 class Restraint():
     def __init__(self):
-        global_config = ConfigParser.SafeConfigParser()
+        globalt_config = ConfigParser.SafeConfigParser()
         global_config.read("etc/global.conf")
         util.log.info (global_config.sections())
         self.username = global_config.get('global', 'username')
@@ -39,18 +41,42 @@ class Restraint():
         resources = ExistingNodes("EXISTING_NODES")
         my_nodes = resources.identify_nodes()
 
-        repo_url = "http://file.bos.redhat.com/~bpeck/restraint/el6.repo"
-        get_repo = ("wget %s -O /etc/yum.repos.d/restraint.repo" % repo_url)
+        #with open("$WORKSPACE/resources.json") as json_file:
+      
+        
+        with open("$WORKSPACE/resources.json") as json_file:
+            data = json.load(json_file)
+            version = data["family"]
+            if version == "RedHatEnterpriseLinux6":
+                     repo_url = "http://file.bos.redhat.com/~bpeck/restraint/el6.repo"
+                     get_repo = ("wget %s -O /etc/yum.repos.d/restraint.repo" % repo_url)
+            elif version == "RedHatEnterpriseLinux7":
+                    repo_url = "http://file.bos.redhat.com/~bpeck/restraint/el7.repo"
+                    get_repo = ("wget %s -O /etc/yum.repos.d/restraint.repo" % repo_url)
+            elif version == "RedHatEnterpriseLinux4":
+                    repo_url = "http://file.bos.redhat.com/~bpeck/restraint/el4.repo"
+                    get_repo = ("wget %s -O /etc/yum.repos.d/restraint.repo" % repo_url)
+            elif version == "RedHatEnterpriseLinux5":
+                    repo_url = "http://file.bos.redhat.com/~bpeck/restraint/el5.repo"
+                    get_repo = ("wget %s -O /etc/yum.repos.d/restraint.repo" % repo_url)
+            elif version == "Fedora19":
+                    repo_url = "http://file.bos.redhat.com/~bpeck/restraint/fc19.repo"
+                    get_repo = ("wget %s -O /etc/yum.repos.d/restraint.repo" % repo_url)
+            elif version == "Fedora20":
+                    repo_url = "http://file.bos.redhat.com/~bpeck/restraint/fc20.repo"
+                    get_repo = ("wget %s -O /etc/yum.repos.d/restraint.repo" % repo_url)
+            
+            node = data["system"]         
 
-        for node in my_nodes:
-            ssh = paramiko.SSHClient()
-            ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            ssh.connect(node, username=self.username,
+            for node in json_file: 
+               ssh = paramiko.SSHClient()
+               ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+               ssh.connect(node, username=self.username,
                         password=self.password)
-            util.log.info("Executing command %s" % get_repo)
-            stdin, stdout, stderr = ssh.exec_command(get_repo)
-            for line in stdout.read().splitlines():
-                util.log.info('host: %s: %s' % (node, line))
+               util.log.info("Executing command %s" % get_repo)
+               stdin, stdout, stderr = ssh.exec_command(get_repo)
+               for line in stdout.read().splitlines():
+                  util.log.info('host: %s: %s' % (node, line))
 
     def remove_rhts_python(self):
         """remove rhts-python as it conflicts with restraint-rhts"""
