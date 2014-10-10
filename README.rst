@@ -42,7 +42,7 @@ Installing pre-requisities
 
 Cloning repositories
 ====================
-* Git clone your project repository to, let's say /home/nexus as an example.
+* Git clone your project repository to, let's say /home/user as an example.
 * Nexus assumes that you have a restraint directory in your project repository with restraint job xml's
 * Git clone Nexus
 
@@ -62,7 +62,7 @@ Setting environment variables
 =============================
 * export EXISTING_NODES=resource.hostname
 * export JOB_NAME=jenkins_job_name (for example, look at etc/ipa.conf)
-* export WORKSPACE=location_of_your_test_repo (in this example: /home/nexus)
+* export WORKSPACE=location_of_your_test_repo (in this example: /home/user)
 
 
 Configuring Nexus
