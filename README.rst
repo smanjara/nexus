@@ -80,13 +80,13 @@ Configuring Nexus
 
 Executing manually
 ==================
-* python idm_ci.py --project ipa --provisioner beaker
+* python nexus.py --project ipa --provisioner beaker
 
 .. code-block:: bash
 
-    # python idm_ci.py
-    usage: idm_ci.py [-h] [--async ASYNC] --project PROJECT --provisioner PROVISIONER
-    idm_ci.py: error: argument --project is required
+    # python nexus.py
+    usage: nexus.py [-h] [--async ASYNC] --project PROJECT --provisioner PROVISIONER
+    nexus.py: error: argument --project is required
 
 
 Adding new test suite
@@ -97,4 +97,4 @@ Adding new test suite
 CI Workflow
 ===========
 
-.. image:: IdM_CI.png
+.. image:: CI.png
