@@ -33,6 +33,7 @@ class Restraint():
 
     def restraint_repo(self):
         """downloads restraint repo file into /etc/yum.repos.d/"""
+
         # TODO: check the OS and download its respective repo file instead of
         # hardcoding el6.repo
         # https://github.com/gsr-shanks/ci-utilities/issues/8
@@ -54,6 +55,7 @@ class Restraint():
 
     def remove_rhts_python(self):
         """remove rhts-python as it conflicts with restraint-rhts"""
+
         resources = ExistingNodes("EXISTING_NODES")
         my_nodes = resources.identify_nodes()
 
@@ -73,6 +75,8 @@ class Restraint():
                     util.log.info('host: %s: %s' % (my_nodes[0], line))
 
     def restraint_install(self):
+        """Installs all the packages required for restraint"""
+
         resources = ExistingNodes("EXISTING_NODES")
         my_nodes = resources.identify_nodes()
 
@@ -93,6 +97,8 @@ class Restraint():
                     util.log.info('host: %s: %s' % (my_nodes[0], line))
 
     def restraint_start(self):
+        """start the restraint service and chkconfig on"""
+
         resources = ExistingNodes("EXISTING_NODES")
         my_nodes = resources.identify_nodes()
 
@@ -115,6 +121,8 @@ class Restraint():
                     util.log.info('host: %s: %s' % (my_nodes[0], line))
 
     def restraint_junit(self, x):
+        """convert job.xml to junit.xml"""
+
         self.junit_xml = x
         job2junit = "/usr/share/restraint/client/job2junit.xml"
 
