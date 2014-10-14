@@ -121,9 +121,9 @@ def restraint_multi_free(job_name,my_nodes,restraint_loc):
             f.write(m)
             f.close()
 
-            mystr2 =  "-t" + " " + str(host_num) + '=' + my_nodes[node]
+            mystr =  "-t" + " " + str(host_num) + '=' + my_nodes[node]
 
-            host_recipe.append(mystr2)
+            host_recipe.append(mystr)
             rest_hosts = " ".join(host_recipe)
             node = node + 1
             host_num = host_num + 1
