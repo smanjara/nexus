@@ -135,7 +135,7 @@ def restraint_multi_free(job_name,my_nodes,restraint_loc):
         print "Done iterating through my_nodes"
 
     subprocess.check_call(['cat', restraint_job])
-    returncode = subprocess.check_call(['restraint', '-j', restraint_job, rest_hosts, '-v', '-v'])
+    returncode = subprocess.check_call(['restraint', '-j', restraint_job, rest_hosts, '-v'])
 
 
 def beaker_run():
