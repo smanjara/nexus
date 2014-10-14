@@ -92,6 +92,52 @@ def restraint_single_free(job_name,my_nodes,restraint_loc):
 
     return returncode
 
+def restraint_multi_free(job_name,my_nodes,restraint_loc):
+
+    """Executes restraint command for multi host testing"""
+    ipa_config = ConfigParser.SafeConfigParser()
+    ipa_config.read("etc/ipa.conf")
+
+    if ipa_config.has_section(job_name):
+        job = ipa_config.get(job_name, 'job_name')
+        print job
+        restraint_job = os.path.join(restraint_loc, job)
+        print restraint_job
+    else:
+        common.util.log.error("Unable to get job_name")
+        sys.exit(1)
+
+    node = 0
+    host_num = 1
+    host_recipe = []
+    while node < len(my_nodes):
+        if os.path.exists(restraint_job):
+            host_num = str(host_num)
+            hostname = ("hostname" + host_num);
+            host_num = int(host_num)
+            j = open(restraint_job, 'r').read()
+            m = j.replace(hostname, (my_nodes[node]))
+            f = open(restraint_job, 'w')
+            f.write(m)
+            f.close()
+
+            mystr2 =  "-t" + " " + str(host_num) + '=' + my_nodes[node]
+
+            host_recipe.append(mystr2)
+            rest_hosts = " ".join(host_recipe)
+            node = node + 1
+            host_num = host_num + 1
+
+        else:
+            common.util.log.error("Unable to find file")
+            sys.exit(2)
+    else:
+        print "Done iterating through my_nodes"
+
+    subprocess.check_call(['cat', restraint_job])
+    returncode = subprocess.check_call(['restraint', '-j', restraint_job, rest_hosts, '-v', '-v'])
+
+
 def beaker_run():
 
     """ Runs the restraint command with the xml file and provides the junit file """
@@ -115,7 +161,10 @@ def beaker_run():
         common.util.log.info("Job type is %s and job style is %s" % (job_type, job_style))
         returncode = restraint_single_free(job_name, my_nodes,restraint_loc)
         common.util.log.info("Restraint returned with %r" % returncode)
-
+    elif job_type == "multi" and job_style == "free":
+        common.util.log.info("Job type is %s and job style is %s" % (job_type, job_style))
+        returncode = restraint_multi_free(job_name, my_nodes, restraint_loc)
+        common.util.log.info("Restraint returned with %r" % returncode)
     else:
         common.util.log.error("Unknown job_style or job_type")
         sys.exit(1)
