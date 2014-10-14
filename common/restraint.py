@@ -64,15 +64,15 @@ class Restraint():
         for node in my_nodes:
             ssh = paramiko.SSHClient()
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            ssh.connect(my_nodes[0], username=self.username, password=self.password)
+            ssh.connect(node, username=self.username, password=self.password)
             util.log.info("Executing command %s" % yum_remove)
             stdin, stdout, stderr = ssh.exec_command(yum_remove)
             for line in stdout.read().splitlines():
                 if "error" in line:
-                    util.log.error('host: %s: %s' % (my_node[0], line))
+                    util.log.error('host: %s: %s' % (node, line))
                     sys.exit(1)
                 else:
-                    util.log.info('host: %s: %s' % (my_nodes[0], line))
+                    util.log.info('host: %s: %s' % (node, line))
 
     def restraint_install(self):
         """Installs all the packages required for restraint"""
@@ -85,16 +85,16 @@ class Restraint():
         for node in my_nodes:
             ssh = paramiko.SSHClient()
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            ssh.connect(my_nodes[0], username=self.username,
+            ssh.connect(node, username=self.username,
                         password=self.password)
             util.log.info("Executing command %s" % yum_install)
             stdin, stdout, stderr = ssh.exec_command(yum_install)
             for line in stdout.read().splitlines():
                 if "error" in line:
-                    util.log.error('host: %s: %s' % (my_node[0], line))
+                    util.log.error('host: %s: %s' % (node, line))
                     sys.exit(1)
                 else:
-                    util.log.info('host: %s: %s' % (my_nodes[0], line))
+                    util.log.info('host: %s: %s' % (node, line))
 
     def restraint_start(self):
         """start the restraint service and chkconfig on"""
@@ -109,16 +109,16 @@ class Restraint():
         for node in my_nodes:
             ssh = paramiko.SSHClient()
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            ssh.connect(my_nodes[0], username=self.username,
+            ssh.connect(node, username=self.username,
                         password=self.password)
             util.log.info("Executing command %s" % start_service)
             stdin, stdout, stderr = ssh.exec_command(start_service)
             for line in stdout.read().splitlines():
                 if "error" in line:
-                    util.log.error('host: %s: %s' % (my_node[0], line))
+                    util.log.error('host: %s: %s' % (node, line))
                     sys.exit(1)
                 else:
-                    util.log.info('host: %s: %s' % (my_nodes[0], line))
+                    util.log.info('host: %s: %s' % (node, line))
 
     def restraint_junit(self, x):
         """convert job.xml to junit.xml"""
