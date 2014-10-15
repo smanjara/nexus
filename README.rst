@@ -4,6 +4,8 @@
 I understand there are quite a few areas where the above applies, so if you are here 
 please feel free to raise an issue with implementation details or pull requests are always welcome.
 
+Note: The external visible behavior of nexus must remain the same.
+
 
 Nexus - Continuous Integration utility
 ======================================
@@ -91,7 +93,12 @@ Executing manually
 
 Adding new test suite
 =====================
-* TODO
+* Create jenkins job yaml in your project.
+* Create or ensure the respective json file for resources to be provisioned exists.
+* Create restraint xml in project/restraint directory or whichever holds your restraint xml's.
+* Run jenkins job builder to create jenkins projects.
+* Update etc/<project>.conf and add runtest JOB_NAME section and its options.
+* Ensure all of the above are merged into respective git repository.
 
 
 CI Workflow

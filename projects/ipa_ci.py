@@ -68,6 +68,8 @@ def restraint_single_free(job_name,my_nodes,restraint_loc):
     ipa_config = ConfigParser.SafeConfigParser()
     ipa_config.read("etc/ipa.conf")
 
+    #TODO This loop should be moved to common since the same
+    # is used in restraint_multi_free()
     if ipa_config.has_section(job_name):
         job = ipa_config.get(job_name, 'job_name')
         print job
@@ -76,6 +78,7 @@ def restraint_single_free(job_name,my_nodes,restraint_loc):
     else:
         common.util.log.error("Unable to get job_name")
         sys.exit(1)
+
     if os.path.exists(restraint_job):
         j = open(restraint_job, 'r').read()
         m = j.replace('hostname1', my_nodes[0])
@@ -88,9 +91,56 @@ def restraint_single_free(job_name,my_nodes,restraint_loc):
 
     host1 = ("1=%s:8081" % my_nodes[0])
     subprocess.check_call(['cat', restraint_job])
-    returncode = subprocess.check_call(['restraint', '-j', restraint_job, '-t', host1, '-v'])
+    returncode = subprocess.check_call(['restraint', '-j', restraint_job, '-t', host1, '-v', '-v'])
 
     return returncode
+
+def restraint_multi_free(job_name,my_nodes,restraint_loc):
+
+    """Executes restraint command for multi host testing"""
+    ipa_config = ConfigParser.SafeConfigParser()
+    ipa_config.read("etc/ipa.conf")
+
+    #TODO Check restraint_single_free()
+    if ipa_config.has_section(job_name):
+        job = ipa_config.get(job_name, 'job_name')
+        print job
+        restraint_job = os.path.join(restraint_loc, job)
+        print restraint_job
+    else:
+        common.util.log.error("Unable to get job_name")
+        sys.exit(1)
+
+    node = 0
+    host_num = 1
+    host_recipe = []
+    while node < len(my_nodes):
+        if os.path.exists(restraint_job):
+            host_num = str(host_num)
+            hostname = ("hostname" + host_num);
+            host_num = int(host_num)
+            j = open(restraint_job, 'r').read()
+            m = j.replace(hostname, (my_nodes[node]))
+            f = open(restraint_job, 'w')
+            f.write(m)
+            f.close()
+
+            mystr =  "-t" + " " + str(host_num) + '=' + my_nodes[node]
+
+            host_recipe.append(mystr)
+            rest_hosts = " ".join(host_recipe)
+            node = node + 1
+            host_num = host_num + 1
+
+        else:
+            common.util.log.error("Unable to find file")
+            sys.exit(2)
+    else:
+        print "Done iterating through my_nodes"
+
+    subprocess.check_call(['cat', restraint_job])
+    rest_command = "restraint" + " " + "-j" + " " + restraint_job + " " + rest_hosts + " " + "-v" + " " + "-v"
+    returncode = subprocess.check_call(rest_command.split(), shell=False)
 
 def beaker_run():
 
@@ -115,7 +165,10 @@ def beaker_run():
         common.util.log.info("Job type is %s and job style is %s" % (job_type, job_style))
         returncode = restraint_single_free(job_name, my_nodes,restraint_loc)
         common.util.log.info("Restraint returned with %r" % returncode)
-
+    elif job_type == "multi" and job_style == "free":
+        common.util.log.info("Job type is %s and job style is %s" % (job_type, job_style))
+        returncode = restraint_multi_free(job_name, my_nodes, restraint_loc)
+        common.util.log.info("Restraint returned with %r" % returncode)
     else:
         common.util.log.error("Unknown job_style or job_type")
         sys.exit(1)

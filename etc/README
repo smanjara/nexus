@@ -1,0 +1,19 @@
+global.conf
+===========
+
+It has a global and a restraint sections. Any section that will help all projects 
+should be created in global.conf
+
+
+{project}.conf
+==============
+
+This is project specific configuration file.
+* global section here is common to your project. For e.g., some path
+* each section matches exactly the JOB_NAME variable from jenkins runtest job
+* job_name is the restraint xml file name which is expected to be available in 
+  ipa-tests/restraints as per global section
+* type is to identify if the tests can be executed in a single node or multi.
+  Accepted values: single or multi
+* style is to identify if the jenkins project is a free style project or a
+  matrix one. Accepted values: free or matrix or whichever JJB supports.
