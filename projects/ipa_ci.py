@@ -68,6 +68,8 @@ def restraint_single_free(job_name,my_nodes,restraint_loc):
     ipa_config = ConfigParser.SafeConfigParser()
     ipa_config.read("etc/ipa.conf")
 
+    #TODO This loop should be moved to common since the same
+    # is used in restraint_multi_free()
     if ipa_config.has_section(job_name):
         job = ipa_config.get(job_name, 'job_name')
         print job
@@ -76,6 +78,7 @@ def restraint_single_free(job_name,my_nodes,restraint_loc):
     else:
         common.util.log.error("Unable to get job_name")
         sys.exit(1)
+
     if os.path.exists(restraint_job):
         j = open(restraint_job, 'r').read()
         m = j.replace('hostname1', my_nodes[0])
@@ -98,6 +101,7 @@ def restraint_multi_free(job_name,my_nodes,restraint_loc):
     ipa_config = ConfigParser.SafeConfigParser()
     ipa_config.read("etc/ipa.conf")
 
+    #TODO Check restraint_single_free()
     if ipa_config.has_section(job_name):
         job = ipa_config.get(job_name, 'job_name')
         print job

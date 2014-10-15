@@ -43,6 +43,7 @@ class Restraint():
         repo_url = "http://file.bos.redhat.com/~bpeck/restraint/el6.repo"
         get_repo = ("wget %s -O /etc/yum.repos.d/restraint.repo" % repo_url)
 
+        #TODO use threads instead of for loop
         for node in my_nodes:
             ssh = paramiko.SSHClient()
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -61,6 +62,7 @@ class Restraint():
 
         yum_remove = ("yum remove -y %s" % self.r_pkgs)
 
+        #TODO use threads instead of for loop
         for node in my_nodes:
             ssh = paramiko.SSHClient()
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -82,6 +84,7 @@ class Restraint():
 
         yum_install = ("yum install -y %s" % self.i_pkgs)
 
+        #TODO use threads instead of for loop
         for node in my_nodes:
             ssh = paramiko.SSHClient()
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -106,6 +109,7 @@ class Restraint():
         service = ("restraintd")
         start_service = ("service %s start; chkconfig %s on" % (service, service))
 
+        #TODO use threads instead of for loop
         for node in my_nodes:
             ssh = paramiko.SSHClient()
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
