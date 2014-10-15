@@ -4,6 +4,8 @@
 I understand there are quite a few areas where the above applies, so if you are here 
 please feel free to raise an issue with implementation details or pull requests are always welcome.
 
+Note: The external visible behavior of nexus must remain the same.
+
 
 Nexus - Continuous Integration utility
 ======================================
