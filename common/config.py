@@ -22,11 +22,11 @@ class SetupConfig():
             sys.exit(1)
         else:
             util.log.info("WORKSPACE env variable is %s." % workspace)
-            return workspace
 
         idm_config.set('global', 'workspace', workspace)
         with open('etc/global.conf', 'wb') as idm_setup_config:
             idm_config.write(idm_setup_config)
+        return workspace
 
     def jenkins_job_name(self, x):
         self.jobname = x

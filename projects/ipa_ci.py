@@ -89,9 +89,9 @@ def restraint_setup():
 def restraint_location():
 
     """ Gets restraint job xml location from the current workspace """
-    idm_config = ConfigParser.SafeConfigParser()
-    idm_config.read("etc/global.conf")
-    workspace_option = idm_config.get('global', 'workspace')
+    ipa_config = ConfigParser.SafeConfigParser()
+    ipa_config.read("etc/global.conf")
+    workspace_option = ipa_config.get('global', 'workspace')
 
     ipa_config = ConfigParser.SafeConfigParser()
     ipa_config.read("etc/ipa.conf")
