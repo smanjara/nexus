@@ -44,16 +44,19 @@ def existing_nodes():
     my_nodes = existing_nodes.identify_nodes()
     return my_nodes
 
-def build_location(workspace):
+def build_location(workspace, job_name, restraint_loc):
 
     build_repo_file = "BUILD_LOCATION.txt"
     build_repo_file_loc = os.path.join(workspace, build_repo_file)
-    myrepo_0 = open(build_repo_file_loc, 'r')
-    print myrepo_0
-    return myrepo_0
+    r = open(build_repo_file_loc, 'r')
+    myrepo_0 = r.read()
+    #print myrepo_0
+    #return myrepo_0
 
     #TODO This loop should be moved to common since the same
     # is used in restraint_multi_free()
+    ipa_config = ConfigParser.SafeConfigParser()
+    ipa_config.read("etc/ipa.conf")
     if ipa_config.has_section(job_name):
         job = ipa_config.get(job_name, 'job_name')
         print job
@@ -180,10 +183,10 @@ def beaker_run():
     """ Runs the restraint command with the xml file and provides the junit file """
     workspace = get_workspace()
     job_name = get_job_name()
-    repo_loc = build_location()
     my_nodes = existing_nodes()
     restraint_inst = restraint_setup()
     restraint_loc = restraint_location()
+    repo_loc = build_location(workspace, job_name, restraint_loc)
 
     ipa_config = ConfigParser.SafeConfigParser()
     ipa_config.read("etc/ipa.conf")
