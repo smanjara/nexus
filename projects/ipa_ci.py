@@ -27,7 +27,11 @@ def get_workspace():
 
     """ Sets up the workspace Directory and returns job_name """
     setup_config = SetupConfig()
-    setup_config.workspace_dir("WORKSPACE")
+    workspace = setup_config.workspace_dir("WORKSPACE")
+    return workspace
+
+def get_job_name():
+    setup_config = SetupConfig()
     job_name = setup_config.jenkins_job_name("JOB_NAME")
     return job_name
 
@@ -39,6 +43,35 @@ def existing_nodes():
     existing_nodes.env_check()
     my_nodes = existing_nodes.identify_nodes()
     return my_nodes
+
+def build_location(workspace):
+
+    build_repo_file = "BUILD_LOCATION.txt"
+    build_repo_file_loc = os.path.join(workspace, build_repo_file)
+    myrepo_0 = open(build_repo_file_loc, 'r')
+    print myrepo_0
+    return myrepo_0
+
+    #TODO This loop should be moved to common since the same
+    # is used in restraint_multi_free()
+    if ipa_config.has_section(job_name):
+        job = ipa_config.get(job_name, 'job_name')
+        print job
+        restraint_job = os.path.join(restraint_loc, job)
+        print restraint_job
+    else:
+        common.util.log.error("Unable to get job_name")
+        sys.exit(1)
+
+    if os.path.exists(restraint_job):
+        j = open(restraint_job, 'r').read()
+        m = j.replace('REPO_URL', myrepo_0)
+        f = open(restraint_job, 'w')
+        f.write(m)
+        f.close()
+    else:
+        common.util.log.error("Unable to find file")
+        sys.exit(2)
 
 def restraint_setup():
 
@@ -145,7 +178,8 @@ def restraint_multi_free(job_name,my_nodes,restraint_loc):
 def beaker_run():
 
     """ Runs the restraint command with the xml file and provides the junit file """
-    job_name = get_workspace()
+    workspace = get_workspace()
+    job_name = get_job_name()
     my_nodes = existing_nodes()
     restraint_inst = restraint_setup()
     restraint_loc = restraint_location()
