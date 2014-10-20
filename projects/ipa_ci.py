@@ -180,6 +180,7 @@ def beaker_run():
     """ Runs the restraint command with the xml file and provides the junit file """
     workspace = get_workspace()
     job_name = get_job_name()
+    repo_loc = build_location()
     my_nodes = existing_nodes()
     restraint_inst = restraint_setup()
     restraint_loc = restraint_location()
