@@ -44,10 +44,14 @@ def existing_nodes():
     my_nodes = existing_nodes.identify_nodes()
     return my_nodes
 
-def wget_repo(my_nodes):
+def wget_repo(my_nodes, job_name):
 
     """Wget the brew build repo in all the existing nodes"""
-    repo_url = "https://idm-qe-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/view/IPA%20CI/job/RHEL6%20Latest%20Trigger/ws/myrepo_0.repo"
+    if "rhel6" in job_name:
+        repo_url = "https://idm-qe-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/view/IPA%20CI/job/RHEL6%20Latest%20Trigger/ws/myrepo_0.repo"
+    elif "rhel7" in job_name:
+        repo_url = "https://idm-qe-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/view/IPA%20CI/job/RHEL7%20Latest%20Trigger/ws/myrepo_0.repo"
+
     get_repo = ("wget --no-check-certificate %s -O /etc/yum.repos.d/myrepo_0.repo" % repo_url)
 
     global_config = ConfigParser.SafeConfigParser()
@@ -206,7 +210,7 @@ def beaker_run():
     workspace = get_workspace()
     job_name = get_job_name()
     my_nodes = existing_nodes()
-    wget_repo_file = wget_repo(my_nodes)
+    wget_repo_file = wget_repo(my_nodes, job_name)
     restraint_inst = restraint_setup()
     restraint_loc = restraint_location()
 
