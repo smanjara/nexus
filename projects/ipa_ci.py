@@ -44,14 +44,36 @@ def existing_nodes():
     my_nodes = existing_nodes.identify_nodes()
     return my_nodes
 
+def wget_repo(my_nodes):
+
+    """Wget the brew build repo in all the existing nodes"""
+    repo_url = "https://idm-qe-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/view/IPA%20CI/job/RHEL6%20Latest%20Trigger/ws/myrepo_0.repo"
+    get_repo = ("wget --no-check-certificate %s -O /etc/yum.repos.d/myrepo_0.repo" % repo_url)
+
+    global_config = ConfigParser.SafeConfigParser()
+    global_config.read("etc/global.conf")
+    username = global_config.get('global', 'username')
+    password = global_config.get('global', 'password')
+
+    #TODO use threads instead of for loop
+    for node in my_nodes:
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.connect(node, username=username,
+                    password=password)
+        common.util.log.info("Executing command %s" % get_repo)
+        stdin, stdout, stderr = ssh.exec_command(get_repo)
+        for line in stdout.read().splitlines():
+            common.util.log.info('host: %s: %s' % (node, line))
+
 def build_location(workspace, job_name, restraint_loc):
 
+    """This function replaces REPO_URL in restraint xml with its value"""
+    #NOTE: This function is not used anywhere now.
     build_repo_file = "BUILD_LOCATION.txt"
     build_repo_file_loc = os.path.join(workspace, build_repo_file)
     r = open(build_repo_file_loc, 'r')
     myrepo_0 = r.read()
-    #print myrepo_0
-    #return myrepo_0
 
     #TODO This loop should be moved to common since the same
     # is used in restraint_multi_free()
@@ -184,9 +206,9 @@ def beaker_run():
     workspace = get_workspace()
     job_name = get_job_name()
     my_nodes = existing_nodes()
+    wget_repo_file = wget_repo(my_nodes)
     restraint_inst = restraint_setup()
     restraint_loc = restraint_location()
-    repo_loc = build_location(workspace, job_name, restraint_loc)
 
     ipa_config = ConfigParser.SafeConfigParser()
     ipa_config.read("etc/ipa.conf")
