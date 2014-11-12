@@ -27,7 +27,11 @@ def get_workspace():
 
     """ Sets up the workspace Directory and returns job_name """
     setup_config = SetupConfig()
-    setup_config.workspace_dir("WORKSPACE")
+    workspace = setup_config.workspace_dir("WORKSPACE")
+    return workspace
+
+def get_job_name():
+    setup_config = SetupConfig()
     job_name = setup_config.jenkins_job_name("JOB_NAME")
     return job_name
 
@@ -39,6 +43,64 @@ def existing_nodes():
     existing_nodes.env_check()
     my_nodes = existing_nodes.identify_nodes()
     return my_nodes
+
+def wget_repo(my_nodes, job_name):
+
+    """Wget the brew build repo in all the existing nodes"""
+    if "rhel6" in job_name:
+        repo_url = "https://idm-qe-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/job/IPA%20RHEL6%20Latest%20Trigger/ws/myrepo_0.repo"
+    elif "rhel7" in job_name:
+        repo_url = "https://idm-qe-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/job/IPA%20RHEL7.1%20Build%20Repo/ws/myrepo_0.repo"
+
+    get_repo = ("wget --no-check-certificate %s -O /etc/yum.repos.d/myrepo_0.repo" % repo_url)
+
+    global_config = ConfigParser.SafeConfigParser()
+    global_config.read("etc/global.conf")
+    username = global_config.get('global', 'username')
+    password = global_config.get('global', 'password')
+
+    #TODO use threads instead of for loop
+    for node in my_nodes:
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.connect(node, username=username,
+                    password=password)
+        common.util.log.info("Executing command %s" % get_repo)
+        stdin, stdout, stderr = ssh.exec_command(get_repo)
+        for line in stdout.read().splitlines():
+            common.util.log.info('host: %s: %s' % (node, line))
+
+def build_location(workspace, job_name, restraint_loc):
+
+    """This function replaces REPO_URL in restraint xml with its value"""
+    #NOTE: This function is not used anywhere now.
+    build_repo_file = "BUILD_LOCATION.txt"
+    build_repo_file_loc = os.path.join(workspace, build_repo_file)
+    r = open(build_repo_file_loc, 'r')
+    myrepo_0 = r.read()
+
+    #TODO This loop should be moved to common since the same
+    # is used in restraint_multi_free()
+    ipa_config = ConfigParser.SafeConfigParser()
+    ipa_config.read("etc/ipa.conf")
+    if ipa_config.has_section(job_name):
+        job = ipa_config.get(job_name, 'job_name')
+        print job
+        restraint_job = os.path.join(restraint_loc, job)
+        print restraint_job
+    else:
+        common.util.log.error("Unable to get job_name")
+        sys.exit(1)
+
+    if os.path.exists(restraint_job):
+        j = open(restraint_job, 'r').read()
+        m = j.replace('REPO_URL', myrepo_0)
+        f = open(restraint_job, 'w')
+        f.write(m)
+        f.close()
+    else:
+        common.util.log.error("Unable to find file")
+        sys.exit(2)
 
 def restraint_setup():
 
@@ -53,9 +115,9 @@ def restraint_setup():
 def restraint_location():
 
     """ Gets restraint job xml location from the current workspace """
-    idm_config = ConfigParser.SafeConfigParser()
-    idm_config.read("etc/global.conf")
-    workspace_option = idm_config.get('global', 'workspace')
+    ipa_config = ConfigParser.SafeConfigParser()
+    ipa_config.read("etc/global.conf")
+    workspace_option = ipa_config.get('global', 'workspace')
 
     ipa_config = ConfigParser.SafeConfigParser()
     ipa_config.read("etc/ipa.conf")
@@ -145,8 +207,10 @@ def restraint_multi_free(job_name,my_nodes,restraint_loc):
 def beaker_run():
 
     """ Runs the restraint command with the xml file and provides the junit file """
-    job_name = get_workspace()
+    workspace = get_workspace()
+    job_name = get_job_name()
     my_nodes = existing_nodes()
+    wget_repo_file = wget_repo(my_nodes, job_name)
     restraint_inst = restraint_setup()
     restraint_loc = restraint_location()
 
