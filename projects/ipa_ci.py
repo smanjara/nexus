@@ -50,7 +50,7 @@ def wget_repo(my_nodes, job_name):
     if "rhel6" in job_name:
         repo_url = "https://idm-qe-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/job/IPA%20RHEL6%20Latest%20Trigger/ws/myrepo_0.repo"
     elif "rhel7" in job_name:
-        repo_url = "https://idm-qe-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/job/IPA%20RHEL7%20Latest%20Trigger/ws/myrepo_0.repo"
+        repo_url = "https://idm-qe-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/job/IPA%20RHEL7.1%20Build%20Repo/ws/myrepo_0.repo"
 
     get_repo = ("wget --no-check-certificate %s -O /etc/yum.repos.d/myrepo_0.repo" % repo_url)
 
