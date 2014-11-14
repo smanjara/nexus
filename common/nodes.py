@@ -44,6 +44,7 @@ class ExistingNodes():
         resources_file = os.path.join(self.workspace, "RESOURCES.txt")
 
         if not host_in:
+            util.log.info("EXISTING_NODES read from RESOURCES.txt")
             config = StringIO.StringIO()
             config.write('[dummysection]\n')
             config.write(open(resources_file).read())
@@ -51,8 +52,9 @@ class ExistingNodes():
 
             cp = ConfigParser.ConfigParser()
             cp.readfp(config)
-            my_nodes = cp.get('dummysection', 'EXISTING_NODES')
-            util.log.info("EXISTING_NODES read from RESOURCES.txt")
+            nodes = cp.get('dummysection', 'EXISTING_NODES')
+
+            my_nodes = tuple(nodes.split(","))
         else:
             util.log.info("EXISTING_NODES found in env variable.")
             my_nodes = tuple(os.environ.get(self.env).split(","))
