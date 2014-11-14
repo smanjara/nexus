@@ -52,7 +52,7 @@ def wget_repo(my_nodes, job_name):
     username = global_config.get('global', 'username')
     password = global_config.get('global', 'password')
 
-    ipa_config = ConfigParser.SafeConfigParser()
+    ipa_config = ConfigParser.RawConfigParser()
     ipa_config.read("etc/ipa.conf")
     rhel71_build_repo = ipa_config.get('global', 'rhel71_build_repo')
 
