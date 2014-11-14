@@ -14,6 +14,7 @@ import sys
 import os
 import util
 import ConfigParser
+import StringIO
 
 
 class ExistingNodes():
@@ -26,15 +27,29 @@ class ExistingNodes():
 
         util.log.info("Checking if %s variable is empty" % self.env)
         host_in = os.environ.get(self.env)
-        if not host_in:
-            util.log.error("List is empty!")
+        if not host_in and not os.path.exists("RESOURCES.txt"):
+            util.log.error("ENV list is empty and RESOURCES.txt file not found")
             sys.exit(1)
         else:
-            util.log.info("%s list is not empty ... ready to go!" % self.env)
+            util.log.info("ready to go!")
 
     def identify_nodes(self):
         """converts list of resources into tuple for further use"""
-        my_nodes = tuple(os.environ.get(self.env).split(","))
+        #TODO identify nodes from resources.json if os.environ.get is empty.
+        host_in = os.environ.get(self.env)
+
+        if not host_in:
+            config = StringIO.StringIO()
+            config.write('[dummysection]\n')
+            config.write(open('RESOURCES.txt').read())
+            config.seek(0, os.SEEK_SET)
+
+            cp = ConfigParser.ConfigParser()
+            cp.readfp(config)
+            my_nodes = cp.get('dummysection', 'EXISTING_NODES')
+        else:
+            my_nodes = tuple(os.environ.get(self.env).split(","))
+
         if len(my_nodes) == 1:
             util.log.info("I have only %s and it is my MASTER." % my_nodes[0])
             #print my_nodes

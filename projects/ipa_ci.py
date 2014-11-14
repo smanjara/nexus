@@ -47,17 +47,20 @@ def existing_nodes():
 def wget_repo(my_nodes, job_name):
 
     """Wget the brew build repo in all the existing nodes"""
-    if "rhel6" in job_name:
-        repo_url = "https://idm-qe-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/job/IPA%20RHEL6%20Latest%20Trigger/ws/myrepo_0.repo"
-    elif "rhel7" in job_name:
-        repo_url = "https://idm-qe-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/job/IPA%20RHEL7.1%20Build%20Repo/ws/myrepo_0.repo"
-
-    get_repo = ("wget --no-check-certificate %s -O /etc/yum.repos.d/myrepo_0.repo" % repo_url)
-
     global_config = ConfigParser.SafeConfigParser()
     global_config.read("etc/global.conf")
     username = global_config.get('global', 'username')
     password = global_config.get('global', 'password')
+    rhel71_build_repo = global_config.get('global', 'rhel71_build_repo')
+
+    #TODO update rhel6 to rhel67 with appropriate URL
+    if "rhel6" in job_name:
+        repo_url = "https://idm-qe-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/job/IPA%20RHEL6%20Latest%20Trigger/ws/myrepo_0.repo"
+    elif "rhel71" in job_name:
+        repo_url = rhel71_build_repo
+
+    get_repo = ("wget --no-check-certificate %s -O /etc/yum.repos.d/myrepo_0.repo" % repo_url)
+
 
     #TODO use threads instead of for loop
     for node in my_nodes:
