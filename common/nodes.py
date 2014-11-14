@@ -20,6 +20,10 @@ import StringIO
 class ExistingNodes():
     def __init__(self, x):
         self.env = x
+        global_config = ConfigParser.SafeConfigParser()
+        global_config.read("etc/global.conf")
+        self.workspace = global_config.get('global', 'workspace')
+        resources_file = os.path.join(self.workspace, "RESOURCES.txt")
 
     def env_check(self):
         """checks if EXISTING_NODES evn variable is empty or
@@ -27,7 +31,7 @@ class ExistingNodes():
 
         util.log.info("Checking if %s variable is empty and existence of RESOURCES.txt" % self.env)
         host_in = os.environ.get(self.env)
-        if not host_in and not os.path.exists("RESOURCES.txt"):
+        if not host_in and not os.path.exists(resources_file):
             util.log.error("ENV list is empty and RESOURCES.txt file not found")
             sys.exit(1)
         else:
@@ -35,26 +39,25 @@ class ExistingNodes():
 
     def identify_nodes(self):
         """converts list of resources into tuple for further use"""
-        #TODO identify nodes from resources.json if os.environ.get is empty.
+
         host_in = os.environ.get(self.env)
 
         if not host_in:
             config = StringIO.StringIO()
             config.write('[dummysection]\n')
-            config.write(open('RESOURCES.txt').read())
+            config.write(open(resources_file).read())
             config.seek(0, os.SEEK_SET)
 
             cp = ConfigParser.ConfigParser()
             cp.readfp(config)
-            util.log.info("EXISTING_NODES read from RESOURCES.txt")
             my_nodes = cp.get('dummysection', 'EXISTING_NODES')
+            util.log.info("EXISTING_NODES read from RESOURCES.txt")
         else:
             util.log.info("EXISTING_NODES found in env variable.")
             my_nodes = tuple(os.environ.get(self.env).split(","))
 
         if len(my_nodes) == 1:
             util.log.info("I have only %s and it is my MASTER." % my_nodes[0])
-            #print my_nodes
             return my_nodes
         else:
             util.log.info("I have multiple resources")
