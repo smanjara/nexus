@@ -23,7 +23,6 @@ class ExistingNodes():
         global_config = ConfigParser.SafeConfigParser()
         global_config.read("etc/global.conf")
         self.workspace = global_config.get('global', 'workspace')
-        resources_file = os.path.join(self.workspace, "RESOURCES.txt")
 
     def env_check(self):
         """checks if EXISTING_NODES evn variable is empty or
@@ -31,6 +30,7 @@ class ExistingNodes():
 
         util.log.info("Checking if %s variable is empty and existence of RESOURCES.txt" % self.env)
         host_in = os.environ.get(self.env)
+        resources_file = os.path.join(self.workspace, "RESOURCES.txt")
         if not host_in and not os.path.exists(resources_file):
             util.log.error("ENV list is empty and RESOURCES.txt file not found")
             sys.exit(1)
@@ -41,6 +41,7 @@ class ExistingNodes():
         """converts list of resources into tuple for further use"""
 
         host_in = os.environ.get(self.env)
+        resources_file = os.path.join(self.workspace, "RESOURCES.txt")
 
         if not host_in:
             config = StringIO.StringIO()
