@@ -25,7 +25,7 @@ class ExistingNodes():
         """checks if EXISTING_NODES evn variable is empty or
         not"""
 
-        util.log.info("Checking if %s variable is empty" % self.env)
+        util.log.info("Checking if %s variable is empty and existence of RESOURCES.txt" % self.env)
         host_in = os.environ.get(self.env)
         if not host_in and not os.path.exists("RESOURCES.txt"):
             util.log.error("ENV list is empty and RESOURCES.txt file not found")
@@ -46,8 +46,10 @@ class ExistingNodes():
 
             cp = ConfigParser.ConfigParser()
             cp.readfp(config)
+            util.log.info("EXISTING_NODES read from RESOURCES.txt")
             my_nodes = cp.get('dummysection', 'EXISTING_NODES')
         else:
+            util.log.info("EXISTING_NODES found in env variable.")
             my_nodes = tuple(os.environ.get(self.env).split(","))
 
         if len(my_nodes) == 1:

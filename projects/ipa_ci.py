@@ -51,7 +51,10 @@ def wget_repo(my_nodes, job_name):
     global_config.read("etc/global.conf")
     username = global_config.get('global', 'username')
     password = global_config.get('global', 'password')
-    rhel71_build_repo = global_config.get('global', 'rhel71_build_repo')
+
+    ipa_config = ConfigParser.SafeConfigParser()
+    ipa_config.read("etc/ipa.conf")
+    rhel71_build_repo = ipa_config.get('global', 'rhel71_build_repo')
 
     #TODO update rhel6 to rhel67 with appropriate URL
     if "rhel6" in job_name:
