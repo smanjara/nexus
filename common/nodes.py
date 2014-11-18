@@ -14,30 +14,53 @@ import sys
 import os
 import util
 import ConfigParser
+import StringIO
 
 
 class ExistingNodes():
     def __init__(self, x):
         self.env = x
+        global_config = ConfigParser.SafeConfigParser()
+        global_config.read("etc/global.conf")
+        self.workspace = global_config.get('global', 'workspace')
 
     def env_check(self):
         """checks if EXISTING_NODES evn variable is empty or
         not"""
 
-        util.log.info("Checking if %s variable is empty" % self.env)
+        util.log.info("Checking if %s variable is empty and existence of RESOURCES.txt" % self.env)
         host_in = os.environ.get(self.env)
-        if not host_in:
-            util.log.error("List is empty!")
+        resources_file = os.path.join(self.workspace, "RESOURCES.txt")
+        if not host_in and not os.path.exists(resources_file):
+            util.log.error("ENV list is empty and RESOURCES.txt file not found")
             sys.exit(1)
         else:
-            util.log.info("%s list is not empty ... ready to go!" % self.env)
+            util.log.info("ready to go!")
 
     def identify_nodes(self):
         """converts list of resources into tuple for further use"""
-        my_nodes = tuple(os.environ.get(self.env).split(","))
+
+        host_in = os.environ.get(self.env)
+        resources_file = os.path.join(self.workspace, "RESOURCES.txt")
+
+        if not host_in:
+            util.log.info("EXISTING_NODES read from RESOURCES.txt")
+            config = StringIO.StringIO()
+            config.write('[dummysection]\n')
+            config.write(open(resources_file).read())
+            config.seek(0, os.SEEK_SET)
+
+            cp = ConfigParser.ConfigParser()
+            cp.readfp(config)
+            nodes = cp.get('dummysection', 'EXISTING_NODES')
+
+            my_nodes = tuple(nodes.split(","))
+        else:
+            util.log.info("EXISTING_NODES found in env variable.")
+            my_nodes = tuple(os.environ.get(self.env).split(","))
+
         if len(my_nodes) == 1:
             util.log.info("I have only %s and it is my MASTER." % my_nodes[0])
-            #print my_nodes
             return my_nodes
         else:
             util.log.info("I have multiple resources")
