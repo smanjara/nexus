@@ -38,6 +38,27 @@ def existing_nodes():
     my_nodes = existing_nodes.identify_nodes()
     return my_nodes
 
+def wget_repo(my_nodes, job_name):
+	"""Wget the brew build repo in all the existing nodes"""
+
+	global_config = ConfigParser.SafeConfigParser()
+	global_config.read("etc/global.conf")
+	username = global_config.get('global', 'username')
+	password = global_config.get('global', 'password')
+
+	rhcs_config = ConfigParser.SafeConfigParser()
+	rhcs_config.read("etc/rhcs.conf")
+	repo_url = rhcs_config.get('global','rhcs9_build_repo')
+	get_repo = ("wget --no-check-certificate %s -O /etc/yum.repos.d/myrepo_0.repo" % repo_url)
+	for node in my_nodes:
+		ssh = paramiko.SSHClient()
+		ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+		ssh.connect(node, username=username,password=password)
+		common.util.log.info("Executing command %s" % get_repo)
+		stdin, stdout, stderr = ssh.exec_command(get_repo)
+		for line in stdout.read().splitlines():
+			common.util.log.info('host: %s: %s' % (node, line))
+
 def restraint_setup():
 
     """ Configures restraint on beaker nodes """
