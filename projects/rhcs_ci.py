@@ -46,7 +46,7 @@ def wget_repo(my_nodes, job_name):
 	username = global_config.get('global', 'username')
 	password = global_config.get('global', 'password')
 
-	rhcs_config = ConfigParser.SafeConfigParser()
+	rhcs_config = ConfigParser.RawConfigParser()
 	rhcs_config.read("etc/rhcs.conf")
 	repo_url = rhcs_config.get('global','rhcs9_build_repo')
 	get_repo = ("wget --no-check-certificate %s -O /etc/yum.repos.d/myrepo_0.repo" % repo_url)
