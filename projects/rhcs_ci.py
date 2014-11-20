@@ -38,6 +38,27 @@ def existing_nodes():
     my_nodes = existing_nodes.identify_nodes()
     return my_nodes
 
+def wget_repo(my_nodes, job_name):
+	"""Wget the brew build repo in all the existing nodes"""
+
+	global_config = ConfigParser.SafeConfigParser()
+	global_config.read("etc/global.conf")
+	username = global_config.get('global', 'username')
+	password = global_config.get('global', 'password')
+
+	rhcs_config = ConfigParser.RawConfigParser()
+	rhcs_config.read("etc/rhcs.conf")
+	repo_url = rhcs_config.get('global','rhcs9_build_repo')
+	get_repo = ("wget --no-check-certificate %s -O /etc/yum.repos.d/myrepo_0.repo" % repo_url)
+	for node in my_nodes:
+		ssh = paramiko.SSHClient()
+		ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+		ssh.connect(node, username=username,password=password)
+		common.util.log.info("Executing command %s" % get_repo)
+		stdin, stdout, stderr = ssh.exec_command(get_repo)
+		for line in stdout.read().splitlines():
+			common.util.log.info('host: %s: %s' % (node, line))
+
 def restraint_setup():
 
     """ Configures restraint on beaker nodes """
@@ -94,7 +115,7 @@ def restraint_single_free(job_name,my_nodes,restraint_loc):
     host1 = ("1=%s:8081" % my_nodes[0])
     subprocess.check_call(['cat', restraint_job])
     common.util.log.info("Executing %r Job  on %r Nodes using Job xml %r" %(job_name, my_nodes[0],restraint_job))
-    returncode = subprocess.check_call(['restraint', '-j', restraint_job, '-t', host1])
+    returncode = subprocess.check_call(['restraint', '-j', restraint_job, '-t', host1, '-v', '-v'])
 
     return returncode 
 
@@ -103,6 +124,7 @@ def beaker_run():
     """ Calls restraint and provides the junit file """
     job_name = get_workspace()
     my_nodes = existing_nodes()
+    wget_repo_file = wget_repo(my_nodes, job_name)
     restraint_inst = restraint_setup()
     restraint_loc = restraint_location()
 
