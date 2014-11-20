@@ -124,6 +124,7 @@ def beaker_run():
     """ Calls restraint and provides the junit file """
     job_name = get_workspace()
     my_nodes = existing_nodes()
+    wget_repo_file = wget_repo(my_nodes, job_name)
     restraint_inst = restraint_setup()
     restraint_loc = restraint_location()
 
