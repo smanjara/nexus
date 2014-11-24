@@ -54,11 +54,11 @@ def wget_repo(my_nodes, job_name):
 
     ipa_config = ConfigParser.RawConfigParser()
     ipa_config.read("etc/ipa.conf")
+    rhel67_build_repo = ipa_config.get('global', 'rhel67_build_repo')
     rhel71_build_repo = ipa_config.get('global', 'rhel71_build_repo')
 
-    #TODO update rhel6 to rhel67 with appropriate URL
-    if "rhel6" in job_name:
-        repo_url = "https://idm-qe-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/job/IPA%20RHEL6%20Latest%20Trigger/ws/myrepo_0.repo"
+    if "rhel67" in job_name:
+        repo_url = rhel67_build_repo
     elif "rhel71" in job_name:
         repo_url = rhel71_build_repo
 
