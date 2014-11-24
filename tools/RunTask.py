@@ -120,9 +120,6 @@ def main():
         if stdout:
             for line in stdout.read().splitlines():
                 print line
-        if stdin:
-            for line in stdin.read().splitines():
-                print line 
         #Clean up
         stdin.close()
         stdout.close()
