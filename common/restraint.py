@@ -34,13 +34,19 @@ class Restraint():
     def restraint_repo(self):
         """downloads restraint repo file into /etc/yum.repos.d/"""
 
-        # TODO: check the OS and download its respective repo file instead of
-        # hardcoding el6.repo
-        # https://github.com/gsr-shanks/ci-utilities/issues/8
         resources = ExistingNodes("EXISTING_NODES")
         my_nodes = resources.identify_nodes()
 
-        repo_url = "http://file.bos.redhat.com/~bpeck/restraint/el6.repo"
+        global_config = ConfigParser.RawConfigParser()
+        global_config.read("etc/global.conf")
+        rhel6_restraint_repo = global_config.get('global', 'rhel6_restraint_repo')
+        rhel7_restraint_repo = global_config.get('global', 'rhel7_restraint_repo')
+
+        if "rhel6" in job_name:
+            repo_url = rhel6_restraint_repo
+        elif "rhel7" in job_name:
+            repo_url = rhel7_restraint_repo
+
         get_repo = ("wget %s -O /etc/yum.repos.d/restraint.repo" % repo_url)
 
         #TODO use threads instead of for loop
