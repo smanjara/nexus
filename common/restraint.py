@@ -55,6 +55,8 @@ class SSHClient(paramiko.SSHClient):
 		
 class Restraint():
     def __init__(self):
+	global_config = ConfigParser.SafeConfigParser()
+	global_config.read("etc/global.conf")
         self.r_pkgs = global_config.get('restraint', 'remove_pkgs')
         self.i_pkgs = global_config.get('restraint', 'install_pkgs')
 
