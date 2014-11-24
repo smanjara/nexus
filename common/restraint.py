@@ -37,6 +37,9 @@ class Restraint():
         resources = ExistingNodes("EXISTING_NODES")
         my_nodes = resources.identify_nodes()
 
+        setup_config = SetupConfig()
+        job_name = setup_config.jenkins_job_name("JOB_NAME")
+
         global_config = ConfigParser.RawConfigParser()
         global_config.read("etc/global.conf")
         rhel6_restraint_repo = global_config.get('restraint', 'rhel6_restraint_repo')
