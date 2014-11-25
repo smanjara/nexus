@@ -81,6 +81,10 @@ class Restraint():
             repo_url = rhel6_restraint_repo
         elif "rhel7" in job_name:
             repo_url = rhel7_restraint_repo
+	elif "fedora20" in job_name:
+	    repo_url = fed20_restraint_repo
+	elif "fedora" in job_name:
+	    repo_url = fed20_restraint_repo
 
         get_repo = ("wget %s -O /etc/yum.repos.d/restraint.repo" % repo_url)
 	RunTask = SSHClient()
