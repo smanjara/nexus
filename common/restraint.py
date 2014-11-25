@@ -46,11 +46,12 @@ class SSHClient(paramiko.SSHClient):
    	except paramiko.SSHException, e:
 	     print "Cannot execute %s", args
 	else:
-	     if stderr:
+	     exit_status = stderr.channel.recv_exit_status()
+	     if exit_status != 0:
+		 util.log.info('command %s exited with non zero status: %d' %(args, exit_status))
 	         for line in stderr.read().splitlines():
 	   	     util.log.info('host: %s %s' %(host, line))
-		     print "It exited because it's in stderr"
-		     sys.exit(1)
+		 sys.exit(1)
 	     else:
 		 for line in stdout.read().splitlines():
 		      util.log.info('host: %s: %s' % (host, line))
