@@ -29,6 +29,7 @@ class SSHClient(paramiko.SSHClient):
 	util.log.info (global_config.sections())
 	self.username = global_config.get('global', 'username')
 	self.password = global_config.get('global', 'password')
+	self.sshport = 22
 	paramiko.SSHClient.__init__(self)
 	self.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 	
@@ -38,7 +39,7 @@ class SSHClient(paramiko.SSHClient):
 		 nodes: list of hostnames on which commands should be executed
 	"""
 	for host in nodes:
-	    self.connect(host, self.username, self.password)
+	    self.connect(host, self.sshport, self.username, self.password)
             util.log.info("Executing command %s" % args)
         try:
 	     stdin, stdout, stderr = self.exec_command(args)
