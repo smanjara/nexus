@@ -49,6 +49,7 @@ class SSHClient(paramiko.SSHClient):
 	     if stderr:
 	         for line in stderr.read().splitlines():
 	   	     util.log.info('host: %s %s' %(host, line))
+		     print "It exited because it's in stderr"
 		     sys.exit(1)
 	     else:
 		 for line in stdout.read().splitlines():
