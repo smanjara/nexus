@@ -39,22 +39,29 @@ class SSHClient(paramiko.SSHClient):
 		 nodes: list of hostnames on which commands should be executed
 	"""
 	for host in nodes:
-	    self.connect(host, self.sshport, self.username, self.password)
-            util.log.info("Executing command %s" % args)
-        try:
-	     stdin, stdout, stderr = self.exec_command(args)
-   	except paramiko.SSHException, e:
-	     print "Cannot execute %s", args
-	else:
-	     exit_status = stderr.channel.recv_exit_status()
-	     if exit_status != 0:
-		 util.log.info('command %s exited with non zero status: %d' %(args, exit_status))
-	         for line in stderr.read().splitlines():
-	   	     util.log.info('host: %s %s' %(host, line))
-		 sys.exit(1)
-	     else:
-		 for line in stdout.read().splitlines():
-		      util.log.info('host: %s: %s' % (host, line))
+	    try:
+	    	self.connect(host, self.sshport, self.username, self.password, timeout=30)
+	        util.log.info("Executing command %s" % args)
+	    except socket.error, (errno, msg):
+		util.log.error("There was problem connecting to host %r" %(host))
+		util.log.debug("Underlying error message: %r" %(msg))
+		util.log.debug("Socket error: %r" %(errno))
+		sys.exit(1)
+	    else:
+	        try:
+		     stdin, stdout, stderr = self.exec_command(args)
+	   	except paramiko.SSHException, e:
+		     print "Cannot execute %s", args
+		else:
+		     exit_status = stderr.channel.recv_exit_status()
+		     if exit_status != 0:
+			 util.log.info('command %s exited with non zero status: %d' %(args, exit_status))
+	        	 for line in stderr.read().splitlines():
+		   	     util.log.info('host: %s %s' %(host, line))
+			 sys.exit(1)
+		     else:
+			 for line in stdout.read().splitlines():
+			      util.log.info('host: %s: %s' % (host, line))
 		
 class Restraint():
     def __init__(self):
