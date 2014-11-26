@@ -49,9 +49,9 @@ def wget_repo(my_nodes, job_name):
 	rhcs_config = ConfigParser.RawConfigParser()
 	rhcs_config.read("etc/rhcs.conf")
 	repo_url = rhcs_config.get('global','rhcs9_build_repo')
-	if rhel7 in job_name:
+	if 'rhel7' in job_name:
 	    get_repo = ("wget --no-check-certificate %s -O /etc/yum.repos.d/myrepo_0.repo" % repo_url)
-	elif fedora in job_name:
+	elif 'fedora' in job_name:
 	    repo_url = rhcs_config.get('global', 'fedora20_build_repo')
             get_repo = ("wget --no-check-certificate %s -O /etc/yum.repos.d/myrepo_0.repo" % repo_url)
 	for node in my_nodes:
