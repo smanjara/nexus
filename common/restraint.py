@@ -18,6 +18,7 @@ import subprocess
 from common.nodes import ExistingNodes
 from common.config import SetupConfig
 import ConfigParser
+import socket
 
 class SSHClient(paramiko.SSHClient):
     """ This class Inherits paramiko.SSHClient and implements client.exec_commands
