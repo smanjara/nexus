@@ -49,7 +49,11 @@ def wget_repo(my_nodes, job_name):
 	rhcs_config = ConfigParser.RawConfigParser()
 	rhcs_config.read("etc/rhcs.conf")
 	repo_url = rhcs_config.get('global','rhcs9_build_repo')
-	get_repo = ("wget --no-check-certificate %s -O /etc/yum.repos.d/myrepo_0.repo" % repo_url)
+	if rhel7 in job_name:
+	    get_repo = ("wget --no-check-certificate %s -O /etc/yum.repos.d/myrepo_0.repo" % repo_url)
+	else:
+	    repo_url = rhcs_config.get('global', 'fedora20_build_repo')
+            get_repo = ("wget --no-check-certificate %s -O /etc/yum.repos.d/myrepo_0.repo" % repo_url)
 	for node in my_nodes:
 		ssh = paramiko.SSHClient()
 		ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -123,8 +127,9 @@ def beaker_run():
     
     """ Calls restraint and provides the junit file """
     job_name = get_workspace()
-    my_nodes = existing_nodes()
+    my_nodes = existing_nodes() 
     wget_repo_file = wget_repo(my_nodes, job_name)
+
     restraint_inst = restraint_setup()
     restraint_loc = restraint_location()
 
