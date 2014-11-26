@@ -76,6 +76,7 @@ class Restraint():
         global_config.read("etc/global.conf")
         rhel6_restraint_repo = global_config.get('restraint', 'rhel6_restraint_repo')
         rhel7_restraint_repo = global_config.get('restraint', 'rhel7_restraint_repo')
+	fed20_restraint_repo = global_config.get('restraint', 'fed20_restraint_repo')
 
         if "rhel6" in job_name:
             repo_url = rhel6_restraint_repo
