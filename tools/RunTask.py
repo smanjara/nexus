@@ -88,9 +88,12 @@ class SSHClient(paramiko.SSHClient):
 
         return stdout,stderr,exit_status
 
-    
-
     def CopyFiles(self,source,destination):
+	""" This Function copies files to destination nodes 
+	@param:
+	source: name of the file toe be copied
+	destination: name of file to be saved at the destination node
+	"""
         Transport = self.get_transport()
         sftp = paramiko.SFTPClient.from_transport(Transport)
         FileAttributes = sftp.put(source, destination)
