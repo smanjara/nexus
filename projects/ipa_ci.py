@@ -57,7 +57,7 @@ def copy_repo(workspace,my_nodes):
 
     repo_list = glob.glob1(workspace, "*.repo")
     repo_name = repo_list[0]
-    source = os.path.join(workspace, source_name)
+    source = os.path.join(workspace, repo_name)
     destination = "/etc/yum.repos.d/" + repo_name
 
     #TODO use threads instead of for loop
