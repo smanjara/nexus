@@ -17,10 +17,12 @@ import string
 import common.util
 import subprocess
 import ConfigParser
+import glob
 from common.nodes import ExistingNodes
 from common.restraint import Restraint
 from common.config import SetupConfig
 from lxml import etree
+from tools.RunTask import SSHClient
 
 
 def get_workspace():
@@ -44,37 +46,24 @@ def existing_nodes():
     my_nodes = existing_nodes.identify_nodes()
     return my_nodes
 
-def wget_repo(my_nodes, job_name):
+def copy_repo(workspace,my_nodes):
 
-    """Wget the brew build repo in all the existing nodes"""
+    """copy the brew build repo in all the existing nodes"""
+    #TODO Move this to common as this would be required for other teams
     global_config = ConfigParser.SafeConfigParser()
     global_config.read("etc/global.conf")
     username = global_config.get('global', 'username')
     password = global_config.get('global', 'password')
 
-    ipa_config = ConfigParser.RawConfigParser()
-    ipa_config.read("etc/ipa.conf")
-    rhel67_build_repo = ipa_config.get('global', 'rhel67_build_repo')
-    rhel71_build_repo = ipa_config.get('global', 'rhel71_build_repo')
-
-    if "rhel67" in job_name:
-        repo_url = rhel67_build_repo
-    elif "rhel71" in job_name:
-        repo_url = rhel71_build_repo
-
-    get_repo = ("wget --no-check-certificate %s -O /etc/yum.repos.d/myrepo_0.repo" % repo_url)
-
+    repo_list = glob.glob1(workspace, "*.repo")
+    repo_name = repo_list[0]
+    source = os.path.join(workspace, source_name)
+    destination = "/etc/yum.repos.d/" + repo_name
 
     #TODO use threads instead of for loop
     for node in my_nodes:
-        ssh = paramiko.SSHClient()
-        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(node, username=username,
-                    password=password)
-        common.util.log.info("Executing command %s" % get_repo)
-        stdin, stdout, stderr = ssh.exec_command(get_repo)
-        for line in stdout.read().splitlines():
-            common.util.log.info('host: %s: %s' % (node, line))
+        client = SSHClient(node, 22, username, password)
+        client.CopyFiles(source, destination)
 
 def restraint_setup():
 
@@ -184,7 +173,7 @@ def beaker_run():
     workspace = get_workspace()
     job_name = get_job_name()
     my_nodes = existing_nodes()
-    wget_repo_file = wget_repo(my_nodes, job_name)
+    copy_repo_file = copy_repo(workspace, my_nodes)
     restraint_inst = restraint_setup()
     restraint_loc = restraint_location()
 
