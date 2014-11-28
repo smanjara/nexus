@@ -76,38 +76,6 @@ def wget_repo(my_nodes, job_name):
         for line in stdout.read().splitlines():
             common.util.log.info('host: %s: %s' % (node, line))
 
-def build_location(workspace, job_name, restraint_loc):
-
-    """This function replaces REPO_URL in restraint xml with its value"""
-    #NOTE: This function is not used anywhere now.
-    build_repo_file = "BUILD_LOCATION.txt"
-    build_repo_file_loc = os.path.join(workspace, build_repo_file)
-    r = open(build_repo_file_loc, 'r')
-    myrepo_0 = r.read()
-
-    #TODO This loop should be moved to common since the same
-    # is used in restraint_multi_free()
-    ipa_config = ConfigParser.SafeConfigParser()
-    ipa_config.read("etc/ipa.conf")
-    if ipa_config.has_section(job_name):
-        job = ipa_config.get(job_name, 'job_name')
-        print job
-        restraint_job = os.path.join(restraint_loc, job)
-        print restraint_job
-    else:
-        common.util.log.error("Unable to get job_name")
-        sys.exit(1)
-
-    if os.path.exists(restraint_job):
-        j = open(restraint_job, 'r').read()
-        m = j.replace('REPO_URL', myrepo_0)
-        f = open(restraint_job, 'w')
-        f.write(m)
-        f.close()
-    else:
-        common.util.log.error("Unable to find file")
-        sys.exit(2)
-
 def restraint_setup():
 
     """ Configures restraint on beaker nodes """
