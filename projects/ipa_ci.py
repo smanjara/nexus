@@ -46,7 +46,7 @@ def existing_nodes():
     my_nodes = existing_nodes.identify_nodes()
     return my_nodes
 
-def copy_repo(workspace,my_nodes):
+def copy_repo(my_nodes):
 
     """copy the brew build repo in all the existing nodes"""
     #TODO Move this to common as this would be required for other teams
@@ -55,9 +55,21 @@ def copy_repo(workspace,my_nodes):
     username = global_config.get('global', 'username')
     password = global_config.get('global', 'password')
 
-    repo_list = glob.glob1(workspace, "*.repo")
-    repo_name = repo_list[0]
-    source = os.path.join(workspace, repo_name)
+    build_repo_tag = os.environ.get("BUILD_REPO_TAG")
+    build_repo_file = build_repo_tag + ".repo"
+    build_repo_url = os.environ.get("BUILD_REPO_URL")
+
+    repo = open(build_repo_file, "w")
+    repo.write( "[" + build_repo_tag + "]\n");
+    repo.write( "name=" + build_repo_tag + "\n" );
+    repo.write( "baseurl=" + build_repo_url + "\n" );
+    repo.write( "enabled=1\n") ;
+    repo.write( "gpgcheck=0\n" );
+    repo.write( "skip_if_unavailable=1\n" );
+    repo.close()
+
+    repo_list = glob.glob("jenkins*.repo")
+    source = repo_list[0]
     destination = "/etc/yum.repos.d/" + repo_name
 
     #TODO use threads instead of for loop
