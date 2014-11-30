@@ -185,7 +185,7 @@ def beaker_run():
     workspace = get_workspace()
     job_name = get_job_name()
     my_nodes = existing_nodes()
-    copy_repo_file = copy_repo(workspace, my_nodes)
+    copy_repo_file = copy_repo(my_nodes)
     restraint_inst = restraint_setup()
     restraint_loc = restraint_location()
 
