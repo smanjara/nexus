@@ -70,7 +70,7 @@ def copy_repo(my_nodes):
 
     repo_list = glob.glob("jenkins*.repo")
     source = repo_list[0]
-    destination = "/etc/yum.repos.d/" + repo_name
+    destination = "/etc/yum.repos.d/" + source
 
     #TODO use threads instead of for loop
     for node in my_nodes:
