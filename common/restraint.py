@@ -24,12 +24,18 @@ class SSHClient(paramiko.SSHClient):
     """ This class Inherits paramiko.SSHClient and implements client.exec_commands
      channel.exec_command """
 	
-    def __init__(self):
+    def __init__(self, username=None, password=None):
 	global_config = ConfigParser.SafeConfigParser()
 	global_config.read("etc/global.conf")
 	util.log.info (global_config.sections())
-	self.username = global_config.get('global', 'username')
-	self.password = global_config.get('global', 'password')
+	if username == None:
+	    self.username = global_config.get('global', 'username')
+	else:
+	    self.username = username
+	if password == None:
+	    self.password = global_config.get('global', 'password')
+	else:
+	    self.password = password
 	self.sshport = 22
 	paramiko.SSHClient.__init__(self)
 	self.set_missing_host_key_policy(paramiko.AutoAddPolicy())
