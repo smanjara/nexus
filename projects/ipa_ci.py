@@ -22,7 +22,7 @@ from common.nodes import ExistingNodes
 from common.restraint import Restraint
 from common.config import SetupConfig
 from lxml import etree
-from tools.RunTask import SSHClient
+from common.factory import SSHClient
 
 
 def get_workspace():
@@ -50,10 +50,6 @@ def copy_repo(my_nodes):
 
     """copy the brew build repo in all the existing nodes"""
     #TODO Move this to common as this would be required for other teams
-    global_config = ConfigParser.SafeConfigParser()
-    global_config.read("etc/global.conf")
-    username = global_config.get('global', 'username')
-    password = global_config.get('global', 'password')
 
     build_repo_tag = os.environ.get("BUILD_REPO_TAG")
     build_repo_file = build_repo_tag + ".repo"
@@ -74,7 +70,7 @@ def copy_repo(my_nodes):
 
     #TODO use threads instead of for loop
     for node in my_nodes:
-        client = SSHClient(node, 22, username, password)
+        client = SSHClient(node, 22)
         client.CopyFiles(source, destination)
 
 def restraint_setup():

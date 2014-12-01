@@ -19,6 +19,7 @@
 import paramiko
 import argparse
 import StringIO
+import ConfigParser
 
 
 class SSHClient(paramiko.SSHClient):
@@ -26,17 +27,26 @@ class SSHClient(paramiko.SSHClient):
     channel.exec_command """
     
     def __init__(self, hostname=None, port=None, username=None, password=None):
-        """ Initialize connection to Remote Host using SSHClient """
-
+        """ Initialize connection to Remote Host using Paramiko SSHClient. Can be
+	initialized with hostname, port, username and password.
+	if username or passwod is not given, username and password will be taken 
+	from etc/global.conf.
+	"""
         self.hostname = hostname
 
         if port == None:
             self.port = 22
         else:
             self.port = port
-        self.username = username
-        self.password = password
-
+	if username == None or password == None:
+		global_config = ConfigParser.SafeConfigParser()
+		global_config.read("etc/global.conf")
+		self.username = global_config.get('global', 'username')
+		self.password = global_config.get('global', 'password')
+	else:
+		self.username = username
+		self.password = password
+	
         paramiko.SSHClient.__init__(self)
         self.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         self.connect(self.hostname, port=self.port, username=self.username, password=self.password)
@@ -98,56 +108,4 @@ class SSHClient(paramiko.SSHClient):
         sftp = paramiko.SFTPClient.from_transport(Transport)
         FileAttributes = sftp.put(source, destination)
         return FileAttributes
-
-def main():
-
-    parser = argparse.ArgumentParser(description="Run Commands on beaker nodes")
-    required = parser.add_argument_group('Mandatory Arguments')
-    parser.add_argument('--host', help="beaker host",required=True)
-    parser.add_argument('--port', type=int, help="SSH Port")
-    parser.add_argument('--username', help="Username to connect")
-    parser.add_argument('--password', help="User password")
-    parser.add_argument('--command', help="Command to Run")
-    parser.add_argument('--sourcefile', help="Source file to be copied")
-    parser.add_argument('--destfile', help="Destination file name")
-    parser.add_argument('--script', help="Script to Run")
-
-    args = parser.parse_args()
-    client = SSHClient(args.host, 22, args.username, args.password)
-
-    if args.command:
-        stdin, stdout, stderr = client.ExecuteCmd(args.command)
-        if stderr:
-            for line in stderr.read().splitlines():
-                print line
-        if stdout:
-            for line in stdout.read().splitlines():
-                print line
-        #Clean up
-        stdin.close()
-        stdout.close()
-        stderr.close()
-
-    if args.script:
-        stdout,stderr,exit_status = client.ExecuteScript(args.script)
-        output = stdout.getvalue()
-        error = stderr.getvalue()
-        if error:
-            print error
-            print exit_status
-        else:
-            print output
-
-        #clean up
-        stdout.close()
-        stderr.close()
-
-    if args.sourcefile and args.destfile:
-        output = client.CopyFiles(args.sourcefile, args.destfile)
-	print output
-
-if __name__ == '__main__':
-    main()
-
-
 
