@@ -17,6 +17,7 @@ import string
 import common.util
 import subprocess
 import ConfigParser
+import glob
 from common.nodes import ExistingNodes
 from common.restraint import Restraint
 from common.config import SetupConfig
