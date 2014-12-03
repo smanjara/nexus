@@ -27,7 +27,7 @@ def get_workspace():
 
     """ Sets up the workspace Directory and returns jenkins workspace information """
     setup_config = SetupConfig()
-    setup_config.workspace_dir("WORKSPACE")
+    workspace = setup_config.workspace_dir("WORKSPACE")
     return workspace
 
 def get_job_name():
