@@ -48,7 +48,7 @@ def existing_nodes():
     my_nodes = existing_nodes.identify_nodes()
     return my_nodes
 
-def copy_repo():
+def copy_repo(my_nodes):
 
     """ Copy the brew build repo in all existing nodes """
     build_repo_tag = os.environ.get("BUILD_REPO_TAG")
