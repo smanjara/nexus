@@ -145,7 +145,7 @@ def beaker_run():
     job_name = get_job_name()
     my_nodes = existing_nodes() 
     
-   if "rhcs9" in job_name:
+    if "rhcs9" in job_name:
        copy_repo_file = copy_repo(my_nodes)
 
     restraint_inst = restraint_setup()
