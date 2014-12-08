@@ -52,11 +52,11 @@ def copy_repo(my_nodes):
 
     """ Copy the brew build repo in all existing nodes """
     build_repo_tag = os.environ.get("BUILD_REPO_TAG")
-    print build_repo_tag
+    print "build_repo_tag = ", build_repo_tag
     build_repo_file = build_repo_tag + ".repo"
-    print build_repo_file
+    print "build_repo_file = ", build_repo_file
     build_repo_url = os.environ.get("BUILD_REPO_URL")
-    print build_repo_url
+    print "build_repo_url = ", build_repo_url
 
     repo = open(build_repo_file, "w")
     repo.write( "[" + build_repo_tag + "]\n");
@@ -144,8 +144,9 @@ def beaker_run():
     workspace = get_workspace()
     job_name = get_job_name()
     my_nodes = existing_nodes() 
-
-    copy_repo_file = copy_repo(my_nodes)
+    
+   if "rhcs9" in job_name:
+       copy_repo_file = copy_repo(my_nodes)
 
     restraint_inst = restraint_setup()
     restraint_loc = restraint_location()
