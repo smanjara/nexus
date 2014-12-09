@@ -52,10 +52,8 @@ class SSHClient(paramiko.SSHClient):
         self.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 	try:
     	    self.connect(self.hostname, port=self.port, username=self.username, password=self.password, timeout=30)
-	except socket.error, (errno, msg):
-            util.log.error("There was problem connecting to host %r" %(host))
-            util.log.debug("Underlying error message: %r" %(msg))
-            util.log.debug("Socket error: %r" %(errno))
+	except (paramiko.AuthenticationException, paramiko.SSHException, socket.error):
+	    raise
 
     def ExecuteCmd(self, args):
         """ This Function executes commands using SSHClient.exec_commands().
@@ -66,6 +64,7 @@ class SSHClient(paramiko.SSHClient):
             stdin, stdout, stderr = self.exec_command(args,timeout=30)
         except paramiko.SSHException, e:
             print "Cannot execute %s", args
+            raise
         else:
             return stdin, stdout, stderr
 
@@ -81,7 +80,7 @@ class SSHClient(paramiko.SSHClient):
             channel = transport.open_session()
         except paramiko.SSHException, e:
             print "Session rejected"
-            sys.exit();
+            raise
         try:
             channel.exec_command(args)
         except  paramiko.SSHException, e:
