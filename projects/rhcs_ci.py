@@ -142,8 +142,11 @@ def beaker_run():
 
     restraint_inst = restraint_setup()
     restraint_loc, restraint_config_loc = restraint_location()
+    print "restraint_loc = ", restraint_loc
+    print "restraint_config_loc", restraint_config_loc
 
     rhcs_config = ConfigParser.SafeConfigParser()
+    # here we are reading pki-tests/etc/restraint.conf file
     rhcs_config.read(restraint_config_loc)
     
     if rhcs_config.has_section(job_name):
