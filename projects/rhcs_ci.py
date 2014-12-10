@@ -101,7 +101,7 @@ def restraint_location():
     restraint_loc = os.path.join(workspace_option, restraint_option)
     restraint_config_loc = os.path.join(workspace_option, restraint_config)
     print "restraint_config_loc = ", restraint_config_loc
-    return restraint_loc restraint_config_loc
+    return restraint_loc, restraint_config_loc
 
 def restraint_single_free(job_name,my_nodes,restraint_job):
 
@@ -147,7 +147,7 @@ def beaker_run():
     
     if rhcs_config.has_section(job_name):
     	job = rhcs_config.get(job_name, 'job_name')
-	    restraint_job = os.path.join(restraint_loc, job)
+	restraint_job = os.path.join(restraint_loc, job)
     else:
         common.util.log.error("Unable to get job_name")
         sys.exit(1)
