@@ -20,6 +20,7 @@ import paramiko
 import argparse
 import StringIO
 import ConfigParser
+import socket
 
 
 class SSHClient(paramiko.SSHClient):
@@ -49,7 +50,10 @@ class SSHClient(paramiko.SSHClient):
 	
         paramiko.SSHClient.__init__(self)
         self.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        self.connect(self.hostname, port=self.port, username=self.username, password=self.password)
+	try:
+    	    self.connect(self.hostname, port=self.port, username=self.username, password=self.password, timeout=30)
+	except (paramiko.AuthenticationException, paramiko.SSHException, socket.error):
+	    raise
 
     def ExecuteCmd(self, args):
         """ This Function executes commands using SSHClient.exec_commands().
@@ -57,9 +61,10 @@ class SSHClient(paramiko.SSHClient):
         outputs or data is buffered should not be excuted using this function. Use ExecuteScript
         function"""
         try:
-            stdin, stdout, stderr = self.exec_command(args)
+            stdin, stdout, stderr = self.exec_command(args,timeout=30)
         except paramiko.SSHException, e:
             print "Cannot execute %s", args
+            raise
         else:
             return stdin, stdout, stderr
 
@@ -75,7 +80,7 @@ class SSHClient(paramiko.SSHClient):
             channel = transport.open_session()
         except paramiko.SSHException, e:
             print "Session rejected"
-            sys.exit();
+            raise
         try:
             channel.exec_command(args)
         except  paramiko.SSHException, e:
