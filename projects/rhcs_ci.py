@@ -100,15 +100,16 @@ def restraint_location():
     restraint_option = rhcs_config.get('global', 'restraint_jobs')
     restraint_loc = os.path.join(workspace_option, restraint_option)
     restraint_config_loc = os.path.join(workspace_option, restraint_config)
+    print "restraint_config_loc = ", restraint_config_loc
     return restraint_loc restraint_config_loc
 
-def restraint_single_free(job_name,my_nodes,restraint_loc):
+def restraint_single_free(job_name,my_nodes,restraint_job):
 
     """calls the restraint command 
     @param:
     job_name is the job_name that is run from jenkins 
     my_nodes is the number of beaker nodes
-    restraint_loc is the restraint xml job that will be 
+    restraint_joc is the restraint xml job that will be 
     passed to restraint command
     """
     if os.path.exists(restraint_job):
@@ -161,7 +162,7 @@ def beaker_run():
 
     if job_type == "single" and job_style == "free":
         common.util.log.info("Job type is %s and job style is %s" % (job_type, job_style))
-        returncode = restraint_single_free(my_nodes,restraint_job)
+        returncode = restraint_single_free(job_name,my_nodes,restraint_job)
         common.util.log.info("Restraint returned with %r" % returncode)
     else:
         common.util.log.error("Unknown job_style or job_type")
