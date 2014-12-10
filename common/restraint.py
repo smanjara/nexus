@@ -56,7 +56,7 @@ class SSHClient(paramiko.SSHClient):
 		sys.exit(1)
 	    else:
 	        try:
-		     stdin, stdout, stderr = self.exec_command(args,timeout=30)
+		     stdin, stdout, stderr = self.exec_command(args)
 	   	except paramiko.SSHException, e:
 		     print "Cannot execute %s", args
 		else:
