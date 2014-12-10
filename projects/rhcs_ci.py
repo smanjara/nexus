@@ -99,6 +99,7 @@ def restraint_location():
     rhcs_config.read("etc/rhcs.conf")
     restraint_option = rhcs_config.get('global', 'restraint_jobs')
     restraint_loc = os.path.join(workspace_option, restraint_option)
+    restraint_config = rhcs_config.get('global', 'restraint_config')
     restraint_config_loc = os.path.join(workspace_option, restraint_config)
     print "restraint_config_loc = ", restraint_config_loc
     return restraint_loc, restraint_config_loc
