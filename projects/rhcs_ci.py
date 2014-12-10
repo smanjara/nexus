@@ -70,9 +70,9 @@ def copy_repo(my_nodes):
     
     repo_list = glob.glob("jenkins*.repo")
     source = repo_list[0]
-    print source
+    print "source = ", source
     destination = "/etc/yum.repos.d/" + source
-    print destination
+    print "destination = ", destination
     
     for node in my_nodes:
         client = SSHClient(node, 22)
