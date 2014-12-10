@@ -52,6 +52,7 @@ def copy_repo(my_nodes):
 
     """ Copy the brew build repo in all existing nodes """
     build_repo_tag = os.environ.get("BUILD_REPO_TAG")
+    
     print "build_repo_tag = ", build_repo_tag
     build_repo_file = build_repo_tag + ".repo"
     print "build_repo_file = ", build_repo_file
@@ -70,9 +71,9 @@ def copy_repo(my_nodes):
     
     repo_list = glob.glob("jenkins*.repo")
     source = repo_list[0]
-    print "source = ", source
     destination = "/etc/yum.repos.d/" + source
-    print "destination = ", destination
+    common.util.log.info("source = %r" % source)
+    common.util.log.info("destination = %r" % destination)
     
     for node in my_nodes:
         client = SSHClient(node, 22)
@@ -101,7 +102,7 @@ def restraint_location():
     restraint_loc = os.path.join(workspace_option, restraint_option)
     restraint_config = rhcs_config.get('global', 'restraint_config')
     restraint_config_loc = os.path.join(workspace_option, restraint_config)
-    print "restraint_config_loc = ", restraint_config_loc
+    common.util.log.info("returning restraint_config_loc =  %r" % restraint_config_loc)
     return restraint_loc, restraint_config_loc
 
 def restraint_single_free(job_name,my_nodes,restraint_job):
@@ -142,8 +143,8 @@ def beaker_run():
 
     restraint_inst = restraint_setup()
     restraint_loc, restraint_config_loc = restraint_location()
-    print "restraint_loc = ", restraint_loc
-    print "restraint_config_loc", restraint_config_loc
+    common.util.log.info("restraint_loc = %r" % restraint_loc)
+    common.util.log.info("restraint_config_loc = %r" % restraint_config_loc)
 
     rhcs_config = ConfigParser.SafeConfigParser()
     # here we are reading pki-tests/etc/restraint.conf file
