@@ -5,6 +5,7 @@ import sys
 import ConfigParser
 import time
 import util
+import json
 from common.nodes import ExistingNodes
 
 class SetupConfig():
@@ -46,3 +47,16 @@ class SetupConfig():
         with open('etc/global.conf', 'wb') as idm_setup_config:
             idm_config.write(idm_setup_config)
         return job_name
+
+    def ci_message(self, x):
+        self.ci_message = x
+
+        ci_msg = os.environ.get("CI_MESSAGE")
+        data = json.loads(ci_msg)
+        print(json.dumps(data, indent=4))
+
+        with open('ci_message.json', 'w') as outfile:
+            json.dump(data, outfile, indent=4)
+
+        ci_value = data[self.ci_message]
+        return ci_value
