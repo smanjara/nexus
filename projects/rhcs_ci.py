@@ -17,51 +17,66 @@ import string
 import common.util
 import subprocess
 import ConfigParser
+import glob
 from common.nodes import ExistingNodes
 from common.restraint import Restraint
 from common.config import SetupConfig
+from common.factory import SSHClient
 
 
 def get_workspace():
 
-    """ Sets up the workspace Directory and returns job_name """
+    """ Sets up the workspace Directory and returns jenkins workspace information """
     setup_config = SetupConfig()
-    setup_config.workspace_dir("WORKSPACE")
+    workspace = setup_config.workspace_dir("WORKSPACE")
+    return workspace
+
+def get_job_name():
+    
+    """ Returns the current JOB_NAME """
+    setup_config = SetupConfig()
     job_name = setup_config.jenkins_job_name("JOB_NAME")
     return job_name
 
 def existing_nodes():
+
     """ Gets the existing beaker nodes to configure restraint
-    on them. Returns a list of existing beaker systems """
+    on them. Returns a list of existing beaker systems 
+    """
     existing_nodes = ExistingNodes("EXISTING_NODES")
     existing_nodes.env_check()
     my_nodes = existing_nodes.identify_nodes()
     return my_nodes
 
-def wget_repo(my_nodes, job_name):
-	"""Wget the brew build repo in all the existing nodes"""
+def copy_repo(my_nodes):
 
-	global_config = ConfigParser.SafeConfigParser()
-	global_config.read("etc/global.conf")
-	username = global_config.get('global', 'username')
-	password = global_config.get('global', 'password')
+    """ Copy the brew build repo in all existing nodes """
+    build_repo_tag = os.environ.get("BUILD_REPO_TAG")
+    print "build_repo_tag = ", build_repo_tag
+    build_repo_file = build_repo_tag + ".repo"
+    print "build_repo_file = ", build_repo_file
+    build_repo_url = os.environ.get("BUILD_REPO_URL")
+    print "build_repo_url = ", build_repo_url
 
-	rhcs_config = ConfigParser.RawConfigParser()
-	rhcs_config.read("etc/rhcs.conf")
-	repo_url = rhcs_config.get('global','rhcs9_build_repo')
-	if 'rhel7' in job_name:
-	    get_repo = ("wget --no-check-certificate %s -O /etc/yum.repos.d/myrepo_0.repo" % repo_url)
-	elif 'fedora' in job_name:
-	    repo_url = rhcs_config.get('global', 'fedora20_build_repo')
-            get_repo = ("wget --no-check-certificate %s -O /etc/yum.repos.d/myrepo_0.repo" % repo_url)
-	for node in my_nodes:
-		ssh = paramiko.SSHClient()
-		ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-		ssh.connect(node, username=username,password=password)
-		common.util.log.info("Executing command %s" % get_repo)
-		stdin, stdout, stderr = ssh.exec_command(get_repo)
-		for line in stdout.read().splitlines():
-			common.util.log.info('host: %s: %s' % (node, line))
+    repo = open(build_repo_file, "w")
+    repo.write( "[" + build_repo_tag + "]\n");
+    repo.write( "name=" + build_repo_tag + "\n" );
+    repo.write( "baseurl=" + build_repo_url + "\n" );
+    repo.write( "enabled=1\n") ;
+    repo.write( "gpgcheck=0\n" );
+    repo.write( "skip_if_unavailable=1\n" );
+    repo.close()
+    
+    
+    repo_list = glob.glob("jenkins*.repo")
+    source = repo_list[0]
+    print "source = ", source
+    destination = "/etc/yum.repos.d/" + source
+    print "destination = ", destination
+    
+    for node in my_nodes:
+        client = SSHClient(node, 22)
+        client.CopyFiles(source, destination)
 
 def restraint_setup():
 
@@ -126,13 +141,15 @@ def restraint_single_free(job_name,my_nodes,restraint_loc):
 def beaker_run():
     
     """ Calls restraint and provides the junit file """
-    job_name = get_workspace()
+    workspace = get_workspace()
+    job_name = get_job_name()
     my_nodes = existing_nodes() 
-    wget_repo_file = wget_repo(my_nodes, job_name)
+    
+    if "rhcs9" in job_name:
+       copy_repo_file = copy_repo(my_nodes)
 
     restraint_inst = restraint_setup()
     restraint_loc = restraint_location()
-
 
     rhcs_config = ConfigParser.SafeConfigParser()
     rhcs_config.read("etc/rhcs.conf")
