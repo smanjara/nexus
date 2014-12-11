@@ -58,5 +58,5 @@ class SetupConfig():
         with open('ci_message.json', 'w') as outfile:
             json.dump(data, outfile, indent=4)
 
-        ci_value = data[self.ci_message]
-        return ci_value
+        ci_msg_value = data[self.ci_message]
+        return ci_msg_value
