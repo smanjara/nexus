@@ -49,10 +49,9 @@ class SSHClient(paramiko.SSHClient):
 	    try:
 	    	self.connect(host, self.sshport, self.username, self.password, timeout=30)
 	        util.log.info("Executing command %s" % args)
-	    except socket.error, (errno, msg):
-		util.log.error("There was problem connecting to host %r" %(host))
-		util.log.debug("Underlying error message: %r" %(msg))
-		util.log.debug("Socket error: %r" %(errno))
+	    #This exception needs to be handled much better
+	    except socket.error, e:
+		util.log.error("There was problem with socket: ", e)
 		sys.exit(1)
 	    else:
 	        try:
