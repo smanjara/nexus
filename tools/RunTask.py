@@ -122,10 +122,7 @@ def main():
         try:
             client = SSHClient(args.host, 22, args.username, args.password)
         except socket.error, e:
-            if len(e.args) == 1:
-                 _errno, errmsg = 'UNKNOWN', e.args[0]
-            else:
-                _errno, errmsg = e.args
+	    print "There was some error connecting host:", e
             print "Try again: ", count
             count += 1
         else:
