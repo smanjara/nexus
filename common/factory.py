@@ -136,6 +136,8 @@ class Errata():
         xmlrpc = ConfigParser.SafeConfigParser()
         xmlrpc.read(errata_config_loc)
         self.xmlrpc_url = xmlrpc.get('xmlrpc-info', 'xmlrpc-url')
+        self.download_loc = xmlrpc.get('xmlrpc-info', 'download_loc')
+        self.mount_base = xmlrpc.get('xmlrpc-info', 'mount_base')
 
         try:
             self.xmlrpc_url and self.errata_id
@@ -144,11 +146,9 @@ class Errata():
 
     def getPackagesURL(self):
 
-        download_loc = "http://download.devel.redhat.com"
         et_rpc_proxy = xmlrpclib.ServerProxy(self.xmlrpc_url)
         response = et_rpc_proxy.getErrataPackages(self.errata_id)
 
         for rpm in response:
-            rpm = rpm.replace('/mnt/redhat', '')
-            rpm_url = (download_loc + rpm)
+            rpm_url = rpm.replace(self.mount_base, self.download_loc)
             print rpm_url
