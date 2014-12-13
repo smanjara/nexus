@@ -124,6 +124,9 @@ def main():
         except socket.error, e:
 	    print "There was some error connecting host:", e
             print "Try again: ", count
+	    count += 1
+	except paramiko.AuthenticationException, e:
+	    print "Wrong username and password"
             count += 1
         else:
             if args.command:
@@ -134,6 +137,8 @@ def main():
                 if stdout:
                    for line in stdout.read().splitlines():
                         print line
+		stdout.close()
+		stderr.close()
             if args.script:
                 stdout,stderr,exit_status = client.ExecuteScript(args.script)
                 output = stdout.getvalue()
@@ -143,12 +148,8 @@ def main():
                	    print "Exit status : ", exit_status
 	        else:
         	    print "Script Output: ", output
-
-	    if stdout:
 		stdout.close()
-	    if stderr:
 		stderr.close()
-
     	    if args.sourcefile and args.destfile:
 	        output = client.CopyFiles(args.sourcefile, args.destfile)
 		print output
@@ -156,6 +157,4 @@ def main():
 	
 if __name__ == '__main__':
     main()
-
-
 
