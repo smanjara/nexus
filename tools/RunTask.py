@@ -143,15 +143,17 @@ def main():
                	    print "Exit status : ", exit_status
 	        else:
         	    print "Script Output: ", output
-	    stdout.close()
-	    stderr.close()
-            break
 
+	    if stdout:
+		stdout.close()
+	    if stderr:
+		stderr.close()
 
-    if args.sourcefile and args.destfile:
-        output = client.CopyFiles(args.sourcefile, args.destfile)
-	print output
-
+    	    if args.sourcefile and args.destfile:
+	        output = client.CopyFiles(args.sourcefile, args.destfile)
+		print output
+	    break
+	
 if __name__ == '__main__':
     main()
 
