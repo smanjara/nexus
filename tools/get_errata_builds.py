@@ -35,6 +35,9 @@ class Errata():
             print "xmlrpc_url or errata_id is not defined"
 
     def getPackagesURL(self):
+        """ This function returns the response received from xmlrpc server.
+        In this case, it returns build URL.
+        """
 
         et_rpc_proxy = xmlrpclib.ServerProxy(self.xmlrpc_url)
         response = et_rpc_proxy.getErrataPackages(self.errata_id)
@@ -44,6 +47,7 @@ class Errata():
         return response
 
     def dlPackages(self):
+        """ Download packages attached to Errata """
         url = self.getPackagesURL()
 
         for rpm_url in url:
