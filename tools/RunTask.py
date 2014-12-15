@@ -19,7 +19,7 @@
 import paramiko
 import argparse
 import StringIO
-
+import socket
 
 class SSHClient(paramiko.SSHClient):
     """ This class Inherits paramiko.SSHClient and implements client.exec_commands 
@@ -39,7 +39,10 @@ class SSHClient(paramiko.SSHClient):
 
         paramiko.SSHClient.__init__(self)
         self.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        self.connect(self.hostname, port=self.port, username=self.username, password=self.password)
+    	try:
+            self.connect(self.hostname, port=self.port, username=self.username, password=self.password)
+        except (paramiko.AuthenticationException, paramiko.SSHException, socket.error):
+            raise
 
     def ExecuteCmd(self, args):
         """ This Function executes commands using SSHClient.exec_commands().
@@ -50,6 +53,7 @@ class SSHClient(paramiko.SSHClient):
             stdin, stdout, stderr = self.exec_command(args)
         except paramiko.SSHException, e:
             print "Cannot execute %s", args
+            raise
         else:
             return stdin, stdout, stderr
 
@@ -65,7 +69,7 @@ class SSHClient(paramiko.SSHClient):
             channel = transport.open_session()
         except paramiko.SSHException, e:
             print "Session rejected"
-            sys.exit();
+            raise
         try:
             channel.exec_command(args)
         except  paramiko.SSHException, e:
@@ -113,41 +117,44 @@ def main():
     parser.add_argument('--script', help="Script to Run")
 
     args = parser.parse_args()
-    client = SSHClient(args.host, 22, args.username, args.password)
-
-    if args.command:
-        stdin, stdout, stderr = client.ExecuteCmd(args.command)
-        if stderr:
-            for line in stderr.read().splitlines():
-                print line
-        if stdout:
-            for line in stdout.read().splitlines():
-                print line
-        #Clean up
-        stdin.close()
-        stdout.close()
-        stderr.close()
-
-    if args.script:
-        stdout,stderr,exit_status = client.ExecuteScript(args.script)
-        output = stdout.getvalue()
-        error = stderr.getvalue()
-        if error:
-            print error
-            print exit_status
+    count = 1
+    while count < 6:
+        try:
+            client = SSHClient(args.host, 22, args.username, args.password)
+        except socket.error, e:
+	    print "There was some error connecting host:", e
+            print "Try again: ", count
+	    count += 1
+	except paramiko.AuthenticationException, e:
+	    print "Wrong username and password"
+            count += 1
         else:
-            print output
-
-        #clean up
-        stdout.close()
-        stderr.close()
-
-    if args.sourcefile and args.destfile:
-        output = client.CopyFiles(args.sourcefile, args.destfile)
-	print output
-
+            if args.command:
+                stdin, stdout, stderr = client.ExecuteCmd(args.command)
+	        if stderr:
+                    for line in stderr.read().splitlines():
+                        print line
+                if stdout:
+                   for line in stdout.read().splitlines():
+                        print line
+		stdout.close()
+		stderr.close()
+            if args.script:
+                stdout,stderr,exit_status = client.ExecuteScript(args.script)
+                output = stdout.getvalue()
+                error = stderr.getvalue()
+	        if error:
+        	    print "error running script: ", error
+               	    print "Exit status : ", exit_status
+	        else:
+        	    print "Script Output: ", output
+		stdout.close()
+		stderr.close()
+    	    if args.sourcefile and args.destfile:
+	        output = client.CopyFiles(args.sourcefile, args.destfile)
+		print output
+	    break
+	
 if __name__ == '__main__':
     main()
-
-
 
