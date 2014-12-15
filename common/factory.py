@@ -149,6 +149,6 @@ class Errata():
         et_rpc_proxy = xmlrpclib.ServerProxy(self.xmlrpc_url)
         response = et_rpc_proxy.getErrataPackages(self.errata_id)
 
-        for rpm in response:
-            rpm_url = rpm.replace(self.mount_base, self.download_loc)
-            print rpm_url
+        response = [w.replace(self.mount_base, self.download_loc) for w in response]
+        response = set(response)
+        return response
