@@ -23,6 +23,7 @@ from common.restraint import Restraint
 from common.config import SetupConfig
 from lxml import etree
 from common.factory import SSHClient
+from common.factory import restraint_html
 
 
 def get_workspace():
@@ -173,6 +174,7 @@ def beaker_run():
     copy_repo_file = copy_repo(my_nodes)
     restraint_inst = restraint_setup()
     restraint_loc, restraint_config_loc = restraint_location()
+    restraint_html = restraint_html()
     common.util.log.info("restraint_loc = %r" % restraint_loc)
     common.util.log.info("restraint_config_loc = %r" % restraint_config_loc)
 
@@ -208,3 +210,4 @@ def beaker_run():
         sys.exit(1)
 
     restraint_inst.restraint_junit("junit.xml")
+    restraint_html.copy_index.html()
