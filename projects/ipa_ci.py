@@ -174,7 +174,7 @@ def beaker_run():
     copy_repo_file = copy_repo(my_nodes)
     restraint_inst = restraint_setup()
     restraint_loc, restraint_config_loc = restraint_location()
-    restraint_html = restraint_html()
+    restraint_status = restraint_html()
     common.util.log.info("restraint_loc = %r" % restraint_loc)
     common.util.log.info("restraint_config_loc = %r" % restraint_config_loc)
 
@@ -210,4 +210,4 @@ def beaker_run():
         sys.exit(1)
 
     restraint_inst.restraint_junit("junit.xml")
-    restraint_html.copy_index_html()
+    restraint_status.copy_index_html()
