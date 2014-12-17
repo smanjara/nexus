@@ -210,4 +210,4 @@ def beaker_run():
         sys.exit(1)
 
     restraint_inst.restraint_junit("junit.xml")
-    restraint_html.copy_index.html()
+    restraint_html.copy_index_html()
