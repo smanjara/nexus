@@ -110,6 +110,7 @@ def restraint_single_free(job_name,my_nodes,restraint_job):
     passed to restraint command
     """
     if os.path.exists(restraint_job):
+        print restraint_job
         j = open(restraint_job, 'r').read()
         m = j.replace('hostname1', my_nodes[0])
         f = open(restraint_job, 'w')
@@ -185,6 +186,7 @@ def beaker_run():
     if ipa_config.has_section(job_name):
         job = ipa_config.get(job_name, 'job_name')
         restraint_job = os.path.join(restraint_loc, job)
+        common.util.log.info("restraint job = %s" % restraint_job)
     else:
         common.util.log.error("Unable to get job_name")
         sys.exit(1)
@@ -199,11 +201,11 @@ def beaker_run():
 
     if job_type == "single" and job_style == "free":
         common.util.log.info("Job type is %s and job style is %s" % (job_type, job_style))
-        returncode = restraint_single_free(job_name, my_nodes,restraint_loc)
+        returncode = restraint_single_free(job_name, my_nodes,restraint_job)
         common.util.log.info("Restraint returned with %r" % returncode)
     elif job_type == "multi" and job_style == "free":
         common.util.log.info("Job type is %s and job style is %s" % (job_type, job_style))
-        returncode = restraint_multi_free(job_name, my_nodes, restraint_loc)
+        returncode = restraint_multi_free(job_name, my_nodes, restraint_job)
         common.util.log.info("Restraint returned with %r" % returncode)
     else:
         common.util.log.error("Unknown job_style or job_type")
