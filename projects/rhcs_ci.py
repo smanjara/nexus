@@ -52,6 +52,7 @@ def copy_repo(my_nodes):
 
     """ Copy the brew build repo in all existing nodes """
     build_repo_tag = os.environ.get("BUILD_REPO_TAG")
+    
     print "build_repo_tag = ", build_repo_tag
     build_repo_file = build_repo_tag + ".repo"
     print "build_repo_file = ", build_repo_file
@@ -70,9 +71,9 @@ def copy_repo(my_nodes):
     
     repo_list = glob.glob("jenkins*.repo")
     source = repo_list[0]
-    print "source = ", source
     destination = "/etc/yum.repos.d/" + source
-    print "destination = ", destination
+    common.util.log.info("source = %r" % source)
+    common.util.log.info("destination = %r" % destination)
     
     for node in my_nodes:
         client = SSHClient(node, 22)
@@ -99,28 +100,20 @@ def restraint_location():
     rhcs_config.read("etc/rhcs.conf")
     restraint_option = rhcs_config.get('global', 'restraint_jobs')
     restraint_loc = os.path.join(workspace_option, restraint_option)
-    return restraint_loc
+    restraint_config = rhcs_config.get('global', 'restraint_config')
+    restraint_config_loc = os.path.join(workspace_option, restraint_config)
+    common.util.log.info("returning restraint_config_loc =  %r" % restraint_config_loc)
+    return restraint_loc, restraint_config_loc
 
-def restraint_single_free(job_name,my_nodes,restraint_loc):
+def restraint_single_free(job_name,my_nodes,restraint_job):
 
     """calls the restraint command 
     @param:
     job_name is the job_name that is run from jenkins 
     my_nodes is the number of beaker nodes
-    restraint_loc is the restraint xml job that will be 
+    restraint_joc is the restraint xml job that will be 
     passed to restraint command
     """
-
-    rhcs_config = ConfigParser.SafeConfigParser()
-    rhcs_config.read("etc/rhcs.conf")
-
-    if rhcs_config.has_section(job_name):
-        job = rhcs_config.get(job_name, 'job_name')
-        restraint_job = os.path.join(restraint_loc, job)
-        print restraint_job
-    else:
-        common.util.log.error("Unable to get job_name")
-        sys.exit(1)
     if os.path.exists(restraint_job):
         j = open(restraint_job, 'r').read()
         m = j.replace('hostname1', my_nodes[0])
@@ -149,11 +142,21 @@ def beaker_run():
        copy_repo_file = copy_repo(my_nodes)
 
     restraint_inst = restraint_setup()
-    restraint_loc = restraint_location()
+    restraint_loc, restraint_config_loc = restraint_location()
+    common.util.log.info("restraint_loc = %r" % restraint_loc)
+    common.util.log.info("restraint_config_loc = %r" % restraint_config_loc)
 
     rhcs_config = ConfigParser.SafeConfigParser()
-    rhcs_config.read("etc/rhcs.conf")
+    # here we are reading pki-tests/etc/restraint.conf file
+    rhcs_config.read(restraint_config_loc)
     
+    if rhcs_config.has_section(job_name):
+    	job = rhcs_config.get(job_name, 'job_name')
+	restraint_job = os.path.join(restraint_loc, job)
+    else:
+        common.util.log.error("Unable to get job_name")
+        sys.exit(1)
+
     if job_name:    
         rhcs_config.has_section(job_name)
         job_style = rhcs_config.get(job_name, 'style')
@@ -164,7 +167,7 @@ def beaker_run():
 
     if job_type == "single" and job_style == "free":
         common.util.log.info("Job type is %s and job style is %s" % (job_type, job_style))
-        returncode = restraint_single_free(job_name,my_nodes,restraint_loc)
+        returncode = restraint_single_free(job_name,my_nodes,restraint_job)
         common.util.log.info("Restraint returned with %r" % returncode)
     else:
         common.util.log.error("Unknown job_style or job_type")

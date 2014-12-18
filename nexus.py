@@ -18,7 +18,7 @@ import common.util
 parser = argparse.ArgumentParser(description='CI tool')
 
 required = parser.add_argument_group('required arguments')
-parser.add_argument('--async', help='build test resources for async')
+parser.add_argument('--async', help='build test resources for async', action="store_true")
 required.add_argument('--project', help='IdM project name. Accepted values: ipa \
                         ', required=True)
 required.add_argument('--provisioner', help='Test resource provisioner. \
@@ -26,18 +26,15 @@ required.add_argument('--provisioner', help='Test resource provisioner. \
 
 args = parser.parse_args()
 pj = args.project
-asy = args.async
 pv = args.provisioner
 
 def main():
-    if pj == "ipa":
-        if pv == "beaker":
-            projects.ipa_ci.beaker_run()
-        else:
-            common.util.log.error("Missing acceptable provisioner name, see help for more info")
-    elif pj == "rhcs":
-        if pv == "beaker":
-            projects.rhcs_ci.beaker_run()
+    if pj == "ipa" and pv == "beaker" and args.async:
+        print "holy cow! It's async!"
+    elif pj == "ipa" and pv == "beaker":
+        projects.ipa_ci.beaker_run()
+    elif pj == "rhcs" and pv == "beaker":
+        projects.rhcs_ci.beaker_run()
     else:
         common.util.log.error("Missing acceptable project name, see help for more info")
 

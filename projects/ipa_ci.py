@@ -23,6 +23,7 @@ from common.restraint import Restraint
 from common.config import SetupConfig
 from lxml import etree
 from common.factory import SSHClient
+from common.factory import restraint_html
 
 
 def get_workspace():
@@ -86,33 +87,30 @@ def restraint_setup():
 def restraint_location():
 
     """ Gets restraint job xml location from the current workspace """
-    ipa_config = ConfigParser.SafeConfigParser()
-    ipa_config.read("etc/global.conf")
-    workspace_option = ipa_config.get('global', 'workspace')
+    idm_config = ConfigParser.SafeConfigParser()
+    idm_config.read("etc/global.conf")
+    workspace_option = idm_config.get('global', 'workspace')
 
     ipa_config = ConfigParser.SafeConfigParser()
     ipa_config.read("etc/ipa.conf")
     restraint_option = ipa_config.get('global', 'restraint_jobs')
     restraint_loc = os.path.join(workspace_option, restraint_option)
-    return restraint_loc
 
-def restraint_single_free(job_name,my_nodes,restraint_loc):
+    restraint_config = ipa_config.get('global', 'restraint_config')
+    restraint_config_loc = os.path.join(workspace_option, restraint_config)
+    common.util.log.info("returning restraint_config_loc =  %r" % restraint_config_loc)
+    return restraint_loc, restraint_config_loc
 
-    ipa_config = ConfigParser.SafeConfigParser()
-    ipa_config.read("etc/ipa.conf")
+def restraint_single_free(job_name,my_nodes,restraint_job):
 
-    #TODO This loop should be moved to common since the same
-    # is used in restraint_multi_free()
-    if ipa_config.has_section(job_name):
-        job = ipa_config.get(job_name, 'job_name')
-        print job
-        restraint_job = os.path.join(restraint_loc, job)
-        print restraint_job
-    else:
-        common.util.log.error("Unable to get job_name")
-        sys.exit(1)
-
+    """calls the restraint command
+    job_name is the job_name that is run from jenkins
+    my_nodes is the number of beaker nodes
+    restraint_job is the restraint xml job that will be
+    passed to restraint command
+    """
     if os.path.exists(restraint_job):
+        print restraint_job
         j = open(restraint_job, 'r').read()
         m = j.replace('hostname1', my_nodes[0])
         f = open(restraint_job, 'w')
@@ -124,26 +122,19 @@ def restraint_single_free(job_name,my_nodes,restraint_loc):
 
     host1 = ("1=%s:8081" % my_nodes[0])
     subprocess.check_call(['cat', restraint_job])
+    common.util.log.info("Executing %r Job  on %r Nodes using Job xml %r" %(job_name, my_nodes[0],restraint_job))
     returncode = subprocess.check_call(['restraint', '-j', restraint_job, '-t', host1, '-v', '-v'])
 
     return returncode
 
-def restraint_multi_free(job_name,my_nodes,restraint_loc):
+def restraint_multi_free(job_name,my_nodes,restraint_job):
 
-    """Executes restraint command for multi host testing"""
-    ipa_config = ConfigParser.SafeConfigParser()
-    ipa_config.read("etc/ipa.conf")
-
-    #TODO Check restraint_single_free()
-    if ipa_config.has_section(job_name):
-        job = ipa_config.get(job_name, 'job_name')
-        print job
-        restraint_job = os.path.join(restraint_loc, job)
-        print restraint_job
-    else:
-        common.util.log.error("Unable to get job_name")
-        sys.exit(1)
-
+    """Executes restraint command for multi host testing
+    job_name is the job_name that is run from jenkins
+    my_nodes is the number of beaker nodes
+    restraint_job is the restraint xml job that will be
+    passed to restraint command
+    """
     node = 0
     host_num = 1
     host_recipe = []
@@ -183,10 +174,22 @@ def beaker_run():
     my_nodes = existing_nodes()
     copy_repo_file = copy_repo(my_nodes)
     restraint_inst = restraint_setup()
-    restraint_loc = restraint_location()
+    restraint_loc, restraint_config_loc = restraint_location()
+    restraint_status = restraint_html()
+    common.util.log.info("restraint_loc = %r" % restraint_loc)
+    common.util.log.info("restraint_config_loc = %r" % restraint_config_loc)
 
     ipa_config = ConfigParser.SafeConfigParser()
-    ipa_config.read("etc/ipa.conf")
+    # here we are reading ipa-tests/restraint/restraint.conf file
+    ipa_config.read(restraint_config_loc)
+
+    if ipa_config.has_section(job_name):
+        job = ipa_config.get(job_name, 'job_name')
+        restraint_job = os.path.join(restraint_loc, job)
+        common.util.log.info("restraint job = %s" % restraint_job)
+    else:
+        common.util.log.error("Unable to get job_name")
+        sys.exit(1)
 
     if job_name:
         ipa_config.has_section(job_name)
@@ -198,14 +201,15 @@ def beaker_run():
 
     if job_type == "single" and job_style == "free":
         common.util.log.info("Job type is %s and job style is %s" % (job_type, job_style))
-        returncode = restraint_single_free(job_name, my_nodes,restraint_loc)
+        returncode = restraint_single_free(job_name, my_nodes,restraint_job)
         common.util.log.info("Restraint returned with %r" % returncode)
     elif job_type == "multi" and job_style == "free":
         common.util.log.info("Job type is %s and job style is %s" % (job_type, job_style))
-        returncode = restraint_multi_free(job_name, my_nodes, restraint_loc)
+        returncode = restraint_multi_free(job_name, my_nodes, restraint_job)
         common.util.log.info("Restraint returned with %r" % returncode)
     else:
         common.util.log.error("Unknown job_style or job_type")
         sys.exit(1)
 
     restraint_inst.restraint_junit("junit.xml")
+    restraint_status.copy_index_html()
