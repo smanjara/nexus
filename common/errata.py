@@ -125,3 +125,4 @@ class Errata():
             raise
         else:
             util.log.info("Successfully copied %s to %s" % (errata_yaml_template, errata_yaml))
+            return 0
