@@ -19,7 +19,7 @@
 import ConfigParser
 import xmlrpclib
 import os
-import sys
+import re
 import shutil
 import util
 
@@ -36,9 +36,9 @@ class Errata():
         else:
             self.errata_id = errata_id
 
-        if not self.errata_id:
-            util.log.error("Failed to find errata_id")
-            sys.exit(1)
+        if self.errata_id == None:
+            util.log.error("Value for errata_id not found")
+            raise ValueError
 
         idm_config = ConfigParser.SafeConfigParser()
         idm_config.read("etc/global.conf")
@@ -118,4 +118,10 @@ class Errata():
         util.log.info ("%s YAML job for Errata # %s: %s" % (self.errata_rel_ver, \
                         errata_id, errata_yaml))
 
-        shutil.copyfile(errata_yaml_template, errata_yaml)
+        try:
+            shutil.copyfile(errata_yaml_template, errata_yaml)
+        except IOError as ioerr:
+            print "There was an IO Error", ioerr
+            raise
+        else:
+            util.log.info("Successfully copied %s to %s" % (errata_yaml_template, errata_yaml))
