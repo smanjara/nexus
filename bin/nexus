@@ -9,4 +9,4 @@ CLI functionality is implemented by tasks/cli.py
 from nexus.tasks import cli
 
 if __name__ == '__main__':
-    cli.run()
+    cli.main()
