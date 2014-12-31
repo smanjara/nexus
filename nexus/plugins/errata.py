@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 import os
-import xmlrpclib
 from nexus.lib import factory
 
 class Errata():

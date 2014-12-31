@@ -19,7 +19,6 @@ setup(
     install_requires=[
         'paramiko',
         'ConfigParser',
-        'xmlrpclib',
         'simplejson',
         'oslo.config',
         'glob2',

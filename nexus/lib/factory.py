@@ -3,7 +3,6 @@
 import koji as brew
 import threading
 import ConfigParser
-import xmlrpclib
 import json
 import urllib2
 import os
