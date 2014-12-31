@@ -57,31 +57,31 @@ class SSHClient(paramiko.SSHClient):
 
     def __init__(self, hostname=None, port=None, username=None, password=None):
         """ Initialize connection to Remote Host using Paramiko SSHClient. Can be
-    initialized with hostname, port, username and password.
-    if username or passwod is not given, username and password will be taken
-    from etc/nexus.ini
-    """
+        initialized with hostname, port, username and password.
+        if username or passwod is not given, username and password will be taken
+        from etc/nexus.ini
+        """
         self.hostname = hostname
 
         if port == None:
             self.port = 22
         else:
             self.port = port
-    if username == None or password == None:
-        global_config = ConfigParser.SafeConfigParser()
-        global_config.read("etc/nexus.ini")
-        self.username = global_config.get('global', 'username')
-        self.password = global_config.get('global', 'password')
-    else:
-        self.username = username
-        self.password = password
+        if username == None or password == None:
+            global_config = ConfigParser.SafeConfigParser()
+            global_config.read("etc/nexus.ini")
+            self.username = global_config.get('global', 'username')
+            self.password = global_config.get('global', 'password')
+        else:
+            self.username = username
+            self.password = password
 
         paramiko.SSHClient.__init__(self)
         self.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    try:
+        try:
             self.connect(self.hostname, port=self.port, username=self.username, password=self.password, timeout=30)
-    except (paramiko.AuthenticationException, paramiko.SSHException, socket.error):
-        raise
+        except (paramiko.AuthenticationException, paramiko.SSHException, socket.error):
+            raise
 
     def ExecuteCmd(self, args):
         """ This Function executes commands using SSHClient.exec_commands().
@@ -132,11 +132,11 @@ class SSHClient(paramiko.SSHClient):
         return stdout,stderr,exit_status
 
     def CopyFiles(self,source,destination):
-    """ This Function copies files to destination nodes
-    @param:
-    source: name of the file toe be copied
-    destination: name of file to be saved at the destination node
-    """
+        """ This Function copies files to destination nodes
+        @param:
+        source: name of the file toe be copied
+        destination: name of file to be saved at the destination node
+        """
         Transport = self.get_transport()
         sftp = paramiko.SFTPClient.from_transport(Transport)
         FileAttributes = sftp.put(source, destination)
