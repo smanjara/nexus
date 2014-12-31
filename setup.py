@@ -20,7 +20,7 @@ setup(
         'paramiko',
         'ConfigParser',
         'simplejson',
-        'oslo.config',
+        'wget',
         'glob2',
     ],
     include_package_data=True

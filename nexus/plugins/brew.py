@@ -2,7 +2,6 @@
 
 import koji as brew
 import os
-import os.path
 from nexus.lib import factory
 
 pathinfo = brew.PathInfo(topdir='http://download.lab.bos.redhat.com/brewroot')
@@ -11,6 +10,9 @@ brew = brew.ClientSession('http://brewhub.devel.redhat.com/brewhub')
 class Brew():
 
     def __init__(self, options, conf_dict):
+        """
+        If options are not available through cli then check conf provided.
+        """
 
         if options.tag is None:
             self.brew_tag = conf_dict['brew']['brew_tag']
@@ -36,19 +38,40 @@ class Brew():
             builds = options.build
         self.brew_builds = [item.strip() for item in builds.split(',')]
 
+    def download_rpms(self, rpm_item):
+        """
+        Download rpms using wget in threads.
+        """
 
-    def list_tagged(self, item):
-        builds = brew.listTagged(self.brew_tag, latest=True, package=item, type=None, inherit=True)
-        print builds
+        import wget
+        filename = wget.download(rpm_item, self.build_download_loc)
 
+    def get_tagged(self, item):
+        """
+        This function constructs the download build URL for each rpm and
+        creates a list of all the rpms in each build. This rpms list is then
+        passed on to threads along with download_rpms().
+        """
+
+        builds = brew.listTagged(self.brew_tag, latest=True, package=item, \
+                                type=None, inherit=True)
+        for build in builds:
+            buildpath = pathinfo.build(build)
+            rpms = brew.listRPMs(build['id'], arches=self.brew_arch)
+            rpms_list = []
+            for rpm in rpms:
+                rpmpath = pathinfo.rpm(rpm)
+                rpmurl = os.path.join(buildpath, rpmpath)
+                rpms_list.append(rpmurl)
+
+        fac = factory.Threader()
+        fac.gather_results([fac.get_item(self.download_rpms, rpm_item) for rpm_item \
+                            in rpms_list])
 
     def get_latest(self, options, conf_dict):
+        """
+        Opens thread for each build provided and calls get_tagged()
+        """
         fac = factory.Threader()
-        fac.gather_results([fac.get_item(self.list_tagged, item) for item in \
+        fac.gather_results([fac.get_item(self.get_tagged, item) for item in \
                            self.brew_builds])
-
-    #def get_url():
-
-    #def get_builds():
-    #    factory.get_item()
-    #    factory.gather_results()
