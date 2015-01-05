@@ -55,7 +55,7 @@ class SSHClient(paramiko.SSHClient):
     """ This class Inherits paramiko.SSHClient and implements client.exec_commands
     channel.exec_command """
 
-    def __init__(self, hostname=None, port=None, username=None, password=None, conf_dict):
+    def __init__(self, conf_dict, hostname=None, port=None, username=None, password=None):
         """ Initialize connection to Remote Host using Paramiko SSHClient. Can be
         initialized with hostname, port, username and password.
         if username or passwod is not given, username and password will be taken
