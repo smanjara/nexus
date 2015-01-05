@@ -1,5 +1,5 @@
 # Development ini
-/nexus/etc/nexus.ini
+/nexus/etc/nexus.conf
 
 # Compiled python modules.
 *.pyc
