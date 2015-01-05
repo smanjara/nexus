@@ -2,6 +2,7 @@
 
 import os
 from nexus.lib import factory
+from nexus.lib import jenkins
 
 class Restraint():
 
@@ -17,3 +18,6 @@ class Restraint():
         else:
             self.restraint_xmls = options.xml_loc
 
+    def run_restraint(self, options, conf_dict):
+
+        print "run restraint yay!"

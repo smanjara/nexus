@@ -55,7 +55,7 @@ class SSHClient(paramiko.SSHClient):
     """ This class Inherits paramiko.SSHClient and implements client.exec_commands
     channel.exec_command """
 
-    def __init__(self, hostname=None, port=None, username=None, password=None):
+    def __init__(self, hostname=None, port=None, username=None, password=None, conf_dict):
         """ Initialize connection to Remote Host using Paramiko SSHClient. Can be
         initialized with hostname, port, username and password.
         if username or passwod is not given, username and password will be taken
@@ -68,10 +68,8 @@ class SSHClient(paramiko.SSHClient):
         else:
             self.port = port
         if username == None or password == None:
-            global_config = ConfigParser.SafeConfigParser()
-            global_config.read("etc/nexus.ini")
-            self.username = global_config.get('global', 'username')
-            self.password = global_config.get('global', 'password')
+            self.username = conf_dict['beaker']['username']
+            self.password = conf_dict['beaker']['password']
         else:
             self.username = username
             self.password = password

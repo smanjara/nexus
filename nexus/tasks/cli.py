@@ -3,8 +3,10 @@
 import os
 import sys
 import argparse
+import ConfigParser
 from nexus.lib import factory
 from nexus.plugins.brew import Brew
+from nexus.plugins.restraint import Restraint
 from nexus.plugins.errata import Errata
 
 def create_parser():
@@ -47,10 +49,37 @@ def main(argv=None):
     config = setup_conf(options)
     execute(options, config)
 
-
 def setup_conf(options):
 
     conf = options.conf
+
+    config = ConfigParser.SafeConfigParser()
+    config.read(conf)
+
+    workspace = os.environ.get("WORKSPACE")
+    if not workspace:
+        print ("Failed to find WORKSPACE env variable")
+    else:
+        print ("WORKSPACE env variable is %s" % workspace)
+        config.set('jenkins', 'workspace', workspace)
+
+    job_name = os.environ.get("JOB_NAME")
+    if not job_name:
+        print ("Failed to find JOB_NAME")
+    else:
+        print ("JOB_NAME from env variable is %s" % job_name)
+        config.set('jenkins', 'job_name', job_name)
+
+    existing_nodes = os.environ.get("EXISTING_NODES")
+    if not existing_nodes:
+        print ("Failed to find EXISTING_NODES env variable.")
+    else:
+        print ("EXISTING_NODES from env variable is %s" % existing_nodes)
+        config.set('jenkins', 'existing_nodes', existing_nodes)
+
+    with open(conf, 'wb') as confini:
+        config.write(confini)
+
     if os.path.isfile(conf):
         f = factory.Conf_ini()
         f.read(conf)
@@ -60,11 +89,11 @@ def setup_conf(options):
 def execute(options, conf_dict):
 
     if options.command == 'brew':
-        brew_1 = Brew(options, conf_dict)
-        brew_1.get_latest(options, conf_dict)
-    elif options.command == 'errata':
-        errata_1 = Errata(options, conf_dict)
+        brew = Brew(options, conf_dict)
+        brew.get_latest(options, conf_dict)
+    elif options.command == 'restraint':
+        restraint = Restraint(options, conf_dict)
+        restraint.run_restraint(options, conf_dict)
 
 if __name__ == '__main__':
     sys.path.insert(0, '.')
-
