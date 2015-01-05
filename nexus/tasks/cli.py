@@ -8,13 +8,20 @@ from nexus.lib import factory
 from nexus.plugins.brew import Brew
 from nexus.plugins.restraint import Restraint
 from nexus.plugins.errata import Errata
+from nexus.plugins.git import Git
 
 def create_parser():
     parser = argparse.ArgumentParser()
     recursive_parser = argparse.ArgumentParser(add_help=False)
 
-    subparser = parser.add_subparsers(help='brew, errata, restraint or ci',
+    subparser = parser.add_subparsers(help='git, brew, errata, restraint or ci',
                                       dest='command')
+
+    parser_git = subparser.add_parser('git')
+    parser_git.add_argument('--project', help='Git project')
+    parser_git.add_argument('--repo', help='Git repo URL')
+    parser_git.add_argument('--branch', help='Git branch')
+    parser_git.add_argument('--tar', help='Git archived file out')
 
     parser_brew = subparser.add_parser('brew')
     parser_brew.add_argument('--tag', help='Brew build tag')
@@ -88,7 +95,10 @@ def setup_conf(options):
 
 def execute(options, conf_dict):
 
-    if options.command == 'brew':
+    if options.command == 'git':
+        git = Git(options, conf_dict)
+        git.get_archive()
+    elif options.command == 'brew':
         brew = Brew(options, conf_dict)
         brew.get_latest(options, conf_dict)
     elif options.command == 'restraint':
