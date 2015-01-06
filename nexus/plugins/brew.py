@@ -38,13 +38,13 @@ class Brew():
             builds = options.build
         self.brew_builds = [item.strip() for item in builds.split(',')]
 
-    def download_rpms(self, rpm_item):
+    def download_rpms(self, rpmurl):
         """
         Download rpms using wget in threads.
         """
 
         import wget
-        filename = wget.download(rpm_item, self.build_download_loc)
+        filename = wget.download(rpmurl, self.build_download_loc)
 
     def get_tagged(self, item):
         """
@@ -63,10 +63,9 @@ class Brew():
                 rpmpath = pathinfo.rpm(rpm)
                 rpmurl = os.path.join(buildpath, rpmpath)
                 rpms_list.append(rpmurl)
+                self.download_rpms(rpmurl)
+                print ("Downloading %s" % rpmurl)
 
-        fac = factory.Threader()
-        fac.gather_results([fac.get_item(self.download_rpms, rpm_item) for rpm_item \
-                            in rpms_list])
 
     def get_latest(self, options, conf_dict):
         """
