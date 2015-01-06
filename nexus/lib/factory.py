@@ -9,6 +9,8 @@ import os
 import paramiko
 import socket
 import argparse
+import StringIO
+
 
 class Conf_ini(ConfigParser.ConfigParser):
     def conf_to_dict(self):
@@ -55,24 +57,20 @@ class SSHClient(paramiko.SSHClient):
     """ This class Inherits paramiko.SSHClient and implements client.exec_commands
     channel.exec_command """
 
-    def __init__(self, conf_dict, hostname=None, port=None, username=None, password=None):
+    def __init__(self, hostname=None, port=None, username=None, password=None):
         """ Initialize connection to Remote Host using Paramiko SSHClient. Can be
         initialized with hostname, port, username and password.
         if username or passwod is not given, username and password will be taken
         from etc/nexus.ini
         """
         self.hostname = hostname
+        self.username = username
+        self.password = password
 
         if port == None:
             self.port = 22
         else:
             self.port = port
-        if username == None or password == None:
-            self.username = conf_dict['beaker']['username']
-            self.password = conf_dict['beaker']['password']
-        else:
-            self.username = username
-            self.password = password
 
         paramiko.SSHClient.__init__(self)
         self.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -132,7 +130,7 @@ class SSHClient(paramiko.SSHClient):
     def CopyFiles(self,source,destination):
         """ This Function copies files to destination nodes
         @param:
-        source: name of the file toe be copied
+        source: name of the file to be copied
         destination: name of file to be saved at the destination node
         """
         Transport = self.get_transport()
