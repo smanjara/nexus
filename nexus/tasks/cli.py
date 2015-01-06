@@ -17,13 +17,13 @@ def create_parser():
     subparser = parser.add_subparsers(help='git, brew, errata, restraint or ci',
                                       dest='command')
 
-    parser_git = subparser.add_parser('git', add_help=False)
+    parser_git = subparser.add_parser('git')
     parser_git.add_argument('--project', help='Git project')
     parser_git.add_argument('--repo', help='Git repo URL')
     parser_git.add_argument('--branch', help='Git branch')
     parser_git.add_argument('--tar', help='Git archived file out')
 
-    parser_brew = subparser.add_parser('brew', add_help=False)
+    parser_brew = subparser.add_parser('brew')
     parser_brew.add_argument('--tag', help='Brew build tag')
     parser_brew.add_argument('--build', help='Brew build name')
     parser_brew.add_argument('--arch', help='Machine arch. Defaults to all if not provided')
@@ -37,7 +37,12 @@ def create_parser():
     parser_restraint.add_argument('--restraint-repo', help='Restraint repo')
     parser_restraint.add_argument('--restraint-xml', help='Restraint xml file')
 
-    parser_ci = subparser.add_parser('ci', parents=[parser_git, parser_brew])
+    parser_ci = subparser.add_parser('ci', add_help=False)
+    parser_ci.add_argument('--project', help='Git project for CI namespace')
+    parser_ci.add_argument('--repo', help='Git repo URL for CI namespace')
+    parser_ci.add_argument('--branch', help='Git branch for CI namespace')
+    parser_ci.add_argument('--tar', help='Git archived file out for CI namespace')
+
 
     parser.add_argument('--conf', dest='conf', help='configuration file')
 
