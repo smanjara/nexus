@@ -17,13 +17,13 @@ def create_parser():
     subparser = parser.add_subparsers(help='git, brew, errata, restraint or ci',
                                       dest='command')
 
-    parser_git = subparser.add_parser('git')
+    parser_git = subparser.add_parser('git', add_help=False)
     parser_git.add_argument('--project', help='Git project')
     parser_git.add_argument('--repo', help='Git repo URL')
     parser_git.add_argument('--branch', help='Git branch')
     parser_git.add_argument('--tar', help='Git archived file out')
 
-    parser_brew = subparser.add_parser('brew')
+    parser_brew = subparser.add_parser('brew', add_help=False)
     parser_brew.add_argument('--tag', help='Brew build tag')
     parser_brew.add_argument('--build', help='Brew build name')
     parser_brew.add_argument('--arch', help='Machine arch. Defaults to all if not provided')
@@ -34,11 +34,10 @@ def create_parser():
     parser_errata.add_argument('--yaml-loc', help='Errata yaml file location')
 
     parser_restraint = subparser.add_parser('restraint')
-    parser_restraint.add_argument('--repo', help='Restraint repo')
-    parser_restraint.add_argument('--xml-loc', help='Restraint xml file location')
+    parser_restraint.add_argument('--restraint-repo', help='Restraint repo')
+    parser_restraint.add_argument('--restraint-xml', help='Restraint xml file')
 
-    parser_ci = subparser.add_parser('ci')
-    parser_ci.add_argument('--provisioner', help='Provisioner for test execution')
+    parser_ci = subparser.add_parser('ci', parents=[parser_git, parser_brew])
 
     parser.add_argument('--conf', dest='conf', help='configuration file')
 
@@ -103,7 +102,10 @@ def execute(options, conf_dict):
         brew.get_latest(options, conf_dict)
     elif options.command == 'restraint':
         restraint = Restraint(options, conf_dict)
-        restraint.run_restraint(options, conf_dict)
+        restraint.run_restraint()
+    elif options.command == 'ci':
+        git = Git(options, conf_dict)
+        git.get_archive()
 
 if __name__ == '__main__':
     sys.path.insert(0, '.')
