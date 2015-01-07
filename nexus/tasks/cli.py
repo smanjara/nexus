@@ -30,8 +30,7 @@ def create_parser():
     parser_brew.add_argument('--loc', help='Absolute path of download to directory')
 
     parser_errata = subparser.add_parser('errata')
-    parser_errata.add_argument('--release', help='Errata release')
-    parser_errata.add_argument('--yaml-loc', help='Errata yaml file location')
+    parser_errata.add_argument('--errata-loc', help='Absolute path of download to directory')
 
     parser_restraint = subparser.add_parser('restraint')
     parser_restraint.add_argument('--restraint-repo', help='Restraint repo')
@@ -108,9 +107,12 @@ def execute(options, conf_dict):
     elif options.command == 'restraint':
         restraint = Restraint(options, conf_dict)
         restraint.run_restraint()
+    elif options.command == 'errata':
+        errata = Errata(options, conf_dict)
+        errata.download_errata_builds()
     elif options.command == 'ci':
         git = Git(options, conf_dict)
         git.get_archive()
 
 if __name__ == '__main__':
-    sys.path.insert(0, '.')
+    main()
