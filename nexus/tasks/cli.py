@@ -106,7 +106,7 @@ def execute(options, conf_dict):
         brew.get_latest(options, conf_dict)
     elif options.command == 'restraint':
         restraint = Restraint(options, conf_dict)
-        restraint.run_restraint()
+        restraint.run_restraint(conf_dict)
     elif options.command == 'errata':
         errata = Errata(options, conf_dict)
         errata.download_errata_builds()
