@@ -33,6 +33,7 @@ def create_parser():
     parser_errata.add_argument('--errata-loc', help='Absolute path of download to directory')
 
     parser_restraint = subparser.add_parser('restraint')
+    parser_restraint.add_argument('--build-repo', help='Build repo')
     parser_restraint.add_argument('--restraint-xml', help='Restraint xml file')
 
     parser_ci = subparser.add_parser('ci', add_help=False)
@@ -105,7 +106,7 @@ def execute(options, conf_dict):
         brew.get_latest(options, conf_dict)
     elif options.command == 'restraint':
         restraint = Restraint(options, conf_dict)
-        restraint.run_restraint(conf_dict)
+        restraint.run_restraint(options, conf_dict)
     elif options.command == 'errata':
         errata = Errata(options, conf_dict)
         errata.download_errata_builds()
