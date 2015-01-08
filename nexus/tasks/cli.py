@@ -33,7 +33,6 @@ def create_parser():
     parser_errata.add_argument('--errata-loc', help='Absolute path of download to directory')
 
     parser_restraint = subparser.add_parser('restraint')
-    parser_restraint.add_argument('--restraint-repo', help='Restraint repo')
     parser_restraint.add_argument('--restraint-xml', help='Restraint xml file')
 
     parser_ci = subparser.add_parser('ci', add_help=False)
