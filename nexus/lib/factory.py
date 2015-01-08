@@ -32,13 +32,13 @@ class Conf_ini(ConfigParser.ConfigParser):
 
 class Threader(object):
 
-    def get_item(self, f, item):
+    def get_item(self, f, item, conf_dict):
         """
         Function which runs a given function in a thread and stores the result.
         """
         result_info = [threading.Event(), None]
         def runit():
-            result_info[1] = f(item)
+            result_info[1] = f(item, conf_dict)
             result_info[0].set()
         threading.Thread(target=runit).start()
         return result_info

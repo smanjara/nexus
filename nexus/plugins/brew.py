@@ -46,7 +46,7 @@ class Brew():
         import wget
         filename = wget.download(rpmurl, self.build_download_loc)
 
-    def get_tagged(self, item):
+    def get_tagged(self, item, conf_dict):
         """
         This function constructs the download build URL for each rpm and
         creates a list of all the rpms in each build. This rpms list is then
@@ -72,5 +72,5 @@ class Brew():
         Opens thread for each build provided and calls get_tagged()
         """
         fac = factory.Threader()
-        fac.gather_results([fac.get_item(self.get_tagged, item) for item in \
+        fac.gather_results([fac.get_item(self.get_tagged, item, conf_dict) for item in \
                            self.brew_builds])
