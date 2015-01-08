@@ -80,6 +80,25 @@ class Restraint():
         source, destination = self.copy_build_repo()
         ssh_c.CopyFiles(source, destination)
 
+    def restraint_junit(self):
+        """convert job.xml to junit.xml"""
+
+        job2junit = "/usr/share/restraint/client/job2junit.xml"
+
+        all_dirs = [d for d in os.listdir('.') if os.path.isdir(d)]
+        latest_dir = max(all_dirs, key=os.path.getmtime)
+
+        job_xml = os.path.join(latest_dir, "job.xml")
+        args = ('xsltproc', '/usr/share/restraint/client/job2junit.xml', job_xml)
+        p_out = subprocess.PIPE
+        p_err = subprocess.PIPE
+
+        p = subprocess.Popen(args,stdout=p_out,stderr=p_err)
+        stdout,stderr = p.communicate()
+
+        fd = open("junit.xml", "w")
+        fd.write(stdout)
+        fd.close()
 
     def run_restraint(self, conf_dict):
         """
