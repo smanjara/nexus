@@ -46,8 +46,10 @@ class Restraint():
     def my_build_repo(self, host, conf_dict):
 
         source = self.build_repo
-        destination = "/etc/yum.repos.d/" + source
+        destination = "/etc/yum.repos.d/my_build.repo"
 
+        print source
+        print destination
         ssh_c = SSHClient(hostname = host, username = \
                                   self.username, password = self.password)
         ssh_c.CopyFiles(source, destination)
@@ -125,6 +127,7 @@ class Restraint():
         else:
             rest_command = "restraint" + " " + "-j" + " " + self.restraint_xml \
                             + " " + self.restraint_hosts + " " + "-v" + " " + "-v"
+            print rest_command
             returncode = subprocess.check_call(rest_command.split(), shell=False)
             return returncode
 
@@ -173,7 +176,7 @@ class Restraint():
         else:
             self.build_repo = options.build_repo
             threads.gather_results([threads.get_item(self.my_build_repo, \
-                                    host, conf_dict) for host in self.existing_nodes])
+                                   host, conf_dict) for host in self.existing_nodes])
 
         if len(self.existing_nodes) == 1:
             print self.restraint_xml
@@ -181,5 +184,5 @@ class Restraint():
             self.execute_restraint()
         else:
             print self.restraint_xml
-            self.execute_restraint()
             self.restraint_update_xml()
+            self.execute_restraint()
