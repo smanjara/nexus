@@ -9,6 +9,7 @@ from nexus.plugins.brew import Brew
 from nexus.plugins.restraint import Restraint
 from nexus.plugins.errata import Errata
 from nexus.plugins.git import Git
+from nexus.plugins.ci import CI
 
 def create_parser():
     parser = argparse.ArgumentParser()
@@ -36,11 +37,15 @@ def create_parser():
     parser_restraint.add_argument('--build-repo', help='Build repo')
     parser_restraint.add_argument('--restraint-xml', help='Restraint xml file')
 
-    parser_ci = subparser.add_parser('ci', add_help=False)
-    parser_ci.add_argument('--project', help='Git project for CI namespace')
-    parser_ci.add_argument('--repo', help='Git repo URL for CI namespace')
-    parser_ci.add_argument('--branch', help='Git branch for CI namespace')
-    parser_ci.add_argument('--tar', help='Git archived file out for CI namespace')
+    parser_ci = subparser.add_parser('ci')
+    parser_ci.add_argument('--provisioner', help='Infra used for test systems provisioning')
+    parser_ci.add_argument('--builds-from', help='Builds from brew or errata')
+    parser_ci.add_argument('--project', help=argparse.SUPPRESS)
+    parser_ci.add_argument('--repo', help=argparse.SUPPRESS)
+    parser_ci.add_argument('--branch', help=argparse.SUPPRESS)
+    parser_ci.add_argument('--tar', help=argparse.SUPPRESS)
+    parser_ci.add_argument('--build-repo', help=argparse.SUPPRESS)
+    parser_ci.add_argument('--restraint-xml', help=argparse.SUPPRESS)
 
 
     parser.add_argument('--conf', dest='conf', help='configuration file')
@@ -107,12 +112,13 @@ def execute(options, conf_dict):
     elif options.command == 'restraint':
         restraint = Restraint(options, conf_dict)
         restraint.run_restraint(options, conf_dict)
+        restraint.restraint_junit()
     elif options.command == 'errata':
         errata = Errata(options, conf_dict)
         errata.download_errata_builds()
     elif options.command == 'ci':
-        git = Git(options, conf_dict)
-        git.get_archive()
+        ci = CI(options, conf_dict)
+        ci.run(options, conf_dict)
 
 if __name__ == '__main__':
     main()
