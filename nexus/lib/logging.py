@@ -1,9 +1,11 @@
+#!/usr/bin/python
+
 """ Contains common utility functions to be used internally """
 import logging
 
 log = logging.getLogger(__name__)
 
-# set Log Level 
+# set Log Level
 log.setLevel(logging.DEBUG)
 
 
@@ -17,3 +19,4 @@ handler.setFormatter(formatter)
 
 log.addHandler(handler)
 log.propagate = False
+

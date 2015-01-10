@@ -1,0 +1,33 @@
+[global]
+existing_nodes = EXISTING_NODES
+workspace = 
+username = root
+password = whatever
+job_name = 
+
+[git]
+git_repo = 
+git_get_branch = ci
+git_tar_out = ipa-tests.tar
+
+[errata]
+xmlrpc_url = 
+download_loc = 
+errata_yamls = ipa-tests/jobs/errata/
+mount_base = /mnt/redhat
+RHEL-6.4.Z = 
+RHEL-7.0.Z = 
+
+[restraint]
+remove_pkgs = rhts-python
+install_pkgs = restraint staf restraint-rhts
+restraint_xmls = ipa-tests/restraint/
+rhel4_restraint_repo = 
+rhel5_restraint_repo = 
+rhel6_restraint_repo = 
+rhel7_restraint_repo = 
+fed19_restraint_repo = 
+fed20_restraint_repo = 
+
+[restraint-jobs]
+ipa-adtrust-rhel71-x86_64-bkr-runtest = 
