@@ -4,6 +4,7 @@ import os
 import sys
 import argparse
 import ConfigParser
+from nexus.lib import logger
 from nexus.lib import factory
 from nexus.plugins.brew import Brew
 from nexus.plugins.restraint import Restraint
@@ -76,16 +77,16 @@ def setup_conf(options):
 
     workspace = os.environ.get("WORKSPACE")
     if not workspace:
-        print ("Failed to find WORKSPACE env variable")
+        logger.log.warn("Unable to find WORKSPACE in env variable")
     else:
-        print ("WORKSPACE env variable is %s" % workspace)
+        logger.log.info("WORKSPACE env variable is %s" % workspace)
         config.set('jenkins', 'workspace', workspace)
 
     job_name = os.environ.get("JOB_NAME")
     if not job_name:
-        print ("Failed to find JOB_NAME")
+        logger.log.warn("Unable to find JOB_NAME in env variable")
     else:
-        print ("JOB_NAME from env variable is %s" % job_name)
+        logger.log.info("JOB_NAME from env variable is %s" % job_name)
         config.set('jenkins', 'job_name', job_name)
 
     existing_nodes = os.environ.get("EXISTING_NODES")
