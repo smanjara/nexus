@@ -10,6 +10,7 @@ from nexus.plugins.restraint import Restraint
 from nexus.plugins.errata import Errata
 from nexus.plugins.git import Git
 from nexus.plugins.ci import CI
+import nexus.version
 
 def create_parser():
     parser = argparse.ArgumentParser()
@@ -49,6 +50,8 @@ def create_parser():
 
 
     parser.add_argument('--conf', dest='conf', help='configuration file')
+    parser.add_argument('--version', dest='version', action='version', version=version(),
+                        help='show version')
 
     return parser
 
@@ -119,6 +122,9 @@ def execute(options, conf_dict):
     elif options.command == 'ci':
         ci = CI(options, conf_dict)
         ci.run(options, conf_dict)
+
+def version():
+    return "version: %s" % nexus.version.version_info.version_string()
 
 if __name__ == '__main__':
     main()
