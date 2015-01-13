@@ -22,6 +22,7 @@ setup(
         'simplejson',
         'wget',
         'glob2',
+	'pbr'
     ],
     include_package_data=True
 )
