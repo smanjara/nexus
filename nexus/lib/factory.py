@@ -11,6 +11,7 @@ import socket
 import argparse
 import StringIO
 
+PARAMIKO_VERSION = tuple(int(ver) for ver in paramiko.__version__.split('.'))
 
 class Conf_ini(ConfigParser.ConfigParser):
     def conf_to_dict(self):
@@ -85,7 +86,10 @@ class SSHClient(paramiko.SSHClient):
         outputs or data is buffered should not be excuted using this function. Use ExecuteScript
         function"""
         try:
-            stdin, stdout, stderr = self.exec_command(args,timeout=30)
+	    if PARAMIKO_VERSION >= (1, 15, 0):
+	       stdin, stdout, stderr = self.exec_command(args,timeout=30)
+	    else:
+	       stdin, stdout, stderr = self.exec_command(args)
         except paramiko.SSHException, e:
             print "Cannot execute %s", args
             raise
