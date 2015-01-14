@@ -107,7 +107,7 @@ class Restraint():
 
         service = ("restraintd")
         start_service_cmd = ("service %s start; chkconfig %s on" % (service, service))
-        logger.log.info(start_service)
+        logger.log.info(start_service_cmd)
         stdin, stdout, stderr = ssh_c.ExecuteCmd(start_service_cmd)
         for line in stdout.read().splitlines(): logger.log.info(line)
 
