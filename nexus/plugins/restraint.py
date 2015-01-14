@@ -1,4 +1,14 @@
 #!/usr/bin/python
+# Copyright (c) 2015 Red Hat, Inc. All rights reserved.
+#
+# This copyrighted material is made available to anyone wishing
+# to use, modify, copy, or redistribute it subject to the terms
+# and conditions of the GNU General Public License version 2.
+#
+# You should have received a copy of the GNU General Public
+# License along with this program; if not, write to the Free
+# Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+# Boston, MA 02110-1301, USA.
 
 import os
 import sys
@@ -8,6 +18,7 @@ import subprocess
 from nexus.lib.factory import SSHClient
 from nexus.lib.factory import Threader
 from nexus.lib import jenkins
+from nexus.lib import logger
 
 class Restraint():
 
@@ -27,6 +38,7 @@ class Restraint():
         build_repo_file = build_repo_tag + ".repo"
         build_repo_url = os.environ.get("BUILD_REPO_URL")
 
+        logger.log.info("Creating build repo file %s" % build_repo_file)
         repo = open(build_repo_file, "w")
         repo.write( "[" + build_repo_tag + "]\n");
         repo.write( "name=" + build_repo_tag + "\n" );
@@ -39,6 +51,9 @@ class Restraint():
         source = build_repo_file
         destination = "/etc/yum.repos.d/" + source
 
+        logger.log.info("source file is %s" % source)
+        logger.log.info("destination file is %s" % destination)
+
         ssh_c = SSHClient(hostname = host, username = \
                                   self.username, password = self.password)
         ssh_c.CopyFiles(source, destination)
@@ -48,8 +63,7 @@ class Restraint():
         source = self.build_repo
         destination = "/etc/yum.repos.d/my_build.repo"
 
-        print source
-        print destination
+        logger.log.info("Copying %s to %s on %s" % source, destination, host)
         ssh_c = SSHClient(hostname = host, username = \
                                   self.username, password = self.password)
         ssh_c.CopyFiles(source, destination)
@@ -61,6 +75,7 @@ class Restraint():
         Install restraint rpms and start its service.
         """
 
+        logger.log.info("Checking platform.dist of %s" % host)
         ssh_c = SSHClient(hostname = host, username = \
                                   self.username, password = self.password)
         stdin, stdout, stderr = ssh_c.ExecuteCmd('python -c "import platform; \
@@ -73,26 +88,31 @@ class Restraint():
 
         restraint_repo = conf_dict['restraint'][dist[1]]
         wget_cmd = "wget " + restraint_repo + " -O " + repo_out
+        logger.log.info(wget)
         stdin, stdout, stderr = ssh_c.ExecuteCmd(wget_cmd)
-        for line in stdout.read().splitlines(): print line
+        for line in stdout.read().splitlines(): logger.log.info(line)
 
         restraint_remove_rpms = conf_dict['restraint']['remove_rpm']
         remove_cmd = "yum remove -y " + restraint_remove_rpms
+        logger.log.info(remove_cmd)
         stdin, stdout, stderr = ssh_c.ExecuteCmd(remove_cmd)
-        for line in stdout.read().splitlines(): print line
+        for line in stdout.read().splitlines(): logger.log.info(line)
 
         restraint_install_rpms = conf_dict['restraint']['install_rpm']
         install_cmd = "yum install -y " + restraint_install_rpms
+        logger.log.info(install_cmd)
         stdin, stdout, stderr = ssh_c.ExecuteCmd(install_cmd)
-        for line in stdout.read().splitlines(): print line
+        for line in stdout.read().splitlines(): logger.log.info(line)
 
         service = ("restraintd")
         start_service_cmd = ("service %s start; chkconfig %s on" % (service, service))
+        logger.log.info(start_service)
         stdin, stdout, stderr = ssh_c.ExecuteCmd(start_service_cmd)
-        for line in stdout.read().splitlines(): print line
+        for line in stdout.read().splitlines(): logger.log.info(line)
 
     def restraint_update_xml(self):
 
+        logger.log.info("Updating %s with existing_node information" % self.restraint_xml)
         node = 0
         host_num = 1
         host_recipe = []
@@ -127,13 +147,14 @@ class Restraint():
         else:
             rest_command = "restraint" + " " + "-j" + " " + self.restraint_xml \
                             + " " + self.restraint_hosts + " " + "-v" + " " + "-v"
-            print rest_command
+            logger.log.info(rest_command)
             returncode = subprocess.check_call(rest_command.split(), shell=False)
             return returncode
 
     def restraint_junit(self):
         """convert job.xml to junit.xml"""
 
+        logger.log.info("Converting job.xml to junit")
         job2junit = "/usr/share/restraint/client/job2junit.xml"
 
         all_dirs = [d for d in os.listdir('.') if os.path.isdir(d)]
@@ -155,6 +176,8 @@ class Restraint():
         """
         Call restraint_setup function using threads per host.
         """
+
+        logger.log.info("Running restraint...")
         threads = Threader()
 
         if options.restraint_xml is None:
@@ -178,11 +201,14 @@ class Restraint():
             threads.gather_results([threads.get_item(self.my_build_repo, \
                                    host, conf_dict) for host in self.existing_nodes])
 
+        logger.log.info("Using %s" % self.restraint_xml)
         if len(self.existing_nodes) == 1:
-            print self.restraint_xml
+            logger.log.info("Found single host in existing_nodes")
+            logger.log.info("single node: %s" % self.existing_nodes)
             self.restraint_update_xml()
             self.execute_restraint()
         else:
-            print self.restraint_xml
+            logger.log.info("Found multiple hosts in existing_nodes")
+            logger.log.info("multiple nodes: %s" % self.existing_nodes)
             self.restraint_update_xml()
             self.execute_restraint()
