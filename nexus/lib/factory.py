@@ -11,7 +11,7 @@ import socket
 import argparse
 import StringIO
 
-PARAMIKO_VERSION = tuple(int(ver) for ver in paramiko.__version__.split('.'))
+PARAMIKO_VERSION = (int(paramiko.__version__.split('.')[0]), int(paramiko.__version__.split('.')[1]))
 
 class Conf_ini(ConfigParser.ConfigParser):
     def conf_to_dict(self):
