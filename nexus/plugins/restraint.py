@@ -63,7 +63,7 @@ class Restraint():
         source = self.build_repo
         destination = "/etc/yum.repos.d/my_build.repo"
 
-        logger.log.info("Copying %s to %s on %s" % source, destination, host)
+        logger.log.info("Copying %s to %s on %s" % (source, destination, host))
         ssh_c = SSHClient(hostname = host, username = \
                                   self.username, password = self.password)
         ssh_c.CopyFiles(source, destination)
@@ -84,7 +84,7 @@ class Restraint():
         dist = str(dist).replace('(','').replace(')','').replace("'", "").\
                replace(',','')
         dist = dist.split()
-        logger.log.info("Platform distribution for host %s is %s" % host, dist)
+        logger.log.info("Platform distribution for host %s is %s" % (host, dist))
         repo_out = "/etc/yum.repos.d/restraint.repo"
 
         restraint_repo = conf_dict['restraint'][dist[1]]
