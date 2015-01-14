@@ -84,6 +84,7 @@ class Restraint():
         dist = str(dist).replace('(','').replace(')','').replace("'", "").\
                replace(',','')
         dist = dist.split()
+        logger.log.info("Platform distribution for host %s is %s" % host, dist)
         repo_out = "/etc/yum.repos.d/restraint.repo"
 
         restraint_repo = conf_dict['restraint'][dist[1]]
