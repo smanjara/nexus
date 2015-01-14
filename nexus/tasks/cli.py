@@ -1,4 +1,14 @@
 #!/usr/bin/python
+# Copyright (c) 2015 Red Hat, Inc. All rights reserved.
+#
+# This copyrighted material is made available to anyone wishing
+# to use, modify, copy, or redistribute it subject to the terms
+# and conditions of the GNU General Public License version 2.
+#
+# You should have received a copy of the GNU General Public
+# License along with this program; if not, write to the Free
+# Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+# Boston, MA 02110-1301, USA.
 
 import os
 import sys
@@ -29,18 +39,23 @@ def create_parser():
     parser_brew = subparser.add_parser('brew')
     parser_brew.add_argument('--tag', help='Brew build tag')
     parser_brew.add_argument('--build', help='Brew build name')
-    parser_brew.add_argument('--arch', help='Machine arch. Defaults to all if not provided')
-    parser_brew.add_argument('--loc', help='Absolute path of download to directory')
+    parser_brew.add_argument('--arch', help='Machine arch. Defaults to all if \
+                            not provided')
+    parser_brew.add_argument('--loc', help='Absolute path of download to \
+                            directory')
 
     parser_errata = subparser.add_parser('errata')
-    parser_errata.add_argument('--errata-loc', help='Absolute path of download to directory')
+    parser_errata.add_argument('--errata-id', help='Errata Id')
+    parser_errata.add_argument('--errata-loc', help='Absolute path of download \
+                                to directory')
 
     parser_restraint = subparser.add_parser('restraint')
     parser_restraint.add_argument('--build-repo', help='Build repo')
     parser_restraint.add_argument('--restraint-xml', help='Restraint xml file')
 
     parser_ci = subparser.add_parser('ci')
-    parser_ci.add_argument('--provisioner', help='Infra used for test systems provisioning')
+    parser_ci.add_argument('--provisioner', help='Infra used for test systems \
+                            provisioning')
     parser_ci.add_argument('--builds-from', help='Builds from brew or errata')
     parser_ci.add_argument('--project', help=argparse.SUPPRESS)
     parser_ci.add_argument('--repo', help=argparse.SUPPRESS)
@@ -51,7 +66,8 @@ def create_parser():
 
 
     parser.add_argument('--conf', dest='conf', help='configuration file')
-    parser.add_argument('--version', dest='version', action='version', version=version(),
+    parser.add_argument('--version', dest='version', action='version', \
+                        version=version(),
                         help='show version')
 
     return parser
@@ -91,9 +107,9 @@ def setup_conf(options):
 
     existing_nodes = os.environ.get("EXISTING_NODES")
     if not existing_nodes:
-        print ("Failed to find EXISTING_NODES env variable.")
+        logger.log.warn("Unable to find EXISTING_NODES env variable.")
     else:
-        print ("EXISTING_NODES from env variable is %s" % existing_nodes)
+        logger.log.info("EXISTING_NODES from env variable is %s" % existing_nodes)
         config.set('jenkins', 'existing_nodes', existing_nodes)
 
     with open(conf, 'wb') as confini:
@@ -102,6 +118,7 @@ def setup_conf(options):
     if os.path.isfile(conf):
         f = factory.Conf_ini()
         f.read(conf)
+        logger.log.info("Writing environment details to %s" % conf)
         conf_dict = f.conf_to_dict()
         return conf_dict
 
