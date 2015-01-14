@@ -1,15 +1,27 @@
 #!/usr/bin/python
+# Copyright (c) 2015 Red Hat, Inc. All rights reserved.
+#
+# This copyrighted material is made available to anyone wishing
+# to use, modify, copy, or redistribute it subject to the terms
+# and conditions of the GNU General Public License version 2.
+#
+# You should have received a copy of the GNU General Public
+# License along with this program; if not, write to the Free
+# Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+# Boston, MA 02110-1301, USA.
 
 import os
 import wget
 import xmlrpclib
 from nexus.lib import factory
+from nexus.lib import logger
 
 class Errata():
 
     def __init__(self, options, conf_dict):
 
         self.errata_id = os.environ.get("errata_id")
+        logger.log.info("Errata id is %s" % self.errata_id)
 
         self.errata_xmlrpc = conf_dict['errata']['xmlrpc_url']
         self.errata_download = conf_dict['errata']['download_devel']
@@ -51,9 +63,9 @@ class Errata():
         """
 
         rpm_set = self.get_package_url()
-        print type(rpm_set)
+
         for rpm_url in rpm_set:
-            print rpm_url
+            logger.log.info(rpm_url)
             rpm_name = os.path.basename(rpm_url)
-            print ("Downloading %s" % rpm_url)
+            logger.log.info("Downloading %s" % rpm_url)
             self.download_rpms(rpm_url)
