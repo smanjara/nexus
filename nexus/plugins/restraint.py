@@ -89,7 +89,7 @@ class Restraint():
 
         restraint_repo = conf_dict['restraint'][dist[1]]
         wget_cmd = "wget " + restraint_repo + " -O " + repo_out
-        logger.log.info(wget)
+        logger.log.info(wget_cmd)
         stdin, stdout, stderr = ssh_c.ExecuteCmd(wget_cmd)
         for line in stdout.read().splitlines(): logger.log.info(line)
 
