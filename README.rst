@@ -29,6 +29,8 @@ Installing pre-requisities
 
 .. code-block:: bash
 
+   ]# git clone https://github.com/gsr-shanks/nexus.git
+   ]# cd nexus
    ]# python setup.py
 
 Alternately you can download the rpm version of nexus at
