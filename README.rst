@@ -16,11 +16,9 @@ Nexus - Continuous Integration utility
   * `Manual execution`_:
 
     - `Installing pre-requisities`_
-    - `Cloning repositories`_
     - `Setting environment variables`_
-    - `Configuring Nexus`_
+    - `Nexus configuration file`_
     - `Executing manually`_
-    - `Adding new test suite`_
   * `CI Workflow`_
 
 Manual execution
@@ -28,77 +26,46 @@ Manual execution
 Installing pre-requisities
 ==========================
 * ssh into the machine where you intend to run Nexus
-* Install python-paramiko python-crypto python-BeautifulSoup python-requests python-argparse
-* Git clone Nexus and execute "python restraint_repo_finder.py" from nexus/tools
 
 .. code-block:: bash
 
-   tools]# python restraint_repo_finder.py
-   ('redhat', '7.0', 'Maipo')
-   Downloading http://file.bos.redhat.com/~bpeck/restraint/el7.repo
-   <Response [200]>
-   Repo file stored in /etc/yum.repos.d/restraint.repo
+   ]# python setup.py
+
+Alternately you can download the rpm version of nexus at
+https://mrniranjan.fedorapeople.org/
 
 * yum install restraint-client
-
-
-Cloning repositories
-====================
-* Git clone your project repository to, let's say /home/user as an example.
-* Nexus assumes that you have a restraint directory in your project repository with restraint job xml's
-* Git clone Nexus
-
-.. code-block:: bash
-
-    # git clone https://github.com/gsr-shanks/nexus.git
-    Cloning into 'nexus'...
-    remote: Counting objects: 426, done.
-    remote: Compressing objects
-    : 100% (5/5), done.
-    remote: Total 426 (delta 0), reused 0 (delta 0)Rec
-    eiving objects: 100% (426/426), 242.51 KiB | 322.00 KiB/s, done.
-    Resolving deltas: 100% (243/243), done.
 
 
 Setting environment variables
 =============================
 * export EXISTING_NODES=resource.hostname
-* export JOB_NAME=jenkins_job_name (for example, look at etc/ipa.conf)
+* export JOB_NAME=jenkins_job_name
 * export WORKSPACE=location_of_your_test_repo (in this example: /home/user)
 
+Or update the jenkins section in your conf file.
 
-Configuring Nexus
-=================
-* Edit etc/global.conf and update your test resource password
-* Ensure you have a section in etc/<your-project>.conf which matches value of JOB_NAME
-* Ensure you have the restraint xml as specified in you job section of etc/<your-project>.conf in your project automation
-* etc/<project-name>.conf:
 
-  1. [JOB_NAME] is called the section, more info https://docs.python.org/2/library/configparser.html
-  2. job_name is the name of your restraint xml which by default is expected to be available in project-automation/restraint and can be modified in the global section
-  3. type is to identify single-host or multi-host
-  4. style is to identify if jenkins is configured for free or matrix project
+Nexus configuration file
+========================
+* Sample file can be found at nexus/etc/nexus.ini
 
 
 Executing manually
 ==================
-* python nexus.py --project ipa --provisioner beaker
+* python nexus -h
 
 .. code-block:: bash
 
-    # python nexus.py
-    usage: nexus.py [-h] [--async ASYNC] --project PROJECT --provisioner PROVISIONER
-    nexus.py: error: argument --project is required
+    # nexus -h
+    usage: nexus [-h] [--conf CONF] [--version] {brew,restraint,ci,git,errata} ...
+    positional arguments:  {brew,restraint,ci,git,errata}
+                                                git, brew, errata, restraint or ci
 
-
-Adding new test suite
-=====================
-* Create jenkins job yaml in your project.
-* Create or ensure the respective json file for resources to be provisioned exists.
-* Create restraint xml in project/restraint directory or whichever holds your restraint xml's.
-* Run jenkins job builder to create jenkins projects.
-* Update etc/<project>.conf and add runtest JOB_NAME section and its options.
-* Ensure all of the above are merged into respective git repository.
+    optional arguments:
+        -h, --help            show this help message and exit
+        --conf CONF           configuration file
+        --version             show version
 
 
 CI Workflow
