@@ -106,14 +106,16 @@ class Restraint():
         for line in stdout.read().splitlines(): logger.log.info(line)
 
         service = ("restraintd")
-        start_service_cmd = ("service %s start; chkconfig %s on" % (service, service))
+        start_service_cmd = ("service %s start; chkconfig %s on" % (service, \
+                            service))
         logger.log.info(start_service_cmd)
         stdin, stdout, stderr = ssh_c.ExecuteCmd(start_service_cmd)
         for line in stdout.read().splitlines(): logger.log.info(line)
 
     def restraint_update_xml(self):
 
-        logger.log.info("Updating %s with existing_node information" % self.restraint_xml)
+        logger.log.info("Updating %s with existing_node information" % \
+                        self.restraint_xml)
         node = 0
         host_num = 1
         host_recipe = []
@@ -187,20 +189,24 @@ class Restraint():
             self.restraint_xml = os.path.join(self.jenkins_workspace, \
                                  self.restraint_xml_loc)
             threads.gather_results([threads.get_item(self.restraint_setup, \
-                                    host, conf_dict) for host in self.existing_nodes])
+                                    host, conf_dict) for host in \
+                                    self.existing_nodes])
         else:
             self.restraint_xml = options.restraint_xml
             threads = Threader()
             threads.gather_results([threads.get_item(self.restraint_setup, \
-                                    host, conf_dict) for host in self.existing_nodes])
+                                    host, conf_dict) for host in \
+                                    self.existing_nodes])
 
         if options.build_repo is None:
             threads.gather_results([threads.get_item(self.copy_build_repo, \
-                                    host, conf_dict) for host in self.existing_nodes])
+                                    host, conf_dict) for host in \
+                                    self.existing_nodes])
         else:
             self.build_repo = options.build_repo
             threads.gather_results([threads.get_item(self.my_build_repo, \
-                                   host, conf_dict) for host in self.existing_nodes])
+                                   host, conf_dict) for host in \
+                                   self.existing_nodes])
 
         logger.log.info("Using %s" % self.restraint_xml)
         if len(self.existing_nodes) == 1:
