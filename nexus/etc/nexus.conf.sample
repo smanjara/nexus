@@ -1,33 +1,55 @@
-[global]
-existing_nodes = EXISTING_NODES
-workspace = 
+[beaker]
 username = root
-password = whatever
+password = 
+
+[jenkins]
 job_name = 
+workspace = /home/shanks/projects/
+existing_nodes = 007.redhat.com,006.redhat.com
 
 [git]
-git_repo = 
+git_project = ipa-tests
+git_repo_url = git://hostname/ipa-tests.git
 git_get_branch = ci
 git_tar_out = ipa-tests.tar
 
 [errata]
 xmlrpc_url = 
-download_loc = 
-errata_yamls = ipa-tests/jobs/errata/
+download_devel = 
+yamls = ipa-tests/jobs/errata/
 mount_base = /mnt/redhat
-RHEL-6.4.Z = 
-RHEL-7.0.Z = 
+build_download_loc = /tmp/shanks-err
+rhel64z = 
+rhel70z = 
+
+[brew]
+brew_root = 
+brew_hub = 
+brew_builds = 
+	ipa, sssd, pki-core, 389-ds-base, bind, bind-dyndb-ldap, tomcat6,
+	nss, nspr, krb5-workstation, krb5, slapi-nis, resteasy-base,
+	python-yubico, certmonger, python-nss, python-dns,
+	redhat-access-plugin-ipa, python-qrcode, open-sans-fonts,
+	fontawesome-fonts, python-kerberos, tomcat, python-ldap, libldb,
+	pyusb, ding-libs, selinux-policy, openldap, mod_nss, mod_revocator,
+	tomcatjss, jss, libtdb, libtevent, libtalloc, samba
+brew_tag = 
+brew_arch = x86_64
+build_download_loc = /tmp/asf
 
 [restraint]
-remove_pkgs = rhts-python
-install_pkgs = restraint staf restraint-rhts
-restraint_xmls = ipa-tests/restraint/
-rhel4_restraint_repo = 
-rhel5_restraint_repo = 
-rhel6_restraint_repo = 
-rhel7_restraint_repo = 
-fed19_restraint_repo = 
-fed20_restraint_repo = 
+remove_rpm = rhts-python
+install_rpm = restraint staf restraint-rhts
+xmls = ipa-tests/restraint/
+6.5 = http://hostname/~bpeck/restraint/el6.repo
+6.6 = http://hostname/~bpeck/restraint/el6.repo
+6.7 = http://hostname/~bpeck/restraint/el6.repo
+7.0 = http://hostname/~bpeck/restraint/el7.repo
+7.1 = http://hostname/~bpeck/restraint/el7.repo
+7.2 = http://hostname/~bpeck/restraint/el7.repo
+20 = http://hostname/~bpeck/restraint/fc20.repo
 
-[restraint-jobs]
-ipa-adtrust-rhel71-x86_64-bkr-runtest = 
+[restraint_jobs]
+ipa-adtrust-rhel71-x86_64-bkr-runtest = ipa-tests/restraint/ipa-adtrust-rhel71-x86_64-bkr.xml
+ipa-sudo-rhel71-x86_64-bkr2-runtest = ipa-tests/restraint/ipa-sudo-rhel71-x86_64-bkr.xml
+
