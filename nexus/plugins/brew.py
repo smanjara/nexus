@@ -82,7 +82,8 @@ class Brew():
         for build in builds:
             buildpath = pathinfo.build(build)
             arches_noarch = (self.brew_arch, "noarch")
-                rpms = brew.listRPMs(build['id'], arches=arches_noarch)
+            for arches in arches_noarch:
+                rpms = brew.listRPMs(build['id'], arches=arches)
                 rpms_list = []
                 for rpm in rpms:
                     rpmpath = pathinfo.rpm(rpm)
