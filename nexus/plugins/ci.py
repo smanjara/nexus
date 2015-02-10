@@ -21,7 +21,6 @@ class CI():
 
     def __init__(self, options, conf_dict):
         self.provisioner = options.provisioner
-        self.builds_from = options.builds_from
 
     def run(self, options, conf_dict):
         if self.provisioner == "beaker":
