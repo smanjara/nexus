@@ -56,7 +56,6 @@ def create_parser():
     parser_ci = subparser.add_parser('ci')
     parser_ci.add_argument('--provisioner', help='Infra used for test systems \
                             provisioning')
-    parser_ci.add_argument('--builds-from', help='Builds from brew or errata')
     parser_ci.add_argument('--project', help=argparse.SUPPRESS)
     parser_ci.add_argument('--repo', help=argparse.SUPPRESS)
     parser_ci.add_argument('--branch', help=argparse.SUPPRESS)

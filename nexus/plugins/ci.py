@@ -24,7 +24,7 @@ class CI():
         self.builds_from = options.builds_from
 
     def run(self, options, conf_dict):
-        if self.provisioner == "beaker" and self.builds_from == "brew":
+        if self.provisioner == "beaker":
             git = Git(options, conf_dict)
             git.get_archive()
 
@@ -32,4 +32,4 @@ class CI():
             restraint.run_restraint(options, conf_dict)
             restraint.restraint_junit()
         else:
-            logger.log.error("Unknown provisioner or builds_from")
+            logger.log.error("Unknown provisioner")
