@@ -81,14 +81,15 @@ class Brew():
                                 type=None, inherit=True)
         for build in builds:
             buildpath = pathinfo.build(build)
-            rpms = brew.listRPMs(build['id'], arches=self.brew_arch)
-            rpms_list = []
-            for rpm in rpms:
-                rpmpath = pathinfo.rpm(rpm)
-                rpmurl = os.path.join(buildpath, rpmpath)
-                rpms_list.append(rpmurl)
-                self.download_rpms(rpmurl)
-                logger.log.info("Downloading %s" % rpmurl)
+            arches_noarch = (self.brew_arch, "noarch")
+                rpms = brew.listRPMs(build['id'], arches=arches_noarch)
+                rpms_list = []
+                for rpm in rpms:
+                    rpmpath = pathinfo.rpm(rpm)
+                    rpmurl = os.path.join(buildpath, rpmpath)
+                    rpms_list.append(rpmurl)
+                    self.download_rpms(rpmurl)
+                    logger.log.info("Downloading %s" % rpmurl)
 
 
     def get_latest(self, options, conf_dict):
