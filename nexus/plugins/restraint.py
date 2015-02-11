@@ -89,26 +89,26 @@ class Restraint():
 
         restraint_repo = conf_dict['restraint'][dist[1]]
         wget_cmd = "wget " + restraint_repo + " -O " + repo_out
-        logger.log.info("%s to %s" % (wget_cmd, host))
+        logger.log.info("%s to %s" % (host, wget_cmd))
         stdin, stdout, stderr = ssh_c.ExecuteCmd(wget_cmd)
         for line in stdout.read().splitlines(): logger.log.info(line)
 
         restraint_remove_rpms = conf_dict['restraint']['remove_rpm']
         remove_cmd = "yum remove -y " + restraint_remove_rpms
-        logger.log.info(remove_cmd)
+        logger.log.info("%s to %s" % (host, remove_cmd))
         stdin, stdout, stderr = ssh_c.ExecuteCmd(remove_cmd)
         for line in stdout.read().splitlines(): logger.log.info(line)
 
         restraint_install_rpms = conf_dict['restraint']['install_rpm']
         install_cmd = "yum install -y " + restraint_install_rpms
-        logger.log.info(install_cmd)
+        logger.log.info("%s to %s" % (host, install_cmd))
         stdin, stdout, stderr = ssh_c.ExecuteCmd(install_cmd)
         for line in stdout.read().splitlines(): logger.log.info(line)
 
         service = ("restraintd")
         start_service_cmd = ("service %s start; chkconfig %s on" % (service, \
                             service))
-        logger.log.info(start_service_cmd)
+        logger.log.info("%s to %s" % (host, start_service_cmd))
         stdin, stdout, stderr = ssh_c.ExecuteCmd(start_service_cmd)
         for line in stdout.read().splitlines(): logger.log.info(line)
 
