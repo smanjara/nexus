@@ -15,6 +15,8 @@ import sys
 import platform
 import glob
 import subprocess
+import glob
+import shutil
 from nexus.lib.factory import SSHClient
 from nexus.lib.factory import Threader
 from nexus.lib import jenkins
@@ -174,6 +176,19 @@ class Restraint():
         fd = open("junit.xml", "w")
         fd.write(stdout)
         fd.close()
+
+    def restraint_html(self):
+        """get index.html from test directory to workspace"""
+
+        logger.log.info("Get index.html from test directory to workspace")
+        index_html = glob.glob("*/index.html")
+        logger.log.info("index.html found at %s" % index_html)
+
+        src = index_html[0]
+        dst = "restraint_results.html"
+
+        shutil.copyfile(src, dst)
+
 
     def run_restraint(self, options, conf_dict):
         """

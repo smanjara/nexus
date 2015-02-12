@@ -30,5 +30,6 @@ class CI():
             restraint = Restraint(options, conf_dict)
             restraint.run_restraint(options, conf_dict)
             restraint.restraint_junit()
+            restraint.restraint_html()
         else:
             logger.log.error("Unknown provisioner")
