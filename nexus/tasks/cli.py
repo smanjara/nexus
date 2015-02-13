@@ -101,48 +101,39 @@ def setup_conf(options):
     config = ConfigParser.SafeConfigParser()
     config.read(conf)
 
-    print options
-    if options.show_triggers is False:
-
-        workspace = os.environ.get("WORKSPACE")
-        if not workspace:
-            logger.log.warn("Unable to find WORKSPACE in env variable, assuming \
+    workspace = os.environ.get("WORKSPACE")
+    if not workspace:
+        logger.log.warn("Unable to find WORKSPACE in env variable, assuming \
                         you have it conf")
-        else:
-            logger.log.info("WORKSPACE env variable is %s" % workspace)
-            config.set('jenkins', 'workspace', workspace)
-
-        job_name = os.environ.get("JOB_NAME")
-        if not job_name:
-            logger.log.warn("Unable to find JOB_NAME in env variable, assuming \
-                        you have it in conf")
-        else:
-            logger.log.info("JOB_NAME from env variable is %s" % job_name)
-            config.set('jenkins', 'job_name', job_name)
-
-        existing_nodes = os.environ.get("EXISTING_NODES")
-        if not existing_nodes:
-            logger.log.warn("Unable to find EXISTING_NODES env variable, assuming \
-                            have it in conf.")
-        else:
-            logger.log.info("EXISTING_NODES from env variable is %s" % existing_nodes)
-            config.set('jenkins', 'existing_nodes', existing_nodes)
-
-        with open(conf, 'wb') as confini:
-            config.write(confini)
-
-        if os.path.isfile(conf):
-            f = factory.Conf_ini()
-            f.read(conf)
-            logger.log.info("Writing environment details to %s" % conf)
-            conf_dict = f.conf_to_dict()
-            return conf_dict
     else:
-        if os.path.isfile(conf):
-            f = factory.Conf_ini()
-            f.read(conf)
-            conf_dict = f.conf_to_dict()
-            return conf_dict
+        logger.log.info("WORKSPACE env variable is %s" % workspace)
+        config.set('jenkins', 'workspace', workspace)
+
+    job_name = os.environ.get("JOB_NAME")
+    if not job_name:
+        logger.log.warn("Unable to find JOB_NAME in env variable, assuming \
+                        you have it in conf")
+    else:
+        logger.log.info("JOB_NAME from env variable is %s" % job_name)
+        config.set('jenkins', 'job_name', job_name)
+
+    existing_nodes = os.environ.get("EXISTING_NODES")
+    if not existing_nodes:
+        logger.log.warn("Unable to find EXISTING_NODES env variable, assuming \
+                        have it in conf.")
+    else:
+        logger.log.info("EXISTING_NODES from env variable is %s" % existing_nodes)
+        config.set('jenkins', 'existing_nodes', existing_nodes)
+
+    with open(conf, 'wb') as confini:
+        config.write(confini)
+
+    if os.path.isfile(conf):
+        f = factory.Conf_ini()
+        f.read(conf)
+        logger.log.info("Writing environment details to %s" % conf)
+        conf_dict = f.conf_to_dict()
+        return conf_dict
 
 def execute(options, conf_dict):
 
