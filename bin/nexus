@@ -1,0 +1,12 @@
+#!/usr/bin/python
+
+""" 
+Command Line Interface for Nexus.
+
+CLI functionality is implemented by tasks/cli.py
+"""
+
+from nexus.tasks import cli
+
+if __name__ == '__main__':
+    cli.main()
