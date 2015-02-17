@@ -22,7 +22,8 @@ setup(
         'simplejson',
         'wget',
         'glob2',
-	'pbr'
+        'python-jenkins',
+	 'pbr'
     ],
     include_package_data=True
 )
