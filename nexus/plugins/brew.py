@@ -26,7 +26,8 @@ class Brew():
         """
 
         if options.tag is None:
-            logger.log.info("No brew-tag provided as option. Checking conf file...")
+            logger.log.info("No brew-tag provided as option. Checking conf \
+                            file...")
             self.brew_tag = conf_dict['brew']['brew_tag']
             logger.log.info("brew-tag from conf file is %s" % self.brew_tag)
         else:
@@ -34,7 +35,8 @@ class Brew():
             logger.log.info("brew-tag from cli is %s" % self.brew_tag)
 
         if options.arch is None:
-            logger.log.info("No build arch provided as option. Checking conf file...")
+            logger.log.info("No build arch provided as option. Checking conf \
+                            file...")
             self.brew_arch = conf_dict['brew']['brew_arch']
             logger.log.info("build arch from conf file is %s" % self.brew_arch)
         else:
@@ -45,14 +47,16 @@ class Brew():
             logger.log.info("No download builds to location provided as option.\
                             Checking conf file...")
             self.build_download_loc = conf_dict['brew']['build_download_loc']
-            logger.log.info("download location from conf file is %s" % self.build_download_loc)
+            logger.log.info("download location from conf file is %s" % \
+                            self.build_download_loc)
         else:
             self.build_download_loc = options.loc
-            logger.log.info("download location from cli is %s" % self.build_download_loc)
+            logger.log.info("download location from cli is %s" % \
+                            self.build_download_loc)
 
         if not os.path.exists(self.build_download_loc):
-            logger.log.info("Build download location does not exist, creating %s" \
-                            % self.build_download_loc)
+            logger.log.info("Build download location does not exist, creating \
+                            %s" % self.build_download_loc)
             os.makedirs(self.build_download_loc)
 
         if options.build is None:
@@ -98,5 +102,5 @@ class Brew():
         Opens thread for each build provided and calls get_tagged()
         """
         fac = factory.Threader()
-        fac.gather_results([fac.get_item(self.get_tagged, item, conf_dict) for item in \
-                           self.brew_builds])
+        fac.gather_results([fac.get_item(self.get_tagged, item, conf_dict) \
+                            for item in self.brew_builds])
