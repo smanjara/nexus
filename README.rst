@@ -29,7 +29,7 @@ Installing pre-requisities
 
 .. code-block:: bash
 
-   ]# yum install -y python-setuptools autoconf gcc python-devel tar
+   ]# yum install -y git python-setuptools autoconf gcc python-devel tar
 
    Download and install koji from
    http://koji.fedoraproject.org/koji/packageinfo?packageID=1181
