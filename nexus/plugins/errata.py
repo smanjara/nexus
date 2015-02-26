@@ -20,7 +20,10 @@ class Errata():
 
     def __init__(self, options, conf_dict):
 
-        self.errata_id = os.environ.get("errata_id")
+        if options.errata_id is None:
+            self.errata_id = os.environ.get("errata_id")
+        else:
+            self.errata_id = options.errata_id
         logger.log.info("Errata id is %s" % self.errata_id)
 
         self.errata_xmlrpc = conf_dict['errata']['xmlrpc_url']
