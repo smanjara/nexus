@@ -54,7 +54,8 @@ def create_parser():
     parser_errata.add_argument('--show-triggers', help=argparse.SUPPRESS)
 
     parser_restraint = subparser.add_parser('restraint')
-    parser_restraint.add_argument('--build-repo', help='Build repo')
+    parser_restraint.add_argument('--build-repo', help='.repo file which you \
+                                    would like to copy to test resources')
     parser_restraint.add_argument('--restraint-xml', help='Restraint xml file')
     parser_restraint.add_argument('--show-triggers', help=argparse.SUPPRESS)
 
