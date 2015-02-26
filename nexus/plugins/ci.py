@@ -28,8 +28,20 @@ class CI():
             git.get_archive()
 
             restraint = Restraint(options, conf_dict)
+
+            """ This function actually runs restraint command and
+            executed the job on beaker.
+            """
             restraint.run_restraint(options, conf_dict)
+
+            """ This function converts job.xml to junit.xml for jenkins
+            trend.
+            """
             restraint.restraint_junit()
+
+            """ This function copies index.html created by restraint within
+            its job directory to WORKSPACE.
+            """
             restraint.restraint_html()
         else:
             logger.log.error("Unknown provisioner")
