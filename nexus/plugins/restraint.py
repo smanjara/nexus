@@ -15,7 +15,6 @@ import sys
 import platform
 import glob
 import subprocess
-import glob
 import shutil
 from nexus.lib.factory import SSHClient
 from nexus.lib.factory import Threader
