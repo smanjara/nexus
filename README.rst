@@ -29,9 +29,18 @@ Installing pre-requisities
 
 .. code-block:: bash
 
+   ]# yum install -y git python-setuptools autoconf gcc python-devel tar
+
+   Download and install koji from
+   http://koji.fedoraproject.org/koji/packageinfo?packageID=1181
+
    ]# git clone https://github.com/gsr-shanks/nexus.git
    ]# cd nexus
-   ]# python setup.py
+   ]# python setup.py install
+
+   ]# python nexus/utils/restraint_repo_finder.py
+
+   ]# yum install -y restraint restraint-client
 
 Alternately you can download the rpm version of nexus at
 https://mrniranjan.fedorapeople.org/

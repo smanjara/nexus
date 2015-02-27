@@ -17,13 +17,16 @@ setup(
     packages=find_packages(),
     scripts=['bin/nexus'],
     install_requires=[
-        'paramiko',
-        'ConfigParser',
-        'simplejson',
+        'pbr',
         'wget',
         'glob2',
-        'python-jenkins',
-	 'pbr'
+        'paramiko',
+        'argparse',
+        'requests',
+        'simplejson',
+        'ConfigParser',
+        'BeautifulSoup',
+        'python-jenkins'
     ],
     include_package_data=True
 )

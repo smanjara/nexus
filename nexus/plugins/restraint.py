@@ -32,25 +32,25 @@ class Restraint():
         self.existing_nodes = [item.strip() for item in nodes.split(',')]
 
         self.jenkins_job_name = conf_dict['jenkins']['job_name']
+        self.build_repo_tag = os.environ.get("BUILD_REPO_TAG")
 
     def copy_build_repo(self, host, conf_dict):
         """copy the brew build repo to all the existing nodes"""
 
-        build_repo_tag = os.environ.get("BUILD_REPO_TAG")
-        build_repo_file = build_repo_tag + ".repo"
-        build_repo_url = os.environ.get("BUILD_REPO_URL")
+        self.build_repo_file = self.build_repo_tag + ".repo"
+        self.build_repo_url = os.environ.get("BUILD_REPO_URL")
 
-        logger.log.info("Creating build repo file %s" % build_repo_file)
-        repo = open(build_repo_file, "w")
-        repo.write( "[" + build_repo_tag + "]\n");
-        repo.write( "name=" + build_repo_tag + "\n" );
-        repo.write( "baseurl=" + build_repo_url + "\n" );
+        logger.log.info("Creating build repo file %s" % self.build_repo_file)
+        repo = open(self.build_repo_file, "w")
+        repo.write( "[" + self.build_repo_tag + "]\n");
+        repo.write( "name=" + self.build_repo_tag + "\n" );
+        repo.write( "baseurl=" + self.build_repo_url + "\n" );
         repo.write( "enabled=1\n") ;
         repo.write( "gpgcheck=0\n" );
         repo.write( "skip_if_unavailable=1\n" );
         repo.close()
 
-        source = build_repo_file
+        source = self.build_repo_file
         destination = "/etc/yum.repos.d/" + source
 
         logger.log.info("source file is %s" % source)
@@ -139,6 +139,7 @@ class Restraint():
                 node = node + 1
                 host_num = host_num + 1
             else:
+                logger.log.error("%s not found" % self.restraint_xml)
                 sys.exit(2)
 
     def execute_restraint(self):
@@ -213,15 +214,23 @@ class Restraint():
                                     host, conf_dict) for host in \
                                     self.existing_nodes])
 
-        if options.build_repo is None:
+        if self.build_repo_tag:
+            logger.log.info("BUILD_REPO_TAG found in env")
+            logger.log.info("Copying %s to %s" % (self.copy_build_repo, host))
             threads.gather_results([threads.get_item(self.copy_build_repo, \
                                     host, conf_dict) for host in \
                                     self.existing_nodes])
         else:
+            logger.log.info("BUILD_REPO_TAG not found in env")
+
+        if options.build_repo:
+            logger.log.info("Manual repo to be copied to resources.")
             self.build_repo = options.build_repo
             threads.gather_results([threads.get_item(self.my_build_repo, \
                                    host, conf_dict) for host in \
                                    self.existing_nodes])
+        else:
+            logger.log.info("No manual repo to be copied to resources.")
 
         logger.log.info("Using %s" % self.restraint_xml)
         if len(self.existing_nodes) == 1:
