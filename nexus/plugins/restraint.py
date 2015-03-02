@@ -182,12 +182,17 @@ class Restraint():
 
         logger.log.info("Get index.html from test directory to workspace")
         index_html = glob.glob("*/index.html")
-        logger.log.info("index.html found at %s" % index_html)
 
-        src = index_html[0]
-        dst = "restraint_results.html"
+        if os.path.exists(index_html):
 
-        shutil.copyfile(src, dst)
+            logger.log.info("index.html found at %s" % index_html)
+
+            src = index_html[0]
+            dst = "restraint_results.html"
+
+            shutil.copyfile(src, dst)
+        else:
+            logger.log.warn("index.html not found.")
 
 
     def run_restraint(self, options, conf_dict):
