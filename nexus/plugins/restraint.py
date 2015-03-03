@@ -142,19 +142,27 @@ class Restraint():
                 sys.exit(2)
 
     def execute_restraint(self):
+        """
+        Check for the length of resources and build appropriate restraint
+        command for both single and multi host execution.
+        """
 
         subprocess.check_call(['cat', self.restraint_xml])
         if len(self.existing_nodes) == 1:
             host1 = ("1=%s:8081" % self.existing_nodes[0])
-            returncode = subprocess.check_call(['restraint', '-j', \
-                         self.restraint_xml, '-t', host1, '-v', '-v'])
-            return returncode
+            try:
+                subprocess.check_call(['restraint', '-j', \
+                    self.restraint_xml, '-t', host1, '-v', '-v'])
+            except subprocess.CalledProcessError as e:
+                exit(e.returncode)
         else:
             rest_command = "restraint" + " " + "-j" + " " + self.restraint_xml \
                             + " " + self.restraint_hosts + " " + "-v" + " " + "-v"
             logger.log.info(rest_command)
-            returncode = subprocess.check_call(rest_command.split(), shell=False)
-            return returncode
+            try:
+                subprocess.check_call(rest_command.split(), shell=False)
+            except subprocess.CalledProcessError as e:
+                exit(e.returncode)
 
     def restraint_junit(self):
         """convert job.xml to junit.xml"""
@@ -182,12 +190,17 @@ class Restraint():
 
         logger.log.info("Get index.html from test directory to workspace")
         index_html = glob.glob("*/index.html")
-        logger.log.info("index.html found at %s" % index_html)
 
-        src = index_html[0]
-        dst = "restraint_results.html"
+        if os.path.exists(index_html):
 
-        shutil.copyfile(src, dst)
+            logger.log.info("index.html found at %s" % index_html)
+
+            src = index_html[0]
+            dst = "restraint_results.html"
+
+            shutil.copyfile(src, dst)
+        else:
+            logger.log.warn("index.html not found.")
 
 
     def run_restraint(self, options, conf_dict):

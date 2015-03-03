@@ -12,6 +12,7 @@
 
 import os
 import sys
+import yum
 import argparse
 import ConfigParser
 from nexus.lib import logger
@@ -135,16 +136,37 @@ def setup_conf(options):
 
 def execute(options, conf_dict):
 
+    yb = yum.YumBase()
+
     if options.command == 'git':
-        git = Git(options, conf_dict)
-        git.get_archive()
+        if yb.rpmdb.searchNevra(name='git'):
+            logger.log.info("Git rpm found.")
+
+            git = Git(options, conf_dict)
+            git.get_archive()
+        else:
+            logger.log.error("Git rpm not installed.")
+            sys.exit(2)
     elif options.command == 'brew':
-        brew = Brew(options, conf_dict)
-        brew.get_latest(options, conf_dict)
+        if yb.rpmdb.searchNevra(name='koji'):
+            logger.log.info("Koji rpm found.")
+
+            brew = Brew(options, conf_dict)
+            brew.get_latest(options, conf_dict)
+        else:
+            logger.log.error("Koji rpm not installed.")
+            sys.exit(2)
+
     elif options.command == 'restraint':
-        restraint = Restraint(options, conf_dict)
-        restraint.run_restraint(options, conf_dict)
-        restraint.restraint_junit()
+        if yb.rpmdb.searchNevra(name='restraint-client'):
+            logger.log.info("restraint-client rpm found.")
+            restraint = Restraint(options, conf_dict)
+            restraint.run_restraint(options, conf_dict)
+            restraint.restraint_junit()
+        else:
+            logger.log.error("restraint-client rpm not installed.")
+            sys.exit(2)
+
     elif options.command == 'errata':
         errata = Errata(options, conf_dict)
         errata.download_errata_builds()

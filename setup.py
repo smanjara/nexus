@@ -19,6 +19,7 @@ setup(
     install_requires=[
         'pbr',
         'wget',
+        'yum',
         'glob2',
         'paramiko',
         'argparse',
