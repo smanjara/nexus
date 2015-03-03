@@ -153,18 +153,26 @@ class Restraint():
             try:
                 subprocess.check_call(['restraint', '-j', \
                     self.restraint_xml, '-t', host1, '-v', '-v'])
+                self.restraint_junit()
+                self.restraint_html()
             except subprocess.CalledProcessError as e:
                 exit(e.returncode)
+            finally:
+                self.restraint_junit()
+                self.restraint_html()
         else:
             rest_command = "restraint" + " " + "-j" + " " + self.restraint_xml \
                             + " " + self.restraint_hosts + " " + "-v" + " " + "-v"
             logger.log.info(rest_command)
             try:
                 subprocess.check_call(rest_command.split(), shell=False)
-            except subprocess.CalledProcessError as e:
                 self.restraint_junit()
                 self.restraint_html()
+            except subprocess.CalledProcessError as e:
                 exit(e.returncode)
+            finally:
+                self.restraint_junit()
+                self.restraint_html()
 
     def restraint_junit(self):
         """convert job.xml to junit.xml"""
@@ -176,16 +184,20 @@ class Restraint():
         latest_dir = max(all_dirs, key=os.path.getmtime)
 
         job_xml = os.path.join(latest_dir, "job.xml")
-        args = ('xsltproc', '/usr/share/restraint/client/job2junit.xml', job_xml)
-        p_out = subprocess.PIPE
-        p_err = subprocess.PIPE
 
-        p = subprocess.Popen(args,stdout=p_out,stderr=p_err)
-        stdout,stderr = p.communicate()
+        if os.path.exists(job_xml):
+            args = ('xsltproc', '/usr/share/restraint/client/job2junit.xml', job_xml)
+            p_out = subprocess.PIPE
+            p_err = subprocess.PIPE
 
-        fd = open("junit.xml", "w")
-        fd.write(stdout)
-        fd.close()
+            p = subprocess.Popen(args,stdout=p_out,stderr=p_err)
+            stdout,stderr = p.communicate()
+
+            fd = open("junit.xml", "w")
+            fd.write(stdout)
+            fd.close()
+        else:
+            logger.log.warn("job.xml not found.")
 
     def restraint_html(self):
         """get index.html from test directory to workspace"""
