@@ -162,6 +162,8 @@ class Restraint():
             try:
                 subprocess.check_call(rest_command.split(), shell=False)
             except subprocess.CalledProcessError as e:
+                self.restraint_junit()
+                self.restraint_html()
                 exit(e.returncode)
 
     def restraint_junit(self):
