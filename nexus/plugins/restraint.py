@@ -156,10 +156,9 @@ class Restraint():
                 self.restraint_junit()
                 self.restraint_html()
             except subprocess.CalledProcessError as e:
-                exit(e.returncode)
-            finally:
                 self.restraint_junit()
                 self.restraint_html()
+                exit(e.returncode)
         else:
             rest_command = "restraint" + " " + "-j" + " " + self.restraint_xml \
                             + " " + self.restraint_hosts + " " + "-v" + " " + "-v"
@@ -169,10 +168,9 @@ class Restraint():
                 self.restraint_junit()
                 self.restraint_html()
             except subprocess.CalledProcessError as e:
-                exit(e.returncode)
-            finally:
                 self.restraint_junit()
                 self.restraint_html()
+                exit(e.returncode)
 
     def restraint_junit(self):
         """convert job.xml to junit.xml"""
