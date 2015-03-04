@@ -203,10 +203,10 @@ class Restraint():
         logger.log.info("Get index.html from test directory to workspace")
         index_html = glob.glob("*/index.html")
 
-            logger.log.info("index.html found at %s" % index_html)
+        logger.log.info("index.html found at %s" % index_html)
 
-            src = index_html[0]
-            dst = "restraint_results.html"
+        src = index_html[0]
+        dst = "restraint_results.html"
 
         if os.path.exists(src):
 
