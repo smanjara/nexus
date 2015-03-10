@@ -18,7 +18,6 @@ import subprocess
 import shutil
 from nexus.lib.factory import SSHClient
 from nexus.lib.factory import Threader
-from nexus.lib import jenkins
 from nexus.lib import logger
 
 class Restraint():

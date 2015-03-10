@@ -18,19 +18,21 @@ import ConfigParser
 from nexus.lib import logger
 from nexus.lib import factory
 from nexus.plugins.brew import Brew
+from nexus.plugins.bkr import Beaker
 from nexus.plugins.restraint import Restraint
 from nexus.plugins.errata import Errata
 from nexus.plugins.git import Git
 from nexus.plugins.ci import CI
 from nexus.plugins.my_jenkins import Jenkins
+from nexus.lib.ci_message import CI_MSG
 import nexus.version
 
 def create_parser():
     parser = argparse.ArgumentParser()
     recursive_parser = argparse.ArgumentParser(add_help=False)
 
-    subparser = parser.add_subparsers(help='git, brew, errata, restraint, ci or jenkins',
-                                      dest='command')
+    subparser = parser.add_subparsers(help='git, brew, errata, restraint, ci \
+        beaker or jenkins', dest='command')
 
     parser_git = subparser.add_parser('git')
     parser_git.add_argument('--project', help='Git project')
@@ -63,6 +65,8 @@ def create_parser():
     parser_jenkins = subparser.add_parser('jenkins')
     parser_jenkins.add_argument('--run', help='Build Jenkins job')
     parser_jenkins.add_argument('--show-triggers', action='store_true', help='Show triggers from conf')
+
+    parser_beaker = subparser.add_parser('beaker')
 
     parser_ci = subparser.add_parser('ci')
     parser_ci.add_argument('--provisioner', help='Infra used for test systems \
@@ -102,6 +106,15 @@ def setup_conf(options):
 
     config = ConfigParser.SafeConfigParser()
     config.read(conf)
+
+    ci_msg = CI_MSG()
+    t = ci_msg.get_ci_msg_value('tag')
+    if t:
+        tag = t['name']
+        config.set('brew', 'brew_tag', tag)
+        logger.log.info("brew tag name is %s" % tag)
+    else:
+        logger.log.warn("tag not found in CI_MESSAGE")
 
     workspace = os.environ.get("WORKSPACE")
     if not workspace:
@@ -147,6 +160,17 @@ def execute(options, conf_dict):
         else:
             logger.log.error("Git rpm not installed.")
             sys.exit(2)
+
+    elif options.command == 'beaker':
+        if yb.rpmdb.searchNevra(name='beaker-client'):
+            logger.log.info("beaker-client rpm found")
+
+            beaker = Beaker(options, conf_dict)
+            beaker.run(options, conf_dict)
+        else:
+            logger.log.error("beaker-client rpm not found")
+            sys.exit(2)
+
     elif options.command == 'brew':
         if yb.rpmdb.searchNevra(name='koji'):
             logger.log.info("Koji rpm found.")
