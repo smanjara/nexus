@@ -12,6 +12,7 @@
 
 import os
 import json
+from nexus.lib import logger
 
 class CI_MSG():
     def get_ci_msg_value(self, x):
@@ -20,7 +21,7 @@ class CI_MSG():
         ci_msg = os.environ.get("CI_MESSAGE")
         if ci_msg is not None:
             data = json.loads(ci_msg)
-            print(json.dumps(data, indent=4))
+            logger.log.info(json.dumps(data, indent=4))
 
             with open('ci_message.json', 'w') as outfile:
                 json.dump(data, outfile, indent=4)
@@ -28,4 +29,4 @@ class CI_MSG():
             ci_msg_value = data[self.ci_message]
             return ci_msg_value
         else:
-            print "not found"
+            logger.log.warn("ci_msg not found")
