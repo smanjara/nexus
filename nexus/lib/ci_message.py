@@ -19,7 +19,9 @@ class CI_MSG():
         self.ci_message = x
 
         ci_msg = os.environ.get("CI_MESSAGE")
-        if ci_msg is not None:
+        if ci_msg == "null" or ci_msg is None:
+            logger.log.warn("ci_msg not found")
+        else:
             data = json.loads(ci_msg)
             logger.log.info(json.dumps(data, indent=4))
 
@@ -28,5 +30,3 @@ class CI_MSG():
 
             ci_msg_value = data[self.ci_message]
             return ci_msg_value
-        else:
-            logger.log.warn("ci_msg not found")
