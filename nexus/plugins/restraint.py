@@ -243,12 +243,19 @@ class Restraint():
 
         self.git_repo_url = conf_dict['git']['git_repo_url']
         self.git_test_branch = conf_dict['git']['git_test_branch']
+        self.what_test = os.environ.get("WHAT_TEST") + ".xml"
 
         if options.restraint_xml is None:
             self.jenkins_workspace = conf_dict['jenkins']['workspace']
-            self.restraint_xml_loc = conf_dict['restraint_jobs'][self.jenkins_job_name]
-            self.restraint_xml = os.path.join(self.jenkins_workspace, \
-                                 self.restraint_xml_loc)
+            try:
+                self.restraint_xml_loc = conf_dict['restraint_jobs'][self.jenkins_job_name]
+                self.restraint_xml = os.path.join(self.jenkins_workspace, \
+                                     self.restraint_xml_loc)
+            except KeyError:
+                logger.log.warn("restraint xml not found in conf file, check with WHAT_TEST")
+                self.restraint_job_xml_loc = conf_dict['restraint']['job_xml_loc']
+                self.restraint_xml = os.path.join(self.restraint_job_xml_loc, self.what_test)
+
             threads.gather_results([threads.get_item(self.restraint_setup, \
                                     host, conf_dict) for host in \
                                     self.existing_nodes])
