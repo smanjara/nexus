@@ -18,7 +18,6 @@ import ConfigParser
 from nexus.lib import logger
 from nexus.lib import factory
 from nexus.plugins.brew import Brew
-from nexus.plugins.bkr import Beaker
 from nexus.plugins.restraint import Restraint
 from nexus.plugins.errata import Errata
 from nexus.plugins.git import Git
