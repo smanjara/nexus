@@ -116,7 +116,9 @@ class Restraint():
         """
         This function updates restraint xml with existing_resources with
         in place of hostname[int] string, also, it updates the git fetch
-        URL and adds test branch name provided in conf file.
+        URL and adds test branch name provided in conf file and if the
+        value is default then use whatever is available in the restraint
+        xml.
         """
 
         logger.log.info("Updating %s with existing_node information" % \
@@ -145,13 +147,17 @@ class Restraint():
                 logger.log.error("%s not found" % self.restraint_xml)
                 sys.exit(2)
 
-        self.git_test_branch_url = self.git_repo_url + "?" + self.git_test_branch
+        if self.git_test_branch == "default":
+            logger.log.info("Using the default branch to run tests.")
+        else:
+            self.git_test_branch_url = self.git_repo_url + "?" + self.git_test_branch
 
-        j = open(self.restraint_xml, 'r').read()
-        m = j.replace(self.git_repo_url, self.git_test_branch_url)
-        f = open(self.restraint_xml, 'w')
-        f.write(m)
-        f.close()
+            j = open(self.restraint_xml, 'r').read()
+            m = j.replace(self.git_repo_url, self.git_test_branch_url)
+            f = open(self.restraint_xml, 'w')
+            f.write(m)
+            f.close()
+            logger.log.info("Updating restraint xml to use %s branch" % self.git_test_branch)
 
     def execute_restraint(self):
         """
@@ -277,9 +283,9 @@ class Restraint():
             logger.log.info("Found single host in existing_nodes")
             logger.log.info("single node: %s" % self.existing_nodes)
             self.restraint_update_xml()
-            self.execute_restraint()
+            #self.execute_restraint()
         else:
             logger.log.info("Found multiple hosts in existing_nodes")
             logger.log.info("multiple nodes: %s" % self.existing_nodes)
             self.restraint_update_xml()
-            self.execute_restraint()
+            #self.execute_restraint()
