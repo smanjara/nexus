@@ -113,6 +113,11 @@ class Restraint():
         for line in stdout.read().splitlines(): logger.log.info(line)
 
     def restraint_update_xml(self):
+        """
+        This function updates restraint xml with existing_resources with
+        in place of hostname[int] string, also, it updates the git fetch
+        URL and adds test branch name provided in conf file.
+        """
 
         logger.log.info("Updating %s with existing_node information" % \
                         self.restraint_xml)
@@ -139,6 +144,14 @@ class Restraint():
             else:
                 logger.log.error("%s not found" % self.restraint_xml)
                 sys.exit(2)
+
+        self.git_test_branch_url = self.git_repo_url + "?" + self.git_test_branch
+
+        j = open(self.restraint_xml, 'r').read()
+        m = j.replace(self.git_repo_url, self.git_test_branch_url)
+        f = open(self.restraint_xml, 'w')
+        f.write(m)
+        f.close()
 
     def execute_restraint(self):
         """
@@ -222,6 +235,9 @@ class Restraint():
         logger.log.info("Running restraint...")
         threads = Threader()
 
+        self.git_repo_url = conf_dict['git']['git_repo_url']
+        self.git_test_branch = conf_dict['git']['git_test_branch']
+
         if options.restraint_xml is None:
             self.jenkins_workspace = conf_dict['jenkins']['workspace']
             self.restraint_xml_loc = conf_dict['restraint_jobs'][self.jenkins_job_name]
@@ -256,6 +272,7 @@ class Restraint():
             logger.log.info("No manual repo to be copied to resources.")
 
         logger.log.info("Using %s" % self.restraint_xml)
+
         if len(self.existing_nodes) == 1:
             logger.log.info("Found single host in existing_nodes")
             logger.log.info("single node: %s" % self.existing_nodes)
