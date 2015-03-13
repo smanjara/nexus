@@ -159,6 +159,13 @@ class Restraint():
             f.close()
             logger.log.info("Updating restraint xml to use %s branch" % self.git_test_branch)
 
+        logger.log.info("Updating restraint xml to use %s as task name" % self.job_name)
+        j = open(self.restraint_xml, 'r').read()
+        m = j.replace("JENKINS_JOB_NAME", self.job_name)
+        f = open(self.restraint_xml, 'w')
+        f.write(m)
+        f.close()
+
     def execute_restraint(self):
         """
         Check for the length of resources and build appropriate restraint
@@ -241,6 +248,7 @@ class Restraint():
         logger.log.info("Running restraint...")
         threads = Threader()
 
+        self.job_name = conf_dict['jenkins']['job_name']
         self.git_repo_url = conf_dict['git']['git_repo_url']
         self.git_test_branch = conf_dict['git']['git_test_branch']
         self.what_test = os.environ.get("WHAT_TEST") + ".xml"
