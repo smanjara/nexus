@@ -243,9 +243,9 @@ class Restraint():
             logger.log.info("Found single host in existing_nodes")
             logger.log.info("single node: %s" % self.existing_nodes)
             self.restraint_update_xml()
-            #self.execute_restraint()
+            self.execute_restraint()
         else:
             logger.log.info("Found multiple hosts in existing_nodes")
             logger.log.info("multiple nodes: %s" % self.existing_nodes)
             self.restraint_update_xml()
-            #self.execute_restraint()
+            self.execute_restraint()
