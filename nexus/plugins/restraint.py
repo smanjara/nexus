@@ -18,7 +18,6 @@ import subprocess
 import shutil
 from nexus.lib.factory import SSHClient
 from nexus.lib.factory import Threader
-from nexus.lib import jenkins
 from nexus.lib import logger
 
 class Restraint():
@@ -114,6 +113,13 @@ class Restraint():
         for line in stdout.read().splitlines(): logger.log.info(line)
 
     def restraint_update_xml(self):
+        """
+        This function updates restraint xml with existing_resources with
+        in place of hostname[int] string, also, it updates the git fetch
+        URL and adds test branch name provided in conf file and if the
+        value is default then use whatever is available in the restraint
+        xml.
+        """
 
         logger.log.info("Updating %s with existing_node information" % \
                         self.restraint_xml)
@@ -140,6 +146,25 @@ class Restraint():
             else:
                 logger.log.error("%s not found" % self.restraint_xml)
                 sys.exit(2)
+
+        if self.git_test_branch == "default":
+            logger.log.info("Using the default branch to run tests.")
+        else:
+            self.git_test_branch_url = self.git_repo_url + "?" + self.git_test_branch
+
+            j = open(self.restraint_xml, 'r').read()
+            m = j.replace(self.git_repo_url, self.git_test_branch_url)
+            f = open(self.restraint_xml, 'w')
+            f.write(m)
+            f.close()
+            logger.log.info("Updating restraint xml to use %s branch" % self.git_test_branch)
+
+        logger.log.info("Updating restraint xml to use %s as task name" % self.job_name)
+        j = open(self.restraint_xml, 'r').read()
+        m = j.replace("JENKINS_JOB_NAME", self.job_name)
+        f = open(self.restraint_xml, 'w')
+        f.write(m)
+        f.close()
 
     def execute_restraint(self):
         """
@@ -223,11 +248,22 @@ class Restraint():
         logger.log.info("Running restraint...")
         threads = Threader()
 
+        self.job_name = conf_dict['jenkins']['job_name']
+        self.git_repo_url = conf_dict['git']['git_repo_url']
+        self.git_test_branch = conf_dict['git']['git_test_branch']
+        self.what_test = os.environ.get("WHAT_TEST") + ".xml"
+
         if options.restraint_xml is None:
             self.jenkins_workspace = conf_dict['jenkins']['workspace']
-            self.restraint_xml_loc = conf_dict['restraint_jobs'][self.jenkins_job_name]
-            self.restraint_xml = os.path.join(self.jenkins_workspace, \
-                                 self.restraint_xml_loc)
+            try:
+                self.restraint_xml_loc = conf_dict['restraint_jobs'][self.jenkins_job_name]
+                self.restraint_xml = os.path.join(self.jenkins_workspace, \
+                                     self.restraint_xml_loc)
+            except KeyError:
+                logger.log.warn("restraint xml not found in conf file, check with WHAT_TEST")
+                self.restraint_job_xml_loc = conf_dict['restraint']['job_xml_loc']
+                self.restraint_xml = os.path.join(self.restraint_job_xml_loc, self.what_test)
+
             threads.gather_results([threads.get_item(self.restraint_setup, \
                                     host, conf_dict) for host in \
                                     self.existing_nodes])
@@ -257,6 +293,7 @@ class Restraint():
             logger.log.info("No manual repo to be copied to resources.")
 
         logger.log.info("Using %s" % self.restraint_xml)
+
         if len(self.existing_nodes) == 1:
             logger.log.info("Found single host in existing_nodes")
             logger.log.info("single node: %s" % self.existing_nodes)
