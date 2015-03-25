@@ -60,11 +60,20 @@ class Brew():
             os.makedirs(self.build_download_loc)
 
         if options.build is None:
-            builds = conf_dict['brew']['brew_builds']
+            if 'brew_builds' in conf_dict['brew']:
+                builds = conf_dict['brew']['brew_builds']
+            else:
+                builds = None
         else:
             builds = options.build
-        self.brew_builds = [item.strip() for item in builds.split(',')]
-        logger.log.info("Builds to download: %s" % self.brew_builds)
+
+        if builds is None:
+            self.brew_builds = [None]
+            logger.log.info("Builds to download: all tagged with %s" %
+                            self.brew_tag)
+        else:
+            self.brew_builds = [item.strip() for item in builds.split(',')]
+            logger.log.info("Builds to download: %s" % self.brew_builds)
 
     def download_rpms(self, rpmurl):
         """
@@ -80,9 +89,12 @@ class Brew():
         creates a list of all the rpms in each build. This rpms list is then
         passed on to threads along with download_rpms().
         """
-
-        builds = brew.listTagged(self.brew_tag, latest=True, package=item, \
-                                type=None, inherit=True)
+        if item is None:
+            builds = brew.listTagged(self.brew_tag, latest=True, type=None,
+                                     inherit=True)
+        else:
+            builds = brew.listTagged(self.brew_tag, latest=True, package=item,
+                                     type=None, inherit=True)
         for build in builds:
             buildpath = pathinfo.build(build)
             arches_noarch = (self.brew_arch, "noarch")
