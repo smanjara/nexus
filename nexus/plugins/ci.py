@@ -16,6 +16,7 @@ from nexus.lib import factory
 from nexus.plugins.brew import Brew
 from nexus.plugins.git import Git
 from nexus.plugins.restraint import Restraint
+from nexus.plugins.repos import Repos
 
 class CI():
 
@@ -26,6 +27,9 @@ class CI():
         if self.provisioner == "beaker":
             git = Git(options, conf_dict)
             git.get_archive()
+
+            repo = Repos(options, conf_dict)
+            repo.run_repo_setup(options, conf_dict)
 
             restraint = Restraint(options, conf_dict)
 

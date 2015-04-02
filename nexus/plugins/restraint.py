@@ -32,43 +32,6 @@ class Restraint():
         self.jenkins_job_name = conf_dict['jenkins']['job_name']
         self.build_repo_tag = os.environ.get("BUILD_REPO_TAG")
 
-    def copy_build_repo(self, host, conf_dict):
-        """copy the brew build repo to all the existing nodes"""
-
-        self.build_repo_file = self.build_repo_tag + ".repo"
-        self.build_repo_url = os.environ.get("BUILD_REPO_URL")
-
-        logger.log.info("Creating build repo file %s" % self.build_repo_file)
-        repo = open(self.build_repo_file, "w")
-        repo.write( "[" + self.build_repo_tag + "]\n");
-        repo.write( "name=" + self.build_repo_tag + "\n" );
-        repo.write( "baseurl=" + self.build_repo_url + "\n" );
-        repo.write( "enabled=1\n") ;
-        repo.write( "gpgcheck=0\n" );
-        repo.write( "skip_if_unavailable=1\n" );
-        repo.close()
-
-        source = self.build_repo_file
-        destination = "/etc/yum.repos.d/" + source
-
-        logger.log.info("source file is %s" % source)
-        logger.log.info("destination file is %s" % destination)
-
-        ssh_c = SSHClient(hostname = host, username = \
-                                  self.username, password = self.password)
-        ssh_c.CopyFiles(source, destination)
-
-    def my_build_repo(self, host, conf_dict):
-
-        source = self.build_repo
-        destination = "/etc/yum.repos.d/my_build.repo"
-
-        logger.log.info("Copying %s to %s on %s" % (source, destination, host))
-        ssh_c = SSHClient(hostname = host, username = \
-                                  self.username, password = self.password)
-        ssh_c.CopyFiles(source, destination)
-
-
     def restraint_setup(self, host, conf_dict):
         """
         wget appropriate restraint repo to respective nodes.
@@ -251,7 +214,6 @@ class Restraint():
         self.job_name = conf_dict['jenkins']['job_name']
         self.git_repo_url = conf_dict['git']['git_repo_url']
         self.git_test_branch = conf_dict['git']['git_test_branch']
-        self.what_test = os.environ.get("WHAT_TEST") + ".xml"
 
         if options.restraint_xml is None:
             self.jenkins_workspace = conf_dict['jenkins']['workspace']
@@ -261,6 +223,7 @@ class Restraint():
                                      self.restraint_xml_loc)
             except KeyError:
                 logger.log.warn("restraint xml not found in conf file, check with WHAT_TEST")
+                self.what_test = os.environ.get("WHAT_TEST") + ".xml"
                 self.restraint_job_xml_loc = conf_dict['restraint']['job_xml_loc']
                 self.restraint_xml = os.path.join(self.restraint_job_xml_loc, self.what_test)
 
@@ -273,24 +236,6 @@ class Restraint():
             threads.gather_results([threads.get_item(self.restraint_setup, \
                                     host, conf_dict) for host in \
                                     self.existing_nodes])
-
-        if self.build_repo_tag:
-            logger.log.info("BUILD_REPO_TAG found in env")
-            logger.log.info("Copying %s to %s" % (self.copy_build_repo, host))
-            threads.gather_results([threads.get_item(self.copy_build_repo, \
-                                    host, conf_dict) for host in \
-                                    self.existing_nodes])
-        else:
-            logger.log.info("BUILD_REPO_TAG not found in env")
-
-        if options.build_repo:
-            logger.log.info("Manual repo to be copied to resources.")
-            self.build_repo = options.build_repo
-            threads.gather_results([threads.get_item(self.my_build_repo, \
-                                   host, conf_dict) for host in \
-                                   self.existing_nodes])
-        else:
-            logger.log.info("No manual repo to be copied to resources.")
 
         logger.log.info("Using %s" % self.restraint_xml)
 
