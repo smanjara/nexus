@@ -22,9 +22,10 @@ class CI():
 
     def __init__(self, options, conf_dict):
         self.provisioner = options.provisioner
+        self.framework = options.framework
 
     def run(self, options, conf_dict):
-        if self.provisioner == "beaker":
+        if self.provisioner == "beaker" and self.framework == "restraint":
             git = Git(options, conf_dict)
             git.get_archive()
 
@@ -38,5 +39,9 @@ class CI():
             """
             restraint.run_restraint(options, conf_dict)
 
+        elif self.provisioner == "beaker" and self.framework == "pytest":
+            #TODO write code to run tests using pytest
+            print "pytest code"
+
         else:
-            logger.log.error("Unknown provisioner")
+            logger.log.error("Unknown provisioner or framework")
