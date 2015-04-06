@@ -10,6 +10,7 @@ it is available in the configuration file.
 * `errata`_:
 * `brew`_:
 * `restraint`_:
+* `ci`_:
 
 jenkins
 -------
@@ -100,3 +101,14 @@ test resources.
 
     ~$ nexus --conf my.conf restraint --build-repo /home/shanks/my_repo.repo 
         --restraint-xml ipa-tests/restraint/ipa-sudo-rhel71-x86_64-bkr.xml
+
+
+ci
+--
+
+::
+
+    ~$ nexus --conf my.conf ci --provisioner beaker --framework restraint
+
+One command to be used in Continuous Integration enviroment for all the
+Jenkins jobs. This command is to be used *ONLY* when triggered through CI plugin.
