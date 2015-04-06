@@ -28,5 +28,6 @@ setup(
         'BeautifulSoup',
         'python-jenkins'
     ],
-    include_package_data=True
+    include_package_data=True,
+    zip_safe=True
 )

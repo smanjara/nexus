@@ -1,85 +1,14 @@
+=====
+Nexus
+=====
 
-*"Learn to refactor, refactor to learn."*
+Nexus was first created as a tool to bridge the gap between CI and QE test 
+automation. However, as it evolved, it took the shape of a tool that could
+be used by others with their custom config and perform tasks using multiple 
+other tools with a single command line.
 
-I understand there are quite a few areas where the above applies, so if you are here 
-please feel free to raise an issue with implementation details or pull requests are always welcome.
+In short, Nexus is designed to connect multiple tools and test frameworks for 
+any pre-requisities, tasks or post requirements with Jenkins. Nexus can also 
+be executed using its commandline interface.
 
-Note: The external visible behavior of nexus must remain the same.
-
-
-Nexus - Continuous Integration utility
-======================================
-
-
-* _`Index`:
-
-  * `Manual execution`_:
-
-    - `Installing pre-requisities`_
-    - `Setting environment variables`_
-    - `Nexus configuration file`_
-    - `Executing manually`_
-  * `CI Workflow`_
-
-Manual execution
-================
-Installing pre-requisities
-==========================
-* ssh into the machine where you intend to run Nexus
-
-.. code-block:: bash
-
-   ]# yum install -y git python-setuptools autoconf gcc python-devel tar
-
-   Download and install koji from
-   http://koji.fedoraproject.org/koji/packageinfo?packageID=1181
-
-   ]# git clone https://github.com/gsr-shanks/nexus.git
-   ]# cd nexus
-   ]# python setup.py install
-
-   ]# python nexus/utils/restraint_repo_finder.py
-
-   ]# yum install -y restraint restraint-client
-
-Alternately you can download the rpm version of nexus at
-https://mrniranjan.fedorapeople.org/
-
-* yum install restraint-client
-
-
-Setting environment variables
-=============================
-* export EXISTING_NODES=resource.hostname
-* export JOB_NAME=jenkins_job_name
-* export WORKSPACE=location_of_your_test_repo (in this example: /home/user)
-
-Or update the jenkins section in your conf file.
-
-
-Nexus configuration file
-========================
-* Sample file can be found at nexus/etc/nexus.ini
-
-
-Executing manually
-==================
-* python nexus -h
-
-.. code-block:: bash
-
-    # nexus -h
-    usage: nexus [-h] [--conf CONF] [--version] {brew,restraint,ci,git,errata} ...
-    positional arguments:  {brew,restraint,ci,git,errata}
-                                                git, brew, errata, restraint or ci
-
-    optional arguments:
-        -h, --help            show this help message and exit
-        --conf CONF           configuration file
-        --version             show version
-
-
-CI Workflow
-===========
-
-.. image:: CI.png
+Full Docmentation is `here <http://nexus-doc.readthedocs.org/>`_.
