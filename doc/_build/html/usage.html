@@ -1,0 +1,199 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Command line usage &mdash; Nexus 2 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="top" title="Nexus 2 documentation" href="index.html" />
+    <link rel="prev" title="Config sections" href="conf.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="conf.html" title="Config sections"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Nexus 2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="command-line-usage">
+<h1>Command line usage<a class="headerlink" href="#command-line-usage" title="Permalink to this headline">¶</a></h1>
+<p>Note: Options provided in commandline overrides config values, which also
+means if the options are not provided in commandline then it is assumed that
+it is available in the configuration file.</p>
+<ul class="simple">
+<li><a class="reference internal" href="#jenkins">jenkins</a>:</li>
+<li><a class="reference internal" href="#git">git</a>:</li>
+<li><a class="reference internal" href="#errata">errata</a>:</li>
+<li><a class="reference internal" href="#brew">brew</a>:</li>
+<li><a class="reference internal" href="#restraint">restraint</a>:</li>
+</ul>
+<div class="section" id="jenkins">
+<h2>jenkins<a class="headerlink" href="#jenkins" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre>~$ nexus --conf workspace/my.conf jenkins --show-triggers
+</pre></div>
+</div>
+<p>Displays all the triggers available for your configuration.</p>
+<div class="highlight-python"><div class="highlight"><pre>~$ nexus --conf workspace/my.conf jenkins --run $JOB_NAME
+</pre></div>
+</div>
+<p>This command triggers any jenkins job in your Jenkins master.</p>
+</div>
+<div class="section" id="git">
+<h2>git<a class="headerlink" href="#git" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre>~$ nexus --conf ~/projects/nexus/nexus/etc/nexus.conf git --project ipa-tests
+    --repo git://git.app.eng.bos.redhat.com/ipa-tests.git --branch ci --tar
+    ipa-tests.tar
+</pre></div>
+</div>
+<p>This command archives the git repo and then downloads the content in a tar
+format. There maybe repos which are huge in size, in such situations it makes
+perfect sense to use the git archive protocol.</p>
+</div>
+<div class="section" id="errata">
+<h2>errata<a class="headerlink" href="#errata" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre>~$ nexus --conf my.conf errata --errata-id 19947 --errata-loc /tmp/err
+</pre></div>
+</div>
+<p>This command downloads all the builds attached to a specific erratum. The
+&#8211;errata-loc is optional here, by default, the location is picked from the
+build_download_loc of errata section in conf.</p>
+</div>
+<div class="section" id="brew">
+<h2>brew<a class="headerlink" href="#brew" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre>~$ nexus --conf my.conf brew --tag rhel-7.1-candidate --build ipa --arch
+    x86_64 --loc /tmp/brew-builds
+</pre></div>
+</div>
+<p>This command downloads the build as per the options specified. Irrespective of
+which arch you provide noarch is downloaded by default. Instead of
+commandline, all this options can be mentioned in the conf as well.</p>
+</div>
+<div class="section" id="restraint">
+<h2>restraint<a class="headerlink" href="#restraint" title="Permalink to this headline">¶</a></h2>
+<p>Pre-requisitie to execute this command:</p>
+<ul class="simple">
+<li>JOB_NAME - export in environment variable or set it in conf.</li>
+<li>EXISTING_NODES - export in environment variable or set it in conf.</li>
+<li>WORKSPACE - export in evn var or set it in conf.</li>
+</ul>
+<p>In your restraint xml:</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;param name=&quot;MASTER&quot; value=&quot;hostname1&quot;/&gt;
+</pre></div>
+</div>
+<p>Note the value &#8220;hostname1&#8221;, when restraint command is executed then
+&#8220;hostname1&#8221; value is replaced with the first hostname from EXISTING_NODES
+environment variable.</p>
+<p>In your restraint.xml for multi host testing:</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;param name=&quot;MASTER&quot; value=&quot;hostname1&quot;/&gt;
+&lt;param name=&quot;MASTER&quot; value=&quot;hostname2&quot;/&gt;
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre>~$ nexus --conf my.conf restraint --restraint-xml ipa-tests/restraint/ipa-sudo-rhel71-x86_64-bkr.xml
+</pre></div>
+</div>
+<p>You may also provide a repo file to restraint command which is to be copied to
+test resources.</p>
+<div class="highlight-python"><div class="highlight"><pre>~$ nexus --conf my.conf restraint --build-repo /home/shanks/my_repo.repo
+    --restraint-xml ipa-tests/restraint/ipa-sudo-rhel71-x86_64-bkr.xml
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Command line usage</a><ul>
+<li><a class="reference internal" href="#jenkins">jenkins</a></li>
+<li><a class="reference internal" href="#git">git</a></li>
+<li><a class="reference internal" href="#errata">errata</a></li>
+<li><a class="reference internal" href="#brew">brew</a></li>
+<li><a class="reference internal" href="#restraint">restraint</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="conf.html"
+                        title="previous chapter">Config sections</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/usage.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Shanks.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.3</a>
+      
+      |
+      <a href="_sources/usage.txt"
+          rel="nofollow">Page source</a></li>
+    </div>
+
+    
+
+    
+  </body>
+</html>
