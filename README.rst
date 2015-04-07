@@ -12,3 +12,7 @@ any pre-requisities, tasks or post requirements with Jenkins. Nexus can also
 be executed using its commandline interface.
 
 Full Docmentation is `here <http://nexus-doc.readthedocs.org/>`_.
+
+.. image:: https://readthedocs.org/projects/nexus-doc/badge/?version=dev
+:target: https://readthedocs.org/projects/nexus-doc/?badge=dev
+:alt: Documentation Status
