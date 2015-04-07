@@ -22,6 +22,9 @@ Installing pre-requisities
     Download and install koji from:
     http://koji.fedoraproject.org/koji/packageinfo?packageID=1181
 
+    Install pip:
+    yum install python-pip
+
 - Clone nexus git repository::
 
     git clone https://github.com/gsr-shanks/nexus.git
@@ -36,10 +39,4 @@ Installing pre-requisities
 
 Using RPM
 ---------
-Installing pre-requisities
-
-
-- Download RPM from::
-
-    https://shanks.fedorapeople.org/nexus/?C=M;O=D
-    yum install nexus
+*TODO*
